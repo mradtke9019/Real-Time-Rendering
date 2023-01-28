@@ -247,3 +247,27 @@ paket-files/
 
 **/Lab1/Debub/Lab1.tlog
 **Debug/
+
+!glew32.lib
+!glew32.dll
+!glew.dll
+
+!/RealTimeRendering/glew-1.10.0/*
+!/RealTimeRendering/assimp/*
+!/RealTimeRendering/freeglut/*
+!/RealTimeRendering/glm/*
+
+!/RealTimeRendering/glew-1.10.0/lib/Release/Win32/*
+!/RealTimeRendering/freeglut/lib/*
+!/RealTimeRendering/assimp/lib/Debug/*
+!/RealTimeRendering/irrKlang-1.6.0/lib*
+
+!*.lib
+
+!/Debug/Assimp32.dll
+!/Debug/Assimp32d.dll
+!/Debug/freeglut.dll
+!/Debug/glew32.dll
+!/Debug/ikpFlac.dll
+!/Debug/ikpMP3.dll
+!/Debug/irrKlang.dll
