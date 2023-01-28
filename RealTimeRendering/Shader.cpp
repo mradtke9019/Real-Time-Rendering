@@ -1,6 +1,15 @@
 #include "Shader.h"
 
 
+Shader::Shader(const char* vertexShaderPath, const char* fragmentShaderPath, bool debug) 
+	: ShaderProgramID(0)
+{
+	this->debugShader = debug;
+	VertexShaderText = ReadFile(vertexShaderPath);
+	FragmentShaderText = ReadFile(fragmentShaderPath);
+	ShaderProgramID = CompileShaders(VertexShaderText, FragmentShaderText);
+}
+
 Shader::Shader(const char* vertexShaderPath, const char* fragmentShaderPath)
 	: ShaderProgramID(0), debugShader(false)
 {

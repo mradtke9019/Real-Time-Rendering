@@ -252,14 +252,21 @@ paket-files/
 !glew32.dll
 !glew.dll
 
-!/RealTimeRendering/glew-1.10.0/*
+
 !/RealTimeRendering/assimp/*
-!/RealTimeRendering/freeglut/*
+!/RealTimeRendering/assimp/bin/*
+!/RealTimeRendering/assimp/lib/Debug/*
+
+
 !/RealTimeRendering/glm/*
 
 !/RealTimeRendering/glew-1.10.0/lib/Release/Win32/*
+!/RealTimeRendering/glew-1.10.0/*
+
 !/RealTimeRendering/freeglut/lib/*
-!/RealTimeRendering/assimp/lib/Debug/*
+!/RealTimeRendering/freeglut/*
+
+
 !/RealTimeRendering/irrKlang-1.6.0/lib*
 
 !*.lib
