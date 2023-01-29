@@ -94,27 +94,28 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="realisticVertex.glsl">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="realisticFragment.glsl">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="nonRealisticVertex.glsl">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="nonRealisticFragment.glsl">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="blinnPhongVertex.glsl">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="blinnPhongFragment.glsl">
-      <Filter>Resource Files</Filter>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
     <CopyFileToFolders Include="teapot.obj">
+      <Filter>Resource Files</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="realisticFragment.glsl">
+      <Filter>Resource Files</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="realisticVertex.glsl">
+      <Filter>Resource Files</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="nonRealisticVertex.glsl">
+      <Filter>Resource Files</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="nonRealisticFragment.glsl">
+      <Filter>Resource Files</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="blinnPhongVertex.glsl">
+      <Filter>Resource Files</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="blinnPhongFragment.glsl">
+      <Filter>Resource Files</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="LightBulb.obj">
       <Filter>Resource Files</Filter>
     </CopyFileToFolders>
   </ItemGroup>

@@ -23,6 +23,7 @@ public:
 
 	virtual glm::mat4* GetViewTransform() = 0;
 	virtual glm::vec3 GetPosition() = 0;
+	virtual void SetPosition(glm::vec3) = 0;
 
 	virtual void TranslateX(float) = 0;
 	virtual void TranslateY(float) = 0;

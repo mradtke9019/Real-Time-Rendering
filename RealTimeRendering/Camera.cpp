@@ -49,6 +49,11 @@ glm::vec3 Camera::GetPosition()
 	return Position;
 }
 
+void Camera::SetPosition(glm::vec3 pos)
+{
+	Position = pos;
+}
+
 glm::mat4* Camera::GetViewTransform()
 {
 	CalculateView();

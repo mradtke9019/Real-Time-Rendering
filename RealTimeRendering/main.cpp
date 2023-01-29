@@ -35,17 +35,23 @@ ISoundEngine* SoundEngine;
 ICamera* activeCamera;
 
 FixedCamera defaultCamera;
-FixedCamera tiltedCamera;
 
 bool Pause;
 
+vector<Model*> models;
 vector<Model> teapots;
+Model* LightBulb;
 
 
 // Idea to use delta frame from here https://learnopengl.com/Getting-started/Camera
 float deltaTime;// Time between current frame and last frame
 float lastFrame; // Time of last frame
 float currentFrame;
+
+float cameraOrbit;
+float cameraHeight;
+float angleSpeed;
+float theta;
 
 glm::vec3 LightColor;
 glm::vec3 LightPosition; 
@@ -69,6 +75,15 @@ void display()
 
 	glm::mat4 projection = GetProjection();
 
+
+	theta += angleSpeed * deltaTime;
+
+	float x = cameraOrbit * cos(glm::radians(theta));
+	float y = cameraOrbit * sin(glm::radians(theta));
+	glm::vec3 cameraPosition = glm::vec3(x,cameraHeight,y);
+	activeCamera->SetPosition(cameraPosition);
+
+
 	for (int i = 0; i < shaders.size(); i++)
 	{
 		Shader* s = &shaders.at(i);
@@ -76,12 +91,25 @@ void display()
 		s->SetUniformVec3("LightColor", LightColor);
 		s->SetUniformVec3("LightPosition", LightPosition);
 		s->SetUniformVec3("LightDirection", LightDirection);
+		s->SetUniformVec3("LightDirection", cameraPosition);
 		s->SetUniform1f("time", timeValue);
 		s->SetUniform1f("rand", r);
 		s->SetUniformMatrix4fv("view", activeCamera->GetViewTransform());
 		s->SetUniformMatrix4fv("projection", &projection);
 	}
 
+	for (int i = 0; i < models.size(); i++)
+	{
+		Model* m = models.at(i);
+		m->SetShader(activeShader);
+		m->Draw();
+	}
+	//for (int i = 0; i < teapots.size(); i++) 
+	//{
+	//	Model* t = &teapots.at(i);
+	//	t->SetShader(activeShader);
+	//	t->Draw();
+	//}
 
 	glutPostRedisplay();
     glutSwapBuffers();
@@ -93,53 +121,61 @@ void LoadShaders()
 	Shader nonRealisticShader;
 	Shader blinnPhongShader;
 	// Set up the shaders
-	realisticShader = Shader("./realisticVertex.glsl", "./realisticFragment.glsl",true);
-	nonRealisticShader = Shader("./nonRealisticVertex.glsl", "./nonRealisticFragment.glsl");
 	blinnPhongShader = Shader("./blinnPhongVertex.glsl", "./blinnPhongFragment.glsl");
+	nonRealisticShader = Shader("./nonRealisticVertex.glsl", "./nonRealisticFragment.glsl");
+	realisticShader = Shader("./realisticVertex.glsl", "./realisticFragment.glsl");
 
 
-	shaders.push_back(realisticShader);
-	shaders.push_back(nonRealisticShader);
 	shaders.push_back(blinnPhongShader);
+	shaders.push_back(nonRealisticShader);
+	shaders.push_back(realisticShader);
 	activeShader = &shaders.at(0);
 }
 
 
 void LoadCameras()
 {
-	defaultCamera = FixedCamera(glm::vec3(0.0f, 150.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, -1.0f));
-	tiltedCamera = FixedCamera(glm::vec3(150.0f, 150.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, -1.0f));
-
-
+	cameraOrbit = 150.0f;
+	cameraHeight = 50.0f;
+	angleSpeed = 0.03;
+	theta = 0.0f;
+	defaultCamera = FixedCamera(glm::vec3(0.0f, cameraHeight, cameraOrbit), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 	activeCamera = &defaultCamera;
 }
 
 void LoadObjects()
 {
-	for (int i = 0; i < 3; i++)
+	for (int i = -1; i < 2; i++)
 	{
 		glm::vec3 randomColor = glm::vec3(
 			static_cast <float> (rand()) / static_cast <float> (RAND_MAX),
 			static_cast <float> (rand()) / static_cast <float> (RAND_MAX),
 			static_cast <float> (rand()) / static_cast <float> (RAND_MAX));
-		glm::vec3 color;
-		if (i == 0)
+		glm::vec3 color  = glm::vec3(1, 1, 1);
+		glm::vec3 position = glm::vec3(i * 70, 0, 0);
+
+
+		if (i == -1)
 		{
 			color = glm::vec3(1,0,0);
 		}
+		else if (i == 0)
+		{
+			color = glm::vec3(0, 1, 0);
+		}
 		else if (i == 1)
 		{
-			glm::vec3(0, 1, 0);
+			color = glm::vec3(0, 0, 1);
 		}
-		else if (i == 2)
-		{
-			glm::vec3(0, 0, 1);
-		}
-		Model m = Model("./teapot.obj",glm::vec3(0,0,0), activeShader, color);
+		Model* m = new Model("./teapot.obj", position, activeShader, color);
 
-		teapots.push_back(m);
+		//teapots.push_back(m);
+		models.push_back(m);
 	}
 
+
+	LightBulb = new Model("./LightBulb.obj", LightPosition, activeShader, glm::vec3(1.0,1.0,1.0));
+	models.push_back(LightBulb);
 
 	SoundEngine = createIrrKlangDevice();
 }
@@ -147,8 +183,8 @@ void LoadObjects()
 void initLight()
 {
 	LightColor = glm::vec3(0.5, 0.5, 0.5);
-	LightPosition = glm::vec3(-1.0, 1.0, -0.3);
-	LightDirection = glm::vec3(0.1, -1.0, -0.3);
+	LightPosition = glm::vec3(0, 50.0, 0);
+	LightDirection = glm::vec3(0.0, -1.0, 0.0);
 }
 
 void init()
@@ -171,12 +207,15 @@ void keyPress(unsigned char key, int x, int y)
 	switch (key) {
 	case '1':
 		activeShader = &shaders.at(0);
+		std::cout << "Shader 1" << std::endl;
 		break;
 	case '2':
 		activeShader = &shaders.at(1);
+		std::cout << "Shader 2" << std::endl;
 		break;
 	case '3':
 		activeShader = &shaders.at(2);
+		std::cout << "Shader 3" << std::endl;
 		break;
 	}
 
@@ -196,7 +235,6 @@ int main(int argc, char** argv){
 	// Tell glut where the display function is
 	glutDisplayFunc(display);
 	glutKeyboardFunc(keyPress); 
-	init();
 	 // A call to glewInit() must be done after glut is initialized!
     GLenum res = glewInit();
 	// Check for any errors
@@ -205,6 +243,7 @@ int main(int argc, char** argv){
       return 1;
     }
 	// Set up your objects and shaders
+	init();
 
 	// Begin infinite event loop
 	glutMainLoop();

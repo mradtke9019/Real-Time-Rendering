@@ -11,31 +11,45 @@ uniform mat4 MVP;
 uniform mat4 Identity;
 uniform float rand;
 
-const float ambientCoeff   = 0.5;
+const float ambientCoeff   = 0.1;
 const float specularCoeff  = 0.1;
-const float specularExp    = 2.0;
+const float specularExp    = 32.0;
 
-uniform vec3 LightColor;
 uniform vec3 ObjectColor;
+uniform vec3 LightColor;
 uniform vec3 LightPosition;
 uniform vec3 LightDirection;
+uniform vec3 ViewPosition;
 in vec3 FragPos;
 
 void main()                                                             
 {
-    vec3 l = normalize(LightDirection);
-	vec3 n = normalize(fNormal);
-	vec3 e = normalize(-fPosition.xyz);
-	vec3 h = normalize (e+l);
+    bool blinn = true;
+    vec3 ambient = ambientCoeff * ObjectColor;
 
-	vec3 dir = vec3(-.5,1,.5); //direction of color diffusion
-	float diffuse = pow(dot(fNormal,dir),12.0);
-	vec3 diffuseColor = diffuse * vec3(0.5,0.5,0.5);
-	
-	
-	vec3 ambientColor = ambientCoeff * ObjectColor;
-	vec3 specularColor = specularCoeff*pow(max(0.0,dot(n,h)),specularExp) * LightColor;
-	
-	
-	gl_FragColor = vec4(ambientColor + specularColor +diffuseColor,1.0);
+    vec3 lightDir = normalize(LightPosition - FragPos);
+   
+    vec3 normal = normalize(fNormal);
+
+    float diff = max(dot(lightDir, normal), 0.0);
+
+    vec3 diffuse = diff * ObjectColor;
+        // specular
+    vec3 viewDir = normalize(ViewPosition - FragPos);
+    vec3 reflectDir = reflect(-lightDir, normal);
+
+    float spec = 0.0;
+    if(blinn)
+    {
+        vec3 halfwayDir = normalize(lightDir + viewDir);  
+        spec = pow(max(dot(normal, halfwayDir), 0.0), specularExp);
+    }
+    else
+    {
+        vec3 reflectDir = reflect(-lightDir, normal);
+        spec = pow(max(dot(viewDir, reflectDir), 0.0), specularExp);
+    }
+    
+    vec3 specular = LightColor * spec; // assuming bright white light color
+    gl_FragColor = vec4(ambient + diffuse + specular, 1.0);
 }

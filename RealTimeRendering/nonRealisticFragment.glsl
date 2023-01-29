@@ -11,8 +11,8 @@ uniform mat4 MVP;
 uniform mat4 Identity;
 uniform float rand;
 
-const float ambientCoeff   = 0.5;
-const float specularCoeff  = 0.1;
+const float ambientCoeff   = 1.5;
+const float specularCoeff  = 14.1;
 const float specularExp    = 2.0;
 
 uniform vec3 LightColor;
@@ -21,21 +21,21 @@ uniform vec3 LightPosition;
 uniform vec3 LightDirection;
 in vec3 FragPos;
 
-void main()                                                             
-{
-    vec3 l = normalize(LightDirection);
-	vec3 n = normalize(fNormal);
-	vec3 e = normalize(-fPosition.xyz);
-	vec3 h = normalize (e+l);
 
-	vec3 dir = vec3(-.5,1,.5); //direction of color diffusion
-	float diffuse = pow(dot(fNormal,dir),12.0);
-	vec3 diffuseColor = diffuse * vec3(0.5,0.5,0.5);
-	
-	
-	vec3 ambientColor = ambientCoeff * ObjectColor;
-	vec3 specularColor = specularCoeff*pow(max(0.0,dot(n,h)),specularExp) * LightColor;
-	
-	
-	gl_FragColor = vec4(ambientColor + specularColor +diffuseColor,1.0);
+void main()
+{
+	float intensity;
+	vec4 color;
+	intensity = dot(LightDirection,normalize(fNormal));
+
+	if (intensity > 0.6)
+		color = vec4(1.0,0.5,0.5,1.0);
+	else if (intensity > 0.5)
+		color = vec4(0.66,0.33,0.33,1.0);
+	else if (intensity > 0.25)
+		color = vec4(0.4,0.2,0.2,1.0);
+	else
+		color = vec4(0.2,0.1,0.1,1.0);
+	gl_FragColor = color;
+
 }

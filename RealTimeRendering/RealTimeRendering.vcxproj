@@ -175,15 +175,32 @@
     <ClInclude Include="Shader.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="blinnPhongFragment.glsl" />
-    <None Include="blinnPhongVertex.glsl" />
-    <None Include="nonRealisticFragment.glsl" />
-    <None Include="nonRealisticVertex.glsl" />
-    <None Include="realisticFragment.glsl" />
-    <None Include="realisticVertex.glsl" />
+    <CopyFileToFolders Include="blinnPhongFragment.glsl">
+      <FileType>Document</FileType>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="blinnPhongVertex.glsl">
+      <FileType>Document</FileType>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="nonRealisticFragment.glsl">
+      <FileType>Document</FileType>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="nonRealisticVertex.glsl">
+      <FileType>Document</FileType>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="realisticFragment.glsl">
+      <FileType>Document</FileType>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="realisticVertex.glsl">
+      <FileType>Document</FileType>
+    </CopyFileToFolders>
   </ItemGroup>
   <ItemGroup>
     <CopyFileToFolders Include="teapot.obj">
+      <FileType>Document</FileType>
+    </CopyFileToFolders>
+  </ItemGroup>
+  <ItemGroup>
+    <CopyFileToFolders Include="LightBulb.obj">
       <FileType>Document</FileType>
     </CopyFileToFolders>
   </ItemGroup>

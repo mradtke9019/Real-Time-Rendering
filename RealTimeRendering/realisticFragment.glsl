@@ -11,14 +11,15 @@ uniform mat4 MVP;
 uniform mat4 Identity;
 uniform float rand;
 
-const float ambientCoeff   = 0.5;
+const float ambientCoeff   = 100.5;
 const float specularCoeff  = 0.1;
-const float specularExp    = 2.0;
+const float specularExp    = 5.0;
 
 uniform vec3 LightColor;
 uniform vec3 ObjectColor;
 uniform vec3 LightPosition;
 uniform vec3 LightDirection;
+
 in vec3 FragPos;
 
 void main()                                                             

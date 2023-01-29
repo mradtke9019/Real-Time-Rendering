@@ -16,6 +16,7 @@ glm::vec3 FixedCamera::GetPosition()
 
 glm::mat4* FixedCamera::GetViewTransform()
 {
+	View = glm::lookAt(Position, Target, Up);
 	return &View;
 };
 

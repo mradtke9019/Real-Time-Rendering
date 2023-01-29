@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ICamera.h"
+#include <exception>
 
 class FreeCamera : public  ICamera
 {
@@ -35,7 +36,10 @@ public:
 
 	glm::vec3 GetPosition();
 
-	void SetPosition(glm::vec3);
+	void SetPosition(glm::vec3) 
+	{
+		throw std::exception("Unsupported operation");
+	}
 
 	glm::vec3 GetUp();
 
