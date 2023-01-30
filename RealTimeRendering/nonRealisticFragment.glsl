@@ -26,16 +26,19 @@ void main()
 {
 	float intensity;
 	vec4 color;
-	intensity = dot(LightDirection,normalize(fNormal));
+	
+    vec3 lightDir = normalize(LightPosition - FragPos);
+	intensity = dot(lightDir,normalize(fNormal));
+	float mult = 1.0f;
 
 	if (intensity > 0.6)
-		color = vec4(1.0,0.5,0.5,1.0);
+		mult = 1.0f;
 	else if (intensity > 0.5)
-		color = vec4(0.66,0.33,0.33,1.0);
+		mult = 0.8f;
 	else if (intensity > 0.25)
-		color = vec4(0.4,0.2,0.2,1.0);
+		mult = 0.4f;
 	else
-		color = vec4(0.2,0.1,0.1,1.0);
-	gl_FragColor = color;
+		mult = 0.2f;
 
+	gl_FragColor = vec4(mult * ObjectColor, 1.0);
 }

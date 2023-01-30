@@ -117,9 +117,9 @@ void display()
 
 void LoadShaders()
 {
-	Shader realisticShader;
-	Shader nonRealisticShader;
-	Shader blinnPhongShader;
+	Shader realisticShader; // 
+	Shader nonRealisticShader; // https://www.lighthouse3d.com/tutorials/glsl-12-tutorial/toon-shader-version-ii/
+	Shader blinnPhongShader; // https://learnopengl.com/Advanced-Lighting/Advanced-Lighting
 	// Set up the shaders
 	blinnPhongShader = Shader("./blinnPhongVertex.glsl", "./blinnPhongFragment.glsl");
 	nonRealisticShader = Shader("./nonRealisticVertex.glsl", "./nonRealisticFragment.glsl");
