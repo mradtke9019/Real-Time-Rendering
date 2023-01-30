@@ -53,6 +53,10 @@ float cameraHeight;
 float angleSpeed;
 float theta;
 
+// Shader parameters
+float thresholds[3];
+float specularExp;
+
 glm::vec3 LightColor;
 glm::vec3 LightPosition; 
 glm::vec3 LightDirection;
@@ -63,9 +67,26 @@ glm::mat4 GetProjection()
 	return glm::perspective(glm::radians(60.0f), (float)glutGet(GLUT_WINDOW_WIDTH) / (float)glutGet(GLUT_WINDOW_HEIGHT), 0.1f, 300.0f);
 }
 
+// https://stackoverflow.com/questions/538661/how-do-i-draw-text-with-glut-opengl-in-c
+void RenderString(float x, float y, void* font, const unsigned char* string, glm::vec3 rgb)
+{
+	//unsigned char string[] = "The quick god jumps over the lazy brown fox."
+	//	int w;
+	//w = glutBitmapLength(GLUT_BITMAP_8_BY_13, string);
+	char* c;
+
+	glColor3f(rgb.r, rgb.g, rgb.b);
+	//glRasterPos2f(x,y
+	glRasterPos2i(x,y);
+
+	glutBitmapString(font, string);
+}
+
 void display()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+
 	auto timeValue = glutGet(GLUT_ELAPSED_TIME);
 	currentFrame = timeValue;
 	deltaTime = currentFrame - lastFrame;
@@ -98,6 +119,7 @@ void display()
 		s->SetUniformMatrix4fv("projection", &projection);
 	}
 
+
 	for (int i = 0; i < models.size(); i++)
 	{
 		Model* m = models.at(i);
@@ -110,7 +132,14 @@ void display()
 	//	t->SetShader(activeShader);
 	//	t->Draw();
 	//}
-
+	//glm::mat4 identity = glm::mat4(1.0);
+	//activeShader->SetUniformMatrix4fv("model", &identity);
+	//activeShader->SetUniformMatrix4fv("projection", &identity);
+	
+	//for (int i = -10; i < 10; i++)
+	//{
+	//	RenderString(i, i, GLUT_BITMAP_TIMES_ROMAN_24, (unsigned char*)"Hello World", glm::vec3(1.0f, 0.0f, 0.0f));
+	//}
 	glutPostRedisplay();
     glutSwapBuffers();
 }
@@ -125,6 +154,13 @@ void LoadShaders()
 	nonRealisticShader = Shader("./nonRealisticVertex.glsl", "./nonRealisticFragment.glsl");
 	realisticShader = Shader("./realisticVertex.glsl", "./realisticFragment.glsl");
 
+	thresholds[0] = 0.7;
+	thresholds[1] = 0.5;
+	thresholds[2] = 0.25;
+	nonRealisticShader.SetUniformFloatArray("thresholds", thresholds, 3);
+	
+	specularExp = 64;
+	blinnPhongShader.SetUniform1f("specularExp", specularExp);
 
 	shaders.push_back(blinnPhongShader);
 	shaders.push_back(nonRealisticShader);
@@ -196,7 +232,20 @@ void init()
 	LoadObjects();
 }
 
-
+void mousePress(int button, int state, int x, int y)
+{
+	switch (button) {
+	case GLUT_LEFT_BUTTON:
+		break;
+	case GLUT_MIDDLE_BUTTON:
+		break;
+	case GLUT_RIGHT_BUTTON:
+		break;
+	default:
+		std::cout << "Unhandled mouse input" <<std::endl;
+		break;
+	}
+}
 
 // function to allow keyboard control
 // it's called a callback function and must be registerd in main() using glutKeyboardFunc();
@@ -217,9 +266,86 @@ void keyPress(unsigned char key, int x, int y)
 		activeShader = &shaders.at(2);
 		std::cout << "Shader 3" << std::endl;
 		break;
+	case ' ':
+		Pause = !Pause;
+		if (Pause)
+		{
+			angleSpeed = 0.0;
+		}
+		else
+		{
+			angleSpeed = 0.03;
+		}
+		break;
 	}
 
 	// we must call these to redraw the scene after we make any changes 
+	glutPostRedisplay();
+}
+
+void IncrementShaders() {
+
+	//shaders.push_back(blinnPhongShader);
+	//shaders.push_back(nonRealisticShader);
+	//shaders.push_back(realisticShader);
+	thresholds[0] += 0.1;
+	thresholds[1] += 0.1;
+	thresholds[2] += 0.1;
+	shaders.at(1).SetUniformFloatArray("thresholds", thresholds, 3);
+
+
+	specularExp = specularExp * 2;
+	shaders.at(0).SetUniform1f("specularExp", specularExp);
+}
+
+void decrementShaders() {
+
+	//shaders.push_back(blinnPhongShader);
+	//shaders.push_back(nonRealisticShader);
+	//shaders.push_back(realisticShader);
+	thresholds[0] -= 0.1;
+	thresholds[1] -= 0.1;
+	thresholds[2] -= 0.1;
+	shaders.at(1).SetUniformFloatArray("thresholds", thresholds, 3);
+
+
+	specularExp = specularExp / 2;
+	shaders.at(0).SetUniform1f("specularExp", specularExp);
+}
+
+void SetLightPosition(glm::vec3 pos) {
+	LightPosition = pos;
+	LightBulb->SetPosition(LightPosition);
+}
+
+glm::vec3 GetLightPosition()
+{
+	return LightPosition;
+}
+
+//https://community.khronos.org/t/what-are-the-codes-for-arrow-keys-to-use-in-glut-keyboard-callback-function/26457/2
+void altKeyPress(int key, int x, int y)
+{
+	glm::vec3 position;
+	switch (key)
+	{
+	case GLUT_KEY_UP:
+		IncrementShaders();
+		break;
+	case GLUT_KEY_DOWN:
+		decrementShaders();
+		break;
+	case GLUT_KEY_LEFT:
+		position = GetLightPosition();
+		position.x += 10;
+		SetLightPosition(position);
+		break;
+	case GLUT_KEY_RIGHT:
+		position = GetLightPosition();
+		position.x -= 10;
+		SetLightPosition(position);
+		break;
+	}
 	glutPostRedisplay();
 }
 
@@ -235,6 +361,8 @@ int main(int argc, char** argv){
 	// Tell glut where the display function is
 	glutDisplayFunc(display);
 	glutKeyboardFunc(keyPress); 
+	glutMouseFunc(mousePress);
+	glutSpecialFunc(altKeyPress);
 	 // A call to glewInit() must be done after glut is initialized!
     GLenum res = glewInit();
 	// Check for any errors

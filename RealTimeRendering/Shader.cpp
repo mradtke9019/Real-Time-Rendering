@@ -131,3 +131,14 @@ void Shader::SetUniformVec3(const char* vec, glm::vec3 vector)
 	}
 	glUniform3f(id, vector.x, vector.y, vector.z);
 }
+
+void Shader::SetUniformFloatArray(const char* name, const float arr[], int count)
+{
+	Use();
+	int id = glGetUniformLocation(ShaderProgramID, name);
+	if (id < 0 && debugShader) {
+		fprintf(stderr, "Unable to set uniform float '%s' in shader program id: '%i'\n", name, ShaderProgramID);
+	}
+
+	glUniform1fv(id, count * sizeof(GLfloat), arr);
+}

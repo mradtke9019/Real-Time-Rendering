@@ -80,3 +80,9 @@ glm::vec3 Model::GetPosition()
 {
 	return this->Position;
 }
+
+void Model::SetPosition(glm::vec3 pos)
+{
+	this->Position = pos;
+	ModelTransform = glm::translate(glm::mat4(1.0f), Position);
+}

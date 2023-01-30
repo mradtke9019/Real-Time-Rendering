@@ -133,5 +133,6 @@ public:
     glm::mat4 GetModelTransform();
     void SetColor(glm::vec3 color);
     glm::vec3 GetColor();
-    glm::vec3 GetPosition();
+    glm::vec3 GetPosition(); 
+    void SetPosition(glm::vec3 pos);
 };

@@ -12,8 +12,10 @@ uniform mat4 Identity;
 uniform float rand;
 
 const float ambientCoeff   = 0.1;
-const float specularCoeff  = 0.1;
-const float specularExp    = 32.0;
+const float specularCoeff  = 1;
+
+
+uniform float specularExp;
 
 uniform vec3 ObjectColor;
 uniform vec3 LightColor;
@@ -25,19 +27,22 @@ in vec3 FragPos;
 void main()                                                             
 {
     bool blinn = true;
-    vec3 ambient = ambientCoeff * ObjectColor;
-
-    vec3 lightDir = normalize(LightPosition - FragPos);
-   
     vec3 normal = normalize(fNormal);
-
-    float diff = max(dot(lightDir, normal), 0.0);
-
-    vec3 diffuse = diff * ObjectColor;
-        // specular
+    vec3 lightDir = normalize(LightPosition - FragPos);
     vec3 viewDir = normalize(ViewPosition - FragPos);
     vec3 reflectDir = reflect(-lightDir, normal);
 
+
+    // Ambient
+    vec3 ambient = ambientCoeff * ObjectColor;
+
+
+    // Diffuse
+    float diff = max(dot(lightDir, normal), 0.0);
+    vec3 diffuse = diff * ObjectColor;
+
+
+    // Specular
     float spec = 0.0;
     if(blinn)
     {
@@ -49,7 +54,9 @@ void main()
         vec3 reflectDir = reflect(-lightDir, normal);
         spec = pow(max(dot(viewDir, reflectDir), 0.0), specularExp);
     }
-    
-    vec3 specular = LightColor * spec; // assuming bright white light color
+    vec3 specular = specularCoeff * LightColor * spec;
+
+
+
     gl_FragColor = vec4(ambient + diffuse + specular, 1.0);
 }

@@ -131,7 +131,7 @@ public:
     GLuint GetUniformVec3(const char* vec);
 
     void SetUniformVec3(const char* vec, glm::vec3 vector);
-
+    void SetUniformFloatArray(const char* name, const float arr[], int count);
     // utility uniform functions
     // ------------------------------------------------------------------------
     void setBool(const std::string& name, bool value);
