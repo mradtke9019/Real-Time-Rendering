@@ -53,9 +53,13 @@ float cameraHeight;
 float angleSpeed;
 float theta;
 
-// Shader parameters
+//////////// Shader parameters
 float thresholds[3];
 float specularExp;
+// cook torrance
+float F0 = 0.8;
+float roughness = 0.1;
+float k = 0.2;
 
 glm::vec3 LightColor;
 glm::vec3 LightPosition; 
@@ -161,6 +165,14 @@ void LoadShaders()
 	
 	specularExp = 64;
 	blinnPhongShader.SetUniform1f("specularExp", specularExp);
+
+	//float F0 = 0.8;
+	//float roughness = 0.1;
+	//float k = 0.2;
+	realisticShader.SetUniform1f("F0", F0);
+	realisticShader.SetUniform1f("roughness", roughness);
+	realisticShader.SetUniform1f("k", k);
+
 
 	shaders.push_back(blinnPhongShader);
 	shaders.push_back(nonRealisticShader);
@@ -296,6 +308,13 @@ void IncrementShaders() {
 
 	specularExp = specularExp * 2;
 	shaders.at(0).SetUniform1f("specularExp", specularExp);
+
+	F0 += 0.1;
+	roughness += 0.1;
+	k += 0.1;
+	shaders.at(2).SetUniform1f("F0", F0);
+	shaders.at(2).SetUniform1f("roughness", roughness);
+	shaders.at(2).SetUniform1f("k", k);
 }
 
 void decrementShaders() {
@@ -311,6 +330,15 @@ void decrementShaders() {
 
 	specularExp = specularExp / 2;
 	shaders.at(0).SetUniform1f("specularExp", specularExp);
+
+
+	F0 -= 0.1;
+	roughness -= 0.1;
+	k -= 0.1;
+	shaders.at(2).SetUniform1f("F0", F0);
+	shaders.at(2).SetUniform1f("roughness", roughness);
+	shaders.at(2).SetUniform1f("k", k);
+
 }
 
 void SetLightPosition(glm::vec3 pos) {
