@@ -24,7 +24,7 @@ uniform vec3 LightDirection;
 uniform vec3 ViewPosition;
 
 in vec3 FragPos;
-// Reference: https://github.com/pboechat/cook_torrance/blob/master/application/shaders/cook_torrance_textured.fs.glsl 
+// References: https://github.com/pboechat/cook_torrance/blob/master/application/shaders/cook_torrance_textured.fs.glsl 
 // https://www.youtube.com/watch?v=hX1FFqmPV5s
 void main()
 {

@@ -244,56 +244,6 @@ void init()
 	LoadObjects();
 }
 
-void mousePress(int button, int state, int x, int y)
-{
-	switch (button) {
-	case GLUT_LEFT_BUTTON:
-		break;
-	case GLUT_MIDDLE_BUTTON:
-		break;
-	case GLUT_RIGHT_BUTTON:
-		break;
-	default:
-		std::cout << "Unhandled mouse input" <<std::endl;
-		break;
-	}
-}
-
-// function to allow keyboard control
-// it's called a callback function and must be registerd in main() using glutKeyboardFunc();
-// the functions must be of a specific format - see freeglut documentation
-// similar functions exist for mouse control etc
-void keyPress(unsigned char key, int x, int y)
-{
-	switch (key) {
-	case '1':
-		activeShader = &shaders.at(0);
-		std::cout << "Shader 1" << std::endl;
-		break;
-	case '2':
-		activeShader = &shaders.at(1);
-		std::cout << "Shader 2" << std::endl;
-		break;
-	case '3':
-		activeShader = &shaders.at(2);
-		std::cout << "Shader 3" << std::endl;
-		break;
-	case ' ':
-		Pause = !Pause;
-		if (Pause)
-		{
-			angleSpeed = 0.0;
-		}
-		else
-		{
-			angleSpeed = 0.03;
-		}
-		break;
-	}
-
-	// we must call these to redraw the scene after we make any changes 
-	glutPostRedisplay();
-}
 
 void IncrementShaders() {
 
@@ -316,7 +266,6 @@ void IncrementShaders() {
 	shaders.at(2).SetUniform1f("roughness", roughness);
 	shaders.at(2).SetUniform1f("k", k);
 }
-
 void decrementShaders() {
 
 	//shaders.push_back(blinnPhongShader);
@@ -351,6 +300,65 @@ glm::vec3 GetLightPosition()
 	return LightPosition;
 }
 
+
+void mousePress(int button, int state, int x, int y)
+{
+	switch (button) {
+	case GLUT_LEFT_BUTTON:
+		break;
+	case GLUT_MIDDLE_BUTTON:
+		break;
+	case GLUT_RIGHT_BUTTON:
+		break;
+	default:
+		std::cout << "Unhandled mouse input" <<std::endl;
+		break;
+	}
+}
+
+// function to allow keyboard control
+// it's called a callback function and must be registerd in main() using glutKeyboardFunc();
+// the functions must be of a specific format - see freeglut documentation
+// similar functions exist for mouse control etc
+void keyPress(unsigned char key, int x, int y)
+{
+	switch (key) {
+	case '1':
+		activeShader = &shaders.at(0);
+		std::cout << "Shader 1" << std::endl;
+		break;
+	case '2':
+		activeShader = &shaders.at(1);
+		std::cout << "Shader 2" << std::endl;
+		break;
+	case '3':
+		activeShader = &shaders.at(2);
+		std::cout << "Shader 3" << std::endl;
+		break;
+	case 'w':
+		IncrementShaders();
+		break;
+	case 's':
+		decrementShaders();
+		break;
+	case ' ':
+		Pause = !Pause;
+		if (Pause)
+		{
+			angleSpeed = 0.0;
+		}
+		else
+		{
+			angleSpeed = 0.03;
+		}
+		break;
+	}
+
+	// we must call these to redraw the scene after we make any changes 
+	glutPostRedisplay();
+}
+
+
 //https://community.khronos.org/t/what-are-the-codes-for-arrow-keys-to-use-in-glut-keyboard-callback-function/26457/2
 void altKeyPress(int key, int x, int y)
 {
@@ -358,10 +366,15 @@ void altKeyPress(int key, int x, int y)
 	switch (key)
 	{
 	case GLUT_KEY_UP:
-		IncrementShaders();
+		position = GetLightPosition();
+		position.z -= 10;
+		SetLightPosition(position);
+		break;
 		break;
 	case GLUT_KEY_DOWN:
-		decrementShaders();
+		position = GetLightPosition();
+		position.z += 10;
+		SetLightPosition(position);
 		break;
 	case GLUT_KEY_LEFT:
 		position = GetLightPosition();
@@ -391,6 +404,8 @@ int main(int argc, char** argv){
 	glutKeyboardFunc(keyPress); 
 	glutMouseFunc(mousePress);
 	glutSpecialFunc(altKeyPress);
+	glClearColor(0.1f, 0.2f, 0.2f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT);
 	 // A call to glewInit() must be done after glut is initialized!
     GLenum res = glewInit();
 	// Check for any errors
