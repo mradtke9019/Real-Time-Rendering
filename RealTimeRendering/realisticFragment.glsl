@@ -61,7 +61,6 @@ void main()
 		Rs = (F * D * G) / (PI * NdotL * NdotV);
 	}
 	
-    vec3 ambient = ambientCoeff * ObjectColor;
 
-	gl_FragColor = vec4(ambient + ObjectColor * LightColor * NdotL + LightColor * ObjectColor * NdotL * (k + Rs * (1.0 - k)), 1.0);
+	gl_FragColor = vec4(ObjectColor * LightColor * NdotL + LightColor * ObjectColor * NdotL * (k + Rs * (1.0 - k)), 1.0);
 }
