@@ -1,0 +1,8 @@
+Submission Youtube link: https://youtu.be/oRpgP6pMs04
+References: 
+
+https://github.com/pboechat/cook_torrance/blob/master/application/shaders/cook_torrance_textured.fs.glsl 
+https://www.youtube.com/watch?v=hX1FFqmPV5s
+
+Shader nonRealisticShader https://www.lighthouse3d.com/tutorials/glsl-12-tutorial/toon-shader-version-ii/
+shader blinnPhongShader https://learnopengl.com/Advanced-Lighting/Advanced-Lighting

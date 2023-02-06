@@ -13,15 +13,21 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Resource Files\Shaders">
+      <UniqueIdentifier>{4210137a-35b9-4ae5-a252-a22b55ca4db0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Models">
+      <UniqueIdentifier>{5008431a-f36a-4d9c-8c3d-ad03aa0ce031}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Skybox">
+      <UniqueIdentifier>{6f314a3d-c758-444d-b633-9cd74c9fc8d2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Shader.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Object.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Mesh.cpp">
@@ -39,17 +45,14 @@
     <ClCompile Include="FreeCamera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Player.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Ghost.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Arena.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SearchAgent.h">
       <Filter>Header Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Skybox.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="stb_image.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -57,9 +60,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Mesh.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Object.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Shader.h">
@@ -77,46 +77,71 @@
     <ClInclude Include="FixedCamera.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Player.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Ghost.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Character.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Direction.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Arena.h">
+    <ClInclude Include="Skybox.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="stb_image.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <CopyFileToFolders Include="teapot.obj">
-      <Filter>Resource Files</Filter>
-    </CopyFileToFolders>
-    <CopyFileToFolders Include="realisticFragment.glsl">
-      <Filter>Resource Files</Filter>
-    </CopyFileToFolders>
-    <CopyFileToFolders Include="realisticVertex.glsl">
-      <Filter>Resource Files</Filter>
-    </CopyFileToFolders>
-    <CopyFileToFolders Include="nonRealisticVertex.glsl">
-      <Filter>Resource Files</Filter>
-    </CopyFileToFolders>
-    <CopyFileToFolders Include="nonRealisticFragment.glsl">
-      <Filter>Resource Files</Filter>
-    </CopyFileToFolders>
-    <CopyFileToFolders Include="blinnPhongVertex.glsl">
-      <Filter>Resource Files</Filter>
+      <Filter>Resource Files\Models</Filter>
     </CopyFileToFolders>
     <CopyFileToFolders Include="blinnPhongFragment.glsl">
-      <Filter>Resource Files</Filter>
+      <Filter>Resource Files\Shaders</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="LightBulb.obj">
-      <Filter>Resource Files</Filter>
+    <CopyFileToFolders Include="blinnPhongVertex.glsl">
+      <Filter>Resource Files\Shaders</Filter>
     </CopyFileToFolders>
+    <CopyFileToFolders Include="environmentMap.frag">
+      <Filter>Resource Files\Shaders</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="environmentMap.vert">
+      <Filter>Resource Files\Shaders</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="skybox.vert">
+      <Filter>Resource Files\Shaders</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="skybox.frag">
+      <Filter>Resource Files\Shaders</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="Diamond.obj">
+      <Filter>Resource Files\Models</Filter>
+    </CopyFileToFolders>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="front.jpg">
+      <Filter>Resource Files\Skybox</Filter>
+    </Image>
+    <Image Include="left.jpg">
+      <Filter>Resource Files\Skybox</Filter>
+    </Image>
+    <Image Include="right.jpg">
+      <Filter>Resource Files\Skybox</Filter>
+    </Image>
+    <Image Include="top.jpg">
+      <Filter>Resource Files\Skybox</Filter>
+    </Image>
+    <Image Include="back.jpg">
+      <Filter>Resource Files\Skybox</Filter>
+    </Image>
+    <Image Include="bottom.jpg">
+      <Filter>Resource Files\Skybox</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="chromatic.vert">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="chromatic.frag">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

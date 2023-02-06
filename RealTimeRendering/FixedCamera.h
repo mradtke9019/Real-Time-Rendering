@@ -13,7 +13,7 @@ private:
 public:
 
 	FixedCamera(){};
-	FixedCamera(glm::vec3, glm::vec3, glm::vec3);
+	FixedCamera(glm::vec3 position, glm::vec3 target, glm::vec3 up);
 
 	glm::mat4* GetViewTransform();
 

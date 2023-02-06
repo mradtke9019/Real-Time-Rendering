@@ -2,7 +2,7 @@
 
 
 Shader::Shader(const char* vertexShaderPath, const char* fragmentShaderPath, bool debug) 
-	: ShaderProgramID(0)
+	: ShaderProgramID(0), textureID(0)
 {
 	this->debugShader = debug;
 	VertexShaderText = ReadFile(vertexShaderPath);
@@ -11,7 +11,7 @@ Shader::Shader(const char* vertexShaderPath, const char* fragmentShaderPath, boo
 }
 
 Shader::Shader(const char* vertexShaderPath, const char* fragmentShaderPath)
-	: ShaderProgramID(0), debugShader(false)
+	: ShaderProgramID(0), debugShader(false), textureID(0)
 {
 	VertexShaderText = ReadFile(vertexShaderPath);
 	FragmentShaderText = ReadFile(fragmentShaderPath);
@@ -56,6 +56,10 @@ GLuint Shader::GetShaderProgramID()
 void Shader::Use()
 {
 	glUseProgram(ShaderProgramID);
+	if (textureID > 0) {
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
+	}
 }
 
 GLuint Shader::GetUniformLocation(const char* uniform)
@@ -66,6 +70,17 @@ GLuint Shader::GetUniformLocation(const char* uniform)
 		fprintf(stderr, "Error finding uniform '%s' in shader program id: '%i'\n", uniform, ShaderProgramID);
 	}
 	return uniformId;
+}
+
+void Shader::SetUniform1i(const char* uniform, int value)
+{
+	Use();
+	int uniformId = GetUniformLocation(uniform);
+	if (uniformId < 0 && debugShader)
+	{
+		fprintf(stderr, "Error setting uniform '%s' in shader program id: '%i'\n", uniform, ShaderProgramID);
+	}
+	glUniform1i(GetUniformLocation(uniform), value);
 }
 
 void Shader::SetUniform1f(const char* uniform, float value)
