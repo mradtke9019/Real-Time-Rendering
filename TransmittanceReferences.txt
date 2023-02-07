@@ -1,0 +1,24 @@
+Scene Description:
+
+The scene features 4 models each within a different shader within a skybox. The shading technique respectively is of reflection, refraction, fresnel, chromatic dispersion. The cubemap effects of the shader match the skybox texture.
+
+
+References used:
+    Learn Open GL
+    https://learnopengl.com/Advanced-OpenGL/Cubemaps
+
+    https://www.scss.tcd.ie/Michael.Manzke/CS7055/GLSL/GLSL-3rdEd-refraction.pdf
+    https://www.youtube.com/watch?v=xutvBtrG23A
+
+
+Model Loading:
+    https://learnopengl.com/Model-Loading/
+
+
+Third party libraries used:
+
+stb_image: https://github.com/nothings/stb/blob/master/stb_image.h
+assimp
+glew
+glm
+freeglut

@@ -100,10 +100,10 @@
     <CopyFileToFolders Include="blinnPhongVertex.glsl">
       <Filter>Resource Files\Shaders</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="environmentMap.frag">
+    <CopyFileToFolders Include="fresnel.frag">
       <Filter>Resource Files\Shaders</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="environmentMap.vert">
+    <CopyFileToFolders Include="fresnel.vert">
       <Filter>Resource Files\Shaders</Filter>
     </CopyFileToFolders>
     <CopyFileToFolders Include="skybox.vert">
@@ -114,6 +114,18 @@
     </CopyFileToFolders>
     <CopyFileToFolders Include="Diamond.obj">
       <Filter>Resource Files\Models</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="chromatic.frag">
+      <Filter>Resource Files\Shaders</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="chromatic.vert">
+      <Filter>Resource Files\Shaders</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="reflection.frag">
+      <Filter>Resource Files\Shaders</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="refraction.frag">
+      <Filter>Resource Files\Shaders</Filter>
     </CopyFileToFolders>
   </ItemGroup>
   <ItemGroup>
@@ -135,13 +147,5 @@
     <Image Include="bottom.jpg">
       <Filter>Resource Files\Skybox</Filter>
     </Image>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="chromatic.vert">
-      <Filter>Resource Files\Shaders</Filter>
-    </None>
-    <None Include="chromatic.frag">
-      <Filter>Resource Files\Shaders</Filter>
-    </None>
   </ItemGroup>
 </Project>

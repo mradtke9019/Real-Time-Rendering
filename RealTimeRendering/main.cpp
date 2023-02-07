@@ -26,10 +26,6 @@ int Height;
 using namespace std;
 using namespace irrklang;
 
-Shader* activeShader;
-Shader* blinnPhongShader;
-Shader* environmentMapShader;
-Shader* chromaticShader;
 vector<Shader*> shaders;
 
 ISoundEngine* SoundEngine;
@@ -128,7 +124,7 @@ void display()
 	for (int i = 0; i < models.size(); i++)
 	{
 		Model* m = models.at(i);
-		m->SetShader(activeShader);
+		//m->SetShader(activeShader);
 		m->Draw();
 	}
 
@@ -142,23 +138,26 @@ void display()
 void LoadShaders()
 {
 	// Set up the shaders
-	blinnPhongShader = new Shader("./blinnPhongVertex.glsl", "./blinnPhongFragment.glsl",true);
+	//Shader* blinnPhongShader = new Shader("./blinnPhongVertex.glsl", "./blinnPhongFragment.glsl",true);
+	//blinnPhongShader->SetUniform1f("specularExp", 64);
 
-	
-	specularExp = 64;
-	blinnPhongShader->SetUniform1f("specularExp", specularExp);
+	Shader* reflectionShader = new Shader("./fresnel.vert", "./reflection.frag");
+	reflectionShader->LoadCubemap("cubemap");
 
 
-	chromaticShader = new Shader("./chromatic.vert", "./chromatic.frag");
+	Shader* refractionShader = new Shader("./fresnel.vert", "./refraction.frag");
+	refractionShader->LoadCubemap("cubemap");
+
+	Shader* chromaticShader = new Shader("./fresnel.vert", "./chromatic.frag");
 	chromaticShader->LoadCubemap("cubemap");
 
-	environmentMapShader = new Shader("./environmentMap.vert", "./environmentMap.frag", true);
-	environmentMapShader->LoadCubemap("cubemap");
-	//activeShader = &shaders.at(0);
-	activeShader = blinnPhongShader;
+	Shader* fresnelShader = new Shader("./fresnel.vert", "./fresnel.frag", true);
+	fresnelShader->LoadCubemap("cubemap");
 
-	shaders.push_back(blinnPhongShader);
-	shaders.push_back(environmentMapShader);
+
+	shaders.push_back(reflectionShader);
+	shaders.push_back(refractionShader);
+	shaders.push_back(fresnelShader);
 	shaders.push_back(chromaticShader);
 }
 
@@ -177,10 +176,13 @@ void LoadCameras()
 void LoadObjects()
 {
 
-	Model* teapot1= new Model("./teapot.obj", glm::vec3(-70, 0, 0), blinnPhongShader);
-	Model* diamond = new Model("./Diamond.obj", glm::vec3(0, 0, 0), blinnPhongShader);
-	models.push_back(teapot1);
-	models.push_back(diamond);
+
+	for (int i = 0; i < shaders.size(); i++) 
+	{
+		Model* teapot = new Model("./teapot.obj", glm::vec3(i * 70, 0, 0), shaders.at(i));
+		models.push_back(teapot);
+	}
+
 	skybox = new Skybox();
 
 	SoundEngine = createIrrKlangDevice();
@@ -237,13 +239,10 @@ void keyPress(unsigned char key, int x, int y)
 {
 	switch (key) {
 	case '1':
-		activeShader = shaders.at(0);
 		break;
 	case '2':
-		activeShader = shaders.at(1);
 		break;
 	case '3':
-		activeShader = shaders.at(2);
 		break;
 	case 'w':
 		break;
