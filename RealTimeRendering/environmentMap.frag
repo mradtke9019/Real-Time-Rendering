@@ -30,6 +30,6 @@ void main()
     float ratio = F + (1.0 - F) * pow((1.0 - dot(-I, n)), FresnelPower);
 
     vec3 color = mix(refractionColor, reflectionColor, ratio);
-    color = reflectionColor;
+    //color = reflectionColor;
     gl_FragColor = vec4(color,1.0);
 }

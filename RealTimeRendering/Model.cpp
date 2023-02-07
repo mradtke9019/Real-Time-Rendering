@@ -4,10 +4,10 @@ Model::Model(std::string path, glm::vec3 Position, Shader* Shader)
 	: ModelTransform(glm::mat4(1.0f))
 {
 	shader = Shader;
-	ObjectColor = glm::vec3(1.0,0.0,0.0);
+	ObjectColor = glm::vec3(1.0, 0.0, 0.0);
 	ModelTransform = glm::translate(glm::mat4(1.0f), Position);
 	this->Position = Position;
-	LoadModel(path);
+	loadModel(path);
 }
 
 Model::Model(std::string path, glm::vec3 Position, Shader* Shader, glm::vec3 color)
@@ -17,7 +17,7 @@ Model::Model(std::string path, glm::vec3 Position, Shader* Shader, glm::vec3 col
 	ObjectColor = color;
 	this->Position = Position;
 	ModelTransform = glm::translate(glm::mat4(1.0f), Position);
-	LoadModel(path);
+	loadModel(path);
 }
 
 void Model::Draw()
@@ -27,18 +27,18 @@ void Model::Draw()
 	shader->SetUniformVec3("ObjectColor", ObjectColor);
 	for (int i = 0; i < meshes.size(); i++)
 	{
-		meshes.at(i).Draw();
+		meshes.at(i).Draw(shader);
 	}
 }
 
-void Model::Draw(Shader* shader)
-{
-	for (int i = 0; i < meshes.size(); i++)
-	{
-		meshes.at(i).SetShader(shader);
-		meshes.at(i).Draw();
-	}
-}
+//void Model::Draw(Shader* shader)
+//{
+//	for (int i = 0; i < meshes.size(); i++)
+//	{
+//		meshes.at(i).SetShader(shader);
+//		meshes.at(i).Draw();
+//	}
+//}
 
 Shader* Model::GetShader()
 {

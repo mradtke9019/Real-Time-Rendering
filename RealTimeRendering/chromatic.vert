@@ -15,13 +15,11 @@ uniform vec3 LightDirection;
 out vec4 color;
 out vec3 fNormal;
 out vec3 fPosition;
-out vec3 FragPos;
 
 void main()                                                              
 {
-	fPosition = vec3(gl_Position);
+	fPosition = vec3(model * vec4(vPosition, 1.0));
 	fNormal =  transpose(inverse(mat3(model))) * vNormal;
 
-    FragPos = vec3(model * vec4(vPosition, 1.0));
 	gl_Position = projection * view * model * vec4(vPosition, 1.0);
 }
