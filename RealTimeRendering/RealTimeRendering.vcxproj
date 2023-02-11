@@ -192,6 +192,8 @@
     </CopyFileToFolders>
   </ItemGroup>
   <ItemGroup>
+    <CopyFileToFolders Include="Airplane\textures\diffuse.dds" />
+    <CopyFileToFolders Include="Airplane\textures\normal.png" />
     <Image Include="back.jpg" />
     <Image Include="bottom.jpg" />
     <Image Include="front.jpg" />
@@ -222,7 +224,18 @@
     </CopyFileToFolders>
   </ItemGroup>
   <ItemGroup>
-    <CopyFileToFolders Include="Diamond.obj">
+    <CopyFileToFolders Include="Airplane\airplane.3DS">
+      <FileType>Document</FileType>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="Airplane\airplane.fbx">
+      <FileType>Document</FileType>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="Airplane\airplane.mtl">
+      <FileType>Document</FileType>
+    </CopyFileToFolders>
+  </ItemGroup>
+  <ItemGroup>
+    <CopyFileToFolders Include="Airplane\airplane.obj">
       <FileType>Document</FileType>
     </CopyFileToFolders>
   </ItemGroup>

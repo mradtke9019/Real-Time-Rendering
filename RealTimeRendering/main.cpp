@@ -45,6 +45,10 @@ float deltaTime;// Time between current frame and last frame
 float lastFrame; // Time of last frame
 float currentFrame;
 
+float rotateX = 0;
+float rotateY = 0;
+float rotateZ = 0;
+
 float cameraOrbit;
 float cameraHeight;
 float angleSpeed;
@@ -102,8 +106,6 @@ void display()
 	glm::vec3 cameraPosition = glm::vec3(x,cameraHeight,y);
 	defaultCamera.SetPosition(cameraPosition + defaultCamera.GetTarget());
 
-	if(activeCamera)
-
 
 	for (int i = 0; i < shaders.size(); i++)
 	{
@@ -138,8 +140,8 @@ void display()
 void LoadShaders()
 {
 	// Set up the shaders
-	//Shader* blinnPhongShader = new Shader("./blinnPhongVertex.glsl", "./blinnPhongFragment.glsl",true);
-	//blinnPhongShader->SetUniform1f("specularExp", 64);
+	Shader* blinnPhongShader = new Shader("./blinnPhongVertex.glsl", "./blinnPhongFragment.glsl",true);
+	blinnPhongShader->SetUniform1f("specularExp", 64);
 
 	Shader* reflectionShader = new Shader("./fresnel.vert", "./reflection.frag");
 	reflectionShader->LoadCubemap("cubemap");
@@ -154,11 +156,13 @@ void LoadShaders()
 	Shader* fresnelShader = new Shader("./fresnel.vert", "./fresnel.frag", true);
 	fresnelShader->LoadCubemap("cubemap");
 
+	
+	shaders.push_back(blinnPhongShader);
 
-	shaders.push_back(reflectionShader);
-	shaders.push_back(refractionShader);
-	shaders.push_back(fresnelShader);
-	shaders.push_back(chromaticShader);
+	//shaders.push_back(reflectionShader);
+	//shaders.push_back(refractionShader);
+	//shaders.push_back(fresnelShader);
+	//shaders.push_back(chromaticShader);
 }
 
 
@@ -176,12 +180,13 @@ void LoadCameras()
 void LoadObjects()
 {
 
-
-	for (int i = 0; i < shaders.size(); i++) 
-	{
-		Model* teapot = new Model("./teapot.obj", glm::vec3(i * 70, 0, 0), shaders.at(i));
-		models.push_back(teapot);
-	}
+	Model* airplane = new Model("./airplane/airplane.obj", glm::vec3(0, 0, 0), shaders.at(0));
+	models.push_back(airplane);
+	//for (int i = 0; i < shaders.size(); i++) 
+	//{
+	//	Model* teapot = new Model("./teapot.obj", glm::vec3(i * 70, 0, 0), shaders.at(i));
+	//	models.push_back(teapot);
+	//}
 
 	skybox = new Skybox();
 
@@ -237,6 +242,13 @@ void mousePress(int button, int state, int x, int y)
 // similar functions exist for mouse control etc
 void keyPress(unsigned char key, int x, int y)
 {
+	float theta = glm::radians(10.0f);
+	glm::mat4 i = glm::mat4(1);
+	glm::vec3 xAxis = glm::vec3(1,0,0);
+	glm::vec3 yAxis = glm::vec3(0, 1, 0);
+	glm::vec3 zAxis = glm::vec3(0, 0, 1);
+	bool rotated = false;
+	glm::mat4 rotate;
 	switch (key) {
 	case '1':
 		break;
@@ -244,9 +256,29 @@ void keyPress(unsigned char key, int x, int y)
 		break;
 	case '3':
 		break;
+	case 'd':
+		rotateY += theta;
+		rotated = true;
+		break;
+	case 'a':
+		rotateY -= theta;
+		rotated = true;
+		break;
 	case 'w':
+		rotateX += theta;
+		rotated = true;
 		break;
 	case 's':
+		rotateX -= theta;
+		rotated = true;
+		break;
+	case 'q':
+		rotateZ += theta;
+		rotated = true;
+		break;
+	case 'e':
+		rotateZ -= theta;
+		rotated = true;
 		break;
 	case ' ':
 		Pause = !Pause;
@@ -261,6 +293,14 @@ void keyPress(unsigned char key, int x, int y)
 		break;
 	case '0':
 		break;
+	}
+
+	if (rotated)
+	{
+		glm::mat4 i = glm::mat4(1);
+		rotate = models.at(0)->GetModelTransform();
+		rotate = glm::rotate(i, rotateX, xAxis) * glm::rotate(i, rotateY, yAxis) * glm::rotate(i, rotateZ, zAxis);
+		models.at(0)->SetModelTransform(rotate);
 	}
 
 	// we must call these to redraw the scene after we make any changes 
