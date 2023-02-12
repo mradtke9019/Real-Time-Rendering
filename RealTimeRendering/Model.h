@@ -18,19 +18,20 @@
 #include <map>
 #include <vector>
 #include "stb_image.h"
+#include "IRotatable.h"
+#include "ITranslatable.h"
 
 using namespace std;
 
-class Model
+class Model : IRotatable, ITranslatable
 {
 public:
     // model data 
     vector<Texture> textures_loaded;	// stores all the textures loaded so far, optimization to make sure textures aren't loaded more than once.
     vector<Mesh>    meshes;
-
-
     string directory;
     bool gammaCorrection;
+
 
     // constructor, expects a filepath to a 3D model.
     Model(string const& path, bool gamma = false) : gammaCorrection(gamma)
@@ -43,11 +44,20 @@ public:
 
     void SetShader(Shader* Shader);
     glm::mat4 GetModelTransform();
-    void SetModelTransform(glm::mat4 model);
+    //void SetModelTransform(glm::mat4 model);
     void SetColor(glm::vec3 color);
     glm::vec3 GetColor();
     glm::vec3 GetPosition();
     void SetPosition(glm::vec3 pos);
+
+
+    float GetRotateX();
+    float GetRotateY();
+    float GetRotateZ();
+
+    void RotateX(float x);
+    void RotateY(float y);
+    void RotateZ(float z);
 
     // draws the model, and thus all its meshes
     void Draw(Shader* shader);
@@ -60,6 +70,16 @@ private:
     glm::vec3 ObjectColor;
     glm::vec3 Position;
     glm::mat4 ModelTransform;
+    bool useEuler;
+
+    // Uses the objects current model position and rotation to set its model transform
+    void UpdateModelTransform()
+    {
+        glm::mat4 transform = glm::translate(glm::mat4(1.0f), Position);
+        
+        ModelTransform = transform * IRotatable::GetRotationMatrix();
+    }
+    
     // loads a model with supported ASSIMP extensions from file and stores the resulting meshes in the meshes vector.
     void loadModel(string const& path)
     {

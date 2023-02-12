@@ -60,7 +60,7 @@ float specularExp;
 
 
 glm::vec3 LightColor;
-glm::vec3 LightPosition; 
+glm::vec3 LightPosition;
 glm::vec3 LightDirection;
 
 
@@ -79,7 +79,7 @@ void RenderString(float x, float y, void* font, const unsigned char* string, glm
 
 	glColor3f(rgb.r, rgb.g, rgb.b);
 	//glRasterPos2f(x,y
-	glRasterPos2i(x,y);
+	glRasterPos2i(x, y);
 
 	glutBitmapString(font, string);
 }
@@ -93,7 +93,7 @@ void display()
 	currentFrame = timeValue;
 	deltaTime = currentFrame - lastFrame;
 	lastFrame = currentFrame;
-	
+
 	float r = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
 
 	glm::mat4 projection = GetProjection();
@@ -103,7 +103,7 @@ void display()
 
 	float x = cameraOrbit * cos(glm::radians(theta));
 	float y = cameraOrbit * sin(glm::radians(theta));
-	glm::vec3 cameraPosition = glm::vec3(x,cameraHeight,y);
+	glm::vec3 cameraPosition = glm::vec3(x, cameraHeight, y);
 	defaultCamera.SetPosition(cameraPosition + defaultCamera.GetTarget());
 
 
@@ -131,16 +131,16 @@ void display()
 	}
 
 	// Draw last
-	skybox->Draw(*activeCamera->GetViewTransform(),&projection);
+	skybox->Draw(*activeCamera->GetViewTransform(), &projection);
 
 	glutPostRedisplay();
-    glutSwapBuffers();
+	glutSwapBuffers();
 }
 
 void LoadShaders()
 {
 	// Set up the shaders
-	Shader* blinnPhongShader = new Shader("./blinnPhongVertex.glsl", "./blinnPhongFragment.glsl",true);
+	Shader* blinnPhongShader = new Shader("./blinnPhongVertex.glsl", "./blinnPhongFragment.glsl", true);
 	blinnPhongShader->SetUniform1f("specularExp", 64);
 
 	Shader* reflectionShader = new Shader("./fresnel.vert", "./reflection.frag");
@@ -156,7 +156,7 @@ void LoadShaders()
 	Shader* fresnelShader = new Shader("./fresnel.vert", "./fresnel.frag", true);
 	fresnelShader->LoadCubemap("cubemap");
 
-	
+
 	shaders.push_back(blinnPhongShader);
 
 	//shaders.push_back(reflectionShader);
@@ -231,7 +231,7 @@ void mousePress(int button, int state, int x, int y)
 	case GLUT_RIGHT_BUTTON:
 		break;
 	default:
-		std::cout << "Unhandled mouse input" <<std::endl;
+		std::cout << "Unhandled mouse input" << std::endl;
 		break;
 	}
 }
@@ -242,11 +242,8 @@ void mousePress(int button, int state, int x, int y)
 // similar functions exist for mouse control etc
 void keyPress(unsigned char key, int x, int y)
 {
-	float theta = glm::radians(10.0f);
-	glm::mat4 i = glm::mat4(1);
-	glm::vec3 xAxis = glm::vec3(1,0,0);
-	glm::vec3 yAxis = glm::vec3(0, 1, 0);
-	glm::vec3 zAxis = glm::vec3(0, 0, 1);
+	float theta = 10.0f;// glm::radians(10.0f);
+	float angle = 0.0f;
 	bool rotated = false;
 	glm::mat4 rotate;
 	switch (key) {
@@ -257,28 +254,22 @@ void keyPress(unsigned char key, int x, int y)
 	case '3':
 		break;
 	case 'd':
-		rotateY += theta;
-		rotated = true;
+		models.at(0)->RotateY(theta);
 		break;
 	case 'a':
-		rotateY -= theta;
-		rotated = true;
+		models.at(0)->RotateY(-theta);
 		break;
 	case 'w':
-		rotateX += theta;
-		rotated = true;
+		models.at(0)->RotateX(theta);
 		break;
 	case 's':
-		rotateX -= theta;
-		rotated = true;
+		models.at(0)->RotateX(-theta);
 		break;
 	case 'q':
-		rotateZ += theta;
-		rotated = true;
+		models.at(0)->RotateZ(theta);
 		break;
 	case 'e':
-		rotateZ -= theta;
-		rotated = true;
+		models.at(0)->RotateZ(-theta);
 		break;
 	case ' ':
 		Pause = !Pause;
@@ -293,14 +284,6 @@ void keyPress(unsigned char key, int x, int y)
 		break;
 	case '0':
 		break;
-	}
-
-	if (rotated)
-	{
-		glm::mat4 i = glm::mat4(1);
-		rotate = models.at(0)->GetModelTransform();
-		rotate = glm::rotate(i, rotateX, xAxis) * glm::rotate(i, rotateY, yAxis) * glm::rotate(i, rotateZ, zAxis);
-		models.at(0)->SetModelTransform(rotate);
 	}
 
 	// we must call these to redraw the scene after we make any changes 
@@ -354,33 +337,33 @@ void altKeyPress(int key, int x, int y)
 	glutPostRedisplay();
 }
 
-int main(int argc, char** argv){
+int main(int argc, char** argv) {
 	Width = 800;
 	Height = 600;
 	// Set up the window
 	glutInit(&argc, argv);
 	glewExperimental = GL_TRUE;
-    glutInitDisplayMode(GLUT_DOUBLE|GLUT_RGB);
-    glutInitWindowSize(Width, Height);
-    glutCreateWindow("Real Time Rendering"); 
+	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
+	glutInitWindowSize(Width, Height);
+	glutCreateWindow("Real Time Rendering");
 	// Tell glut where the display function is
 	glutDisplayFunc(display);
-	glutKeyboardFunc(keyPress); 
+	glutKeyboardFunc(keyPress);
 	glutMouseFunc(mousePress);
 	glutSpecialFunc(altKeyPress);
 	glClearColor(0.1f, 0.2f, 0.2f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
-	 // A call to glewInit() must be done after glut is initialized!
-    GLenum res = glewInit();
+	// A call to glewInit() must be done after glut is initialized!
+	GLenum res = glewInit();
 	// Check for any errors
-    if (res != GLEW_OK) {
-      fprintf(stderr, "Error: '%s'\n", glewGetErrorString(res));
-      return 1;
-    }
+	if (res != GLEW_OK) {
+		fprintf(stderr, "Error: '%s'\n", glewGetErrorString(res));
+		return 1;
+	}
 	// Set up your objects and shaders
 	init();
 
 	// Begin infinite event loop
 	glutMainLoop();
-    return 0;
+	return 0;
 }

@@ -59,12 +59,6 @@ glm::mat4 Model::GetModelTransform()
 	return ModelTransform;
 }
 
-void Model::SetModelTransform(glm::mat4 model)
-{
-	ModelTransform = model;
-}
-
-
 void Model::SetColor(glm::vec3 color)
 {
 	this->ObjectColor = color;
@@ -84,5 +78,24 @@ glm::vec3 Model::GetPosition()
 void Model::SetPosition(glm::vec3 pos)
 {
 	this->Position = pos;
-	ModelTransform = glm::translate(glm::mat4(1.0f), Position);
+	UpdateModelTransform();
+}
+
+
+void Model::RotateX(float angle)
+{
+	IRotatable::RotateX(angle);
+	UpdateModelTransform();
+}
+
+void Model::RotateY(float angle)
+{
+	IRotatable::RotateY(angle);
+	UpdateModelTransform();
+}
+
+void Model::RotateZ(float angle)
+{
+	IRotatable::RotateZ(angle);
+	UpdateModelTransform();
 }
