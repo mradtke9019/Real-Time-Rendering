@@ -31,16 +31,15 @@ public:
 		if (useQuaternions) 
 		{
 			// Normalize our axis so no strange things happen with the quaternions
-			rotationAxis = glm::normalize(rotationAxis);
+			glm::vec3 r = glm::normalize(rotationAxis);
 
 			// Reference: https://www.opengl-tutorial.org/intermediate-tutorials/tutorial-17-quaternions
-			float x = rotationAxis.x * glm::sin(glm::radians(rotationAngle / 2));
-			float y = rotationAxis.y * glm::sin(glm::radians(rotationAngle / 2));
-			float z = rotationAxis.z * glm::sin(glm::radians(rotationAngle/ 2));
-			float w = glm::cos(glm::radians(rotationAngle / 2));
+			glm::quat x = glm::angleAxis(glm::radians(rotateX), glm::vec3(1, 0, 0));
+			glm::quat y = glm::angleAxis(glm::radians(rotateY), glm::vec3(0, 1, 0));
+			glm::quat z = glm::angleAxis(glm::radians(rotateZ), glm::vec3(0, 0, 1));
 
-
-			glm::quat quaternion = glm::quat(w,x,y,z);
+			// Order matters?
+			glm::quat quaternion = y * z * x;
 			result = glm::toMat4(quaternion);
 		}
 		else
