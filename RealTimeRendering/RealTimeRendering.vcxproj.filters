@@ -34,6 +34,9 @@
     <Filter Include="Resource Files\Models\Lightbulb">
       <UniqueIdentifier>{dc4ca6c5-f17d-4ef9-a4a6-e858622eb7d6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource Files\Models\Sphere">
+      <UniqueIdentifier>{e0d41c48-1909-40bc-9d0b-dacfbfaa4ace}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Shader.cpp">
@@ -112,10 +115,10 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <CopyFileToFolders Include="blinnPhongFragment.glsl">
+    <CopyFileToFolders Include="blinnPhong.frag">
       <Filter>Resource Files\Shaders</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="blinnPhongVertex.glsl">
+    <CopyFileToFolders Include="blinnPhong.vert">
       <Filter>Resource Files\Shaders</Filter>
     </CopyFileToFolders>
     <CopyFileToFolders Include="fresnel.frag">
@@ -190,6 +193,12 @@
     <CopyFileToFolders Include="Models\Teapot\teapot.obj">
       <Filter>Resource Files\Models\Teapot</Filter>
     </CopyFileToFolders>
+    <CopyFileToFolders Include="Models\Airplane\piper_pa18.obj">
+      <Filter>Resource Files\Models\Airplane</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="Models\Sphere\Sphere.obj">
+      <Filter>Resource Files\Models\Sphere</Filter>
+    </CopyFileToFolders>
   </ItemGroup>
   <ItemGroup>
     <Image Include="front.jpg">
@@ -221,10 +230,5 @@
     <None Include="Models\Airplane\piper_pa18.mtl">
       <Filter>Resource Files\Models\Airplane</Filter>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Object Include="Models\Airplane\piper_pa18.obj">
-      <Filter>Resource Files\Models\Airplane</Filter>
-    </Object>
   </ItemGroup>
 </Project>

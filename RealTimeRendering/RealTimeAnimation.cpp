@@ -101,7 +101,6 @@ void display()
 
 		s->SetUniformVec3("LightColor", LightColor);
 		s->SetUniformVec3("LightPosition", LightPosition);
-		s->SetUniformVec3("LightDirection", LightDirection);
 		s->SetUniform1f("time", timeValue);
 		s->SetUniform1f("rand", r);
 		s->SetUniformMatrix4fv("view", defaultCamera.GetViewTransform());
@@ -136,7 +135,7 @@ void LoadShaders()
 	// Set up the shaders
 	Shader* textureShader = new Shader("./textures.vert", "./textures.frag", true);
 
-	Shader* blinnPhongShader = new Shader("./blinnPhongVertex.glsl", "./blinnPhongFragment.glsl", false);
+	Shader* blinnPhongShader = new Shader("./blinnPhong.vert", "./blinnPhong.frag", false);
 	blinnPhongShader->SetUniform1f("specularExp", 64);
 
 	Shader* reflectionShader = new Shader("./fresnel.vert", "./reflection.frag");
@@ -192,7 +191,7 @@ void LoadObjects()
 	//}
 
 
-	LightBulb = new Model("./Models/Lightbulb/LightBulb.obj", LightPosition, shaders.at(0));
+	LightBulb = new Model("./Models/Sphere/Sphere.obj", LightPosition, shaders.at(0));
 	models.push_back(LightBulb);
 
 	skybox = new Skybox();
