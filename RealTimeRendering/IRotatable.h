@@ -4,8 +4,6 @@
 #pragma once
 class IRotatable {
 private:
-	glm::vec3 rotationAxis;
-	float rotationAngle;
 
 	float rotateX;
 	float rotateY;
@@ -20,9 +18,6 @@ public:
 		rotateZ = 0;
 
 		useQuaternions = false;
-
-		rotationAxis = glm::vec3(0,0,1);
-		rotationAngle = 0.0f;
 	}
 
 	glm::mat4 GetRotationMatrix()
@@ -30,8 +25,6 @@ public:
 		glm::mat4 result = glm::mat4(1);
 		if (useQuaternions) 
 		{
-			// Normalize our axis so no strange things happen with the quaternions
-			glm::vec3 r = glm::normalize(rotationAxis);
 
 			// Reference: https://www.opengl-tutorial.org/intermediate-tutorials/tutorial-17-quaternions
 			glm::quat x = glm::angleAxis(glm::radians(rotateX), glm::vec3(1, 0, 0));
@@ -63,37 +56,6 @@ public:
 		useQuaternions = use;
 	}
 
-	void SetRotationAxisX(float x)
-	{
-		rotationAxis.x = x;
-	}
-	void SetRotationAxisY(float x)
-	{
-		rotationAxis.y = x;
-	}
-	void SetRotationAxisZ(float x)
-	{
-		rotationAxis.z = x;
-	}
-
-
-	float GetRotationAxisX()
-	{
-		return rotationAxis.x;
-	}
-	float GetRotationAxisY()
-	{
-		return rotationAxis.y;
-	}
-	float GetRotationAxisZ()
-	{
-		return rotationAxis.z;
-	}
-
-	void IncreaseRotationAngle(float x)
-	{
-		rotationAngle += x;
-	}
 
 	float GetRotateX()
 	{

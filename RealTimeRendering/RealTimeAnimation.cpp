@@ -283,74 +283,42 @@ void keyPress(unsigned char key, int x, int y)
 			Log::WriteLog("Setting rotation code to use quaternions.", Info);
 		}
 		m->SetQuaternionPolicy(!inUse);
-		m->RotateX(0); // Rotate by nothing to refresh the model matrix
+		model->RotateX(0); // Rotate by nothing to refresh the model matrix
 	}
-		break;
+	break;
 
 	case 'd':
-		if (usingQuaternions)
-		{
-			models.at(0)->SetRotationAxisY(models.at(0)->GetRotationAxisY() -axisIncrement);
-		}
-		else {
-			models.at(0)->RotateY(-theta);
-			Log::WriteLog("Y Rotation: " + std::to_string(models.at(0)->GetRotateY()), Info);
-		}
+
+		models.at(0)->RotateY(-theta);
+		Log::WriteLog("Y Rotation: " + std::to_string(models.at(0)->GetRotateY()), Info);
 		break;
 	case 'a':
-		if (usingQuaternions)
-		{
-			models.at(0)->SetRotationAxisY(models.at(0)->GetRotationAxisY() + axisIncrement);
-		}
-		else
-		{
-			models.at(0)->RotateY(theta);
-			Log::WriteLog("Y Rotation: " + std::to_string(models.at(0)->GetRotateY()), Info);
-		}
+
+		models.at(0)->RotateY(theta);
+		Log::WriteLog("Y Rotation: " + std::to_string(models.at(0)->GetRotateY()), Info);
 		break;
 	case 'w':
-		if (usingQuaternions)
-		{
-			models.at(0)->SetRotationAxisX(models.at(0)->GetRotationAxisX() - axisIncrement);
-		}
-		else
-		{
 
-			models.at(0)->RotateX(-theta);
-			Log::WriteLog("X Rotation: " + std::to_string(models.at(0)->GetRotateX()), Info);
-		}
+		models.at(0)->RotateX(-theta);
+		Log::WriteLog("X Rotation: " + std::to_string(models.at(0)->GetRotateX()), Info);
+
 		break;
 	case 's':
-		if (usingQuaternions)
-		{
-			models.at(0)->SetRotationAxisX(models.at(0)->GetRotationAxisX() + axisIncrement);
-		}
-		else
-		{
-			models.at(0)->RotateX(theta);
-			Log::WriteLog("X Rotation: " + std::to_string(models.at(0)->GetRotateX()), Info);
-		}
+
+		models.at(0)->RotateX(theta);
+		Log::WriteLog("X Rotation: " + std::to_string(models.at(0)->GetRotateX()), Info);
 		break;
 	case 'q':
-		if (usingQuaternions)
-		{
-			models.at(0)->SetRotationAxisZ(models.at(0)->GetRotationAxisZ() - axisIncrement);
-		}
-		else
-		{
-			models.at(0)->RotateZ(-theta);
-			Log::WriteLog("Z Rotation: " + std::to_string(models.at(0)->GetRotateZ()), Info);
-		}
+
+		models.at(0)->RotateZ(-theta);
+		Log::WriteLog("Z Rotation: " + std::to_string(models.at(0)->GetRotateZ()), Info);
+
 		break;
 	case 'e':
-		if (usingQuaternions)
-		{
-			models.at(0)->SetRotationAxisZ(models.at(0)->GetRotationAxisZ() + axisIncrement);
-		}
-		else {
-			models.at(0)->RotateZ(theta);
-			Log::WriteLog("Z Rotation: " + std::to_string(models.at(0)->GetRotateZ()), Info);
-		}
+
+		models.at(0)->RotateZ(theta);
+		Log::WriteLog("Z Rotation: " + std::to_string(models.at(0)->GetRotateZ()), Info);
+
 		break;
 	case ' ':
 		Pause = !Pause;
@@ -364,10 +332,10 @@ void keyPress(unsigned char key, int x, int y)
 		}
 		break;
 	case '+':
-		models.at(0)->IncreaseRotationAngle(theta);
+
 		break;
 	case '-':
-		models.at(0)->IncreaseRotationAngle(-theta);
+
 		break;
 	}
 

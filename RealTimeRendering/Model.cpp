@@ -105,26 +105,3 @@ void Model::RotateMeshZ(int index, float x)
 {
 	meshes.at(index).RotateZ(x);
 }
-
-void Model::SetRotationAxisX(float x)
-{
-	IRotatable::SetRotationAxisX(x);
-	UpdateModelTransform();
-}
-
-void Model::SetRotationAxisY(float x)
-{
-	IRotatable::SetRotationAxisY(x);
-	UpdateModelTransform();
-}
-
-void Model::SetRotationAxisZ(float x)
-{
-	IRotatable::SetRotationAxisZ(x);
-	UpdateModelTransform();
-}
-void Model::IncreaseRotationAngle(float x)
-{
-	IRotatable::IncreaseRotationAngle(x);
-	UpdateModelTransform();
-}

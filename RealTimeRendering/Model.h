@@ -62,10 +62,6 @@ public:
     void RotateMeshY(int index, float x);
     void RotateMeshZ(int index, float x);
 
-    void SetRotationAxisX(float x);
-    void SetRotationAxisY(float x);
-    void SetRotationAxisZ(float x);
-    void IncreaseRotationAngle(float x);
     // draws the model, and thus all its meshes
     void Draw();
 
