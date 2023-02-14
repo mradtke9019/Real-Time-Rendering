@@ -16,6 +16,7 @@ out vec4 color;
 out vec3 fNormal;
 out vec3 fPosition;
 out vec3 FragPos;
+out vec2 TexCoord;
 
 void main()                                                              
 {
@@ -23,4 +24,5 @@ void main()
 
 	fPosition = vec3(gl_Position);
 	fNormal =  transpose(inverse(mat3(model))) * vNormal;
+	TexCoord = vec2(vTexture.x, vTexture.y);
 }

@@ -17,21 +17,33 @@ const float specularCoeff  = 1;
 
 uniform float specularExp;
 
-uniform vec3 ObjectColor;
+vec3 ObjectColor;
 uniform vec3 LightColor;
 uniform vec3 LightPosition;
 uniform vec3 LightDirection;
 uniform vec3 ViewPosition;
 in vec3 FragPos;
 
+
+in vec2 TexCoord;
+uniform sampler2D texture_diffuse1;
+uniform sampler2D texture_normal1;
+
 void main()                                                             
 {
     bool blinn = true;
-    vec3 normal = normalize(fNormal);
+
+    // USe normal map instead of normal vector 
+    //vec3 normal = normalize(fNormal);
+    // obtain normal from normal map in range [0,1]
+    vec3 normal = texture(texture_normal1, TexCoord).rgb;
+    // transform normal vector to range [-1,1]
+    normal = normalize(normal * 2.0 - 1.0);   
     vec3 lightDir = normalize(LightPosition - FragPos);
     vec3 viewDir = normalize(ViewPosition - FragPos);
     vec3 reflectDir = reflect(-lightDir, normal);
 
+    ObjectColor = texture(texture_diffuse1, TexCoord).xyz;
 
     // Ambient
     vec3 ambient = ambientCoeff * ObjectColor;
@@ -58,5 +70,6 @@ void main()
 
 
 
-    gl_FragColor = vec4(ambient + diffuse + specular, 1.0);
+    gl_FragColor = vec4(ambient + diffuse + specular, 1.0); //+ texture(texture_diffuse1, TexCoord);
+	//gl_FragColor = ;
 }

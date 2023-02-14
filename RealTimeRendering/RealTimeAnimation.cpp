@@ -17,6 +17,7 @@
 #include <irrKlang.h>
 #include "Skybox.h"
 #include <filesystem>
+#include "Log.h"
 
 // Macro for indexing vertex buffer
 #define BUFFER_OFFSET(i) ((char *)NULL + (i))
@@ -25,6 +26,7 @@ int Height;
 
 using namespace std;
 using namespace irrklang;
+
 
 vector<Shader*> shaders;
 
@@ -36,6 +38,8 @@ FixedCamera defaultCamera;
 bool Pause;
 
 vector<Model*> models;
+Model* airplane;
+Model* gear;
 Model* LightBulb;
 Skybox* skybox;
 
@@ -45,9 +49,7 @@ float deltaTime;// Time between current frame and last frame
 float lastFrame; // Time of last frame
 float currentFrame;
 
-float rotateX = 0;
-float rotateY = 0;
-float rotateZ = 0;
+int rotatationMeshIndex = 0;
 
 float cameraOrbit;
 float cameraHeight;
@@ -69,20 +71,6 @@ glm::mat4 GetProjection()
 	return glm::perspective(glm::radians(60.0f), (float)glutGet(GLUT_WINDOW_WIDTH) / (float)glutGet(GLUT_WINDOW_HEIGHT), 0.1f, 300.0f);
 }
 
-// https://stackoverflow.com/questions/538661/how-do-i-draw-text-with-glut-opengl-in-c
-void RenderString(float x, float y, void* font, const unsigned char* string, glm::vec3 rgb)
-{
-	//unsigned char string[] = "The quick god jumps over the lazy brown fox."
-	//	int w;
-	//w = glutBitmapLength(GLUT_BITMAP_8_BY_13, string);
-	char* c;
-
-	glColor3f(rgb.r, rgb.g, rgb.b);
-	//glRasterPos2f(x,y
-	glRasterPos2i(x, y);
-
-	glutBitmapString(font, string);
-}
 
 void display()
 {
@@ -114,7 +102,6 @@ void display()
 		s->SetUniformVec3("LightColor", LightColor);
 		s->SetUniformVec3("LightPosition", LightPosition);
 		s->SetUniformVec3("LightDirection", LightDirection);
-		s->SetUniformVec3("LightDirection", cameraPosition);
 		s->SetUniform1f("time", timeValue);
 		s->SetUniform1f("rand", r);
 		s->SetUniformMatrix4fv("view", defaultCamera.GetViewTransform());
@@ -122,11 +109,18 @@ void display()
 		s->SetUniformVec3("cameraPos", defaultCamera.GetPosition());
 	}
 
+	airplane->RotateMeshZ(29, angleSpeed * 1000);
+	airplane->RotateMeshZ(30, angleSpeed * 1000);
+	airplane->RotateMeshZ(31, angleSpeed * 1000);
+	airplane->RotateMeshZ(32, angleSpeed * 1000);
 
 	for (int i = 0; i < models.size(); i++)
 	{
 		Model* m = models.at(i);
 		//m->SetShader(activeShader);
+		// Mesh 8 is the propellor
+		//m->RotateMeshZ(8, angleSpeed * 1000);
+		//m->RotateMeshX(9, angleSpeed * 1000);
 		m->Draw();
 	}
 
@@ -140,7 +134,9 @@ void display()
 void LoadShaders()
 {
 	// Set up the shaders
-	Shader* blinnPhongShader = new Shader("./blinnPhongVertex.glsl", "./blinnPhongFragment.glsl", true);
+	Shader* textureShader = new Shader("./textures.vert", "./textures.frag", true);
+
+	Shader* blinnPhongShader = new Shader("./blinnPhongVertex.glsl", "./blinnPhongFragment.glsl", false);
 	blinnPhongShader->SetUniform1f("specularExp", 64);
 
 	Shader* reflectionShader = new Shader("./fresnel.vert", "./reflection.frag");
@@ -153,16 +149,12 @@ void LoadShaders()
 	Shader* chromaticShader = new Shader("./fresnel.vert", "./chromatic.frag");
 	chromaticShader->LoadCubemap("cubemap");
 
-	Shader* fresnelShader = new Shader("./fresnel.vert", "./fresnel.frag", true);
+	Shader* fresnelShader = new Shader("./fresnel.vert", "./fresnel.frag", false);
 	fresnelShader->LoadCubemap("cubemap");
 
 
 	shaders.push_back(blinnPhongShader);
 
-	//shaders.push_back(reflectionShader);
-	//shaders.push_back(refractionShader);
-	//shaders.push_back(fresnelShader);
-	//shaders.push_back(chromaticShader);
 }
 
 
@@ -180,23 +172,39 @@ void LoadCameras()
 void LoadObjects()
 {
 
-	Model* airplane = new Model("./airplane/airplane.obj", glm::vec3(0, 0, 0), shaders.at(0));
+	airplane = new Model("./Models/Airplane/piper_pa18.obj", glm::vec3(0, 0, 0), shaders.at(0));
+
+	// Positions of the propellor and the wheels
+	airplane->meshes.at(29).SetOrigin(glm::vec3(0.0f, 1.23, 3.37f), airplane->GetPosition());
+	airplane->meshes.at(30).SetOrigin(glm::vec3(0.0f, 1.23, 3.37f), airplane->GetPosition());
+	airplane->meshes.at(31).SetOrigin(glm::vec3(0.0f, 1.23, 3.37f), airplane->GetPosition());
+	airplane->meshes.at(32).SetOrigin(glm::vec3(0.0f, 1.23, 3.37f), airplane->GetPosition());
+
 	models.push_back(airplane);
+
+
+	gear = new Model("./Models/Gear/Gear2.obj", glm::vec3(100, 0, 0), shaders.at(0));
+	models.push_back(gear);
 	//for (int i = 0; i < shaders.size(); i++) 
 	//{
 	//	Model* teapot = new Model("./teapot.obj", glm::vec3(i * 70, 0, 0), shaders.at(i));
 	//	models.push_back(teapot);
 	//}
 
+
+	LightBulb = new Model("./Models/Lightbulb/LightBulb.obj", LightPosition, shaders.at(0));
+	models.push_back(LightBulb);
+
 	skybox = new Skybox();
 
 	SoundEngine = createIrrKlangDevice();
+
 }
 
 void initLight()
 {
 	LightColor = glm::vec3(0.5, 0.5, 0.5);
-	LightPosition = glm::vec3(0, 50.0, 0);
+	LightPosition = glm::vec3(20, 100.0, 0);
 	LightDirection = glm::vec3(0.0, -1.0, 0.0);
 }
 
@@ -207,12 +215,13 @@ void init()
 	LoadShaders();
 	LoadCameras();
 	LoadObjects();
+	//Log::Level = LogLevel::Info;
 }
 
 
 void SetLightPosition(glm::vec3 pos) {
 	LightPosition = pos;
-	//LightBulb->SetPosition(LightPosition);
+	LightBulb->SetPosition(LightPosition);
 }
 
 glm::vec3 GetLightPosition()
@@ -231,7 +240,7 @@ void mousePress(int button, int state, int x, int y)
 	case GLUT_RIGHT_BUTTON:
 		break;
 	default:
-		std::cout << "Unhandled mouse input" << std::endl;
+		Log::WriteLog("Unhandled mouse input.", Debug);
 		break;
 	}
 }
@@ -281,6 +290,12 @@ void keyPress(unsigned char key, int x, int y)
 		{
 			angleSpeed = 0.01;
 		}
+		break;
+	case '+':
+		rotatationMeshIndex++;
+		break;
+	case '-':
+		rotatationMeshIndex--;
 		break;
 	case '0':
 		break;

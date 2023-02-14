@@ -23,7 +23,16 @@
       <UniqueIdentifier>{6f314a3d-c758-444d-b633-9cd74c9fc8d2}</UniqueIdentifier>
     </Filter>
     <Filter Include="Resource Files\Models\Airplane">
-      <UniqueIdentifier>{91b5adb7-06c3-4c51-8fdf-b68e47f8dd3d}</UniqueIdentifier>
+      <UniqueIdentifier>{e8c2907e-fca5-446b-978c-1099d8bdad22}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Models\Teapot">
+      <UniqueIdentifier>{6b0b03f6-2c79-4a85-889f-d3e3a8d3d9b5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Models\Gear">
+      <UniqueIdentifier>{fea9e1fe-cfb2-4028-9a1f-06ddd0e74758}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Models\Lightbulb">
+      <UniqueIdentifier>{dc4ca6c5-f17d-4ef9-a4a6-e858622eb7d6}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -98,11 +107,11 @@
     <ClInclude Include="ITranslatable.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Log.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <CopyFileToFolders Include="teapot.obj">
-      <Filter>Resource Files\Models</Filter>
-    </CopyFileToFolders>
     <CopyFileToFolders Include="blinnPhongFragment.glsl">
       <Filter>Resource Files\Shaders</Filter>
     </CopyFileToFolders>
@@ -133,23 +142,53 @@
     <CopyFileToFolders Include="refraction.frag">
       <Filter>Resource Files\Shaders</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="Airplane\airplane.3DS">
+    <CopyFileToFolders Include="textures.vert">
+      <Filter>Resource Files\Shaders</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="textures.frag">
+      <Filter>Resource Files\Shaders</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="Models\Airplane\textures\piper_refl.jpg">
       <Filter>Resource Files\Models\Airplane</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="Airplane\airplane.fbx">
-      <Filter>Resource Files\Models</Filter>
+    <CopyFileToFolders Include="Models\Gear\Gear2.obj">
+      <Filter>Resource Files\Models\Gear</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="Airplane\airplane.mtl">
-      <Filter>Resource Files\Models</Filter>
+    <CopyFileToFolders Include="Models\Gear\textures\Gear_2_BaseColor.png">
+      <Filter>Resource Files\Models\Gear</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="Airplane\airplane.obj">
-      <Filter>Resource Files\Models</Filter>
+    <CopyFileToFolders Include="Models\Gear\textures\Gear_2_Diffuse.png">
+      <Filter>Resource Files\Models\Gear</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="Airplane\textures\diffuse.dds">
-      <Filter>Resource Files\Models</Filter>
+    <CopyFileToFolders Include="Models\Gear\textures\Gear_2_Glossiness.png">
+      <Filter>Resource Files\Models\Gear</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="Airplane\textures\normal.png">
-      <Filter>Resource Files\Models</Filter>
+    <CopyFileToFolders Include="Models\Gear\textures\Gear_2_Metallic.png">
+      <Filter>Resource Files\Models\Gear</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="Models\Gear\textures\Gear_2_Normal.png">
+      <Filter>Resource Files\Models\Gear</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="Models\Gear\textures\Gear_2_Roughness.png">
+      <Filter>Resource Files\Models\Gear</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="Models\Gear\textures\Gear_2_Specular.png">
+      <Filter>Resource Files\Models\Gear</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="Models\Gear\Gear2.mtl">
+      <Filter>Resource Files\Models\Gear</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="Models\Lightbulb\LightBulb.mtl">
+      <Filter>Resource Files\Models\Lightbulb</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="Models\Lightbulb\LightBulb.obj">
+      <Filter>Resource Files\Models\Lightbulb</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="Models\Teapot\teapot.mtl">
+      <Filter>Resource Files\Models\Teapot</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="Models\Teapot\teapot.obj">
+      <Filter>Resource Files\Models\Teapot</Filter>
     </CopyFileToFolders>
   </ItemGroup>
   <ItemGroup>
@@ -171,5 +210,21 @@
     <Image Include="bottom.jpg">
       <Filter>Resource Files\Skybox</Filter>
     </Image>
+    <Image Include="Models\Airplane\textures\piper_bump.jpg">
+      <Filter>Resource Files\Models\Airplane</Filter>
+    </Image>
+    <Image Include="Models\Airplane\textures\piper_diffuse.jpg">
+      <Filter>Resource Files\Models\Airplane</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Models\Airplane\piper_pa18.mtl">
+      <Filter>Resource Files\Models\Airplane</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Object Include="Models\Airplane\piper_pa18.obj">
+      <Filter>Resource Files\Models\Airplane</Filter>
+    </Object>
   </ItemGroup>
 </Project>

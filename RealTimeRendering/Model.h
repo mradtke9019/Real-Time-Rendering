@@ -10,6 +10,8 @@
 
 #include "Mesh.h"
 #include "Shader.h"
+#include "Log.h"
+
 
 #include <string>
 #include <fstream>
@@ -51,16 +53,14 @@ public:
     void SetPosition(glm::vec3 pos);
 
 
-    float GetRotateX();
-    float GetRotateY();
-    float GetRotateZ();
-
     void RotateX(float x);
     void RotateY(float y);
     void RotateZ(float z);
 
-    // draws the model, and thus all its meshes
-    void Draw(Shader* shader);
+    void RotateMeshX(int index, float x);
+    void RotateMeshY(int index, float x);
+    void RotateMeshZ(int index, float x);
+
     // draws the model, and thus all its meshes
     void Draw();
 
@@ -89,7 +89,7 @@ private:
         // check for errors
         if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) // if is Not Zero
         {
-            cout << "ERROR::ASSIMP:: " << importer.GetErrorString() << endl;
+            Log::WriteLog("ERROR::ASSIMP:: " + std::string(importer.GetErrorString()), Error);
             return;
         }
         // retrieve the directory path of the filepath
@@ -199,7 +199,7 @@ private:
         textures.insert(textures.end(), heightMaps.begin(), heightMaps.end());
 
         // return a mesh object created from the extracted mesh data
-        return Mesh(vertices, indices, textures);
+        return Mesh(vertices, indices, textures,shader);
     }
 
     // checks all material textures of a given type and loads the textures if they're not loaded yet.
@@ -269,7 +269,7 @@ private:
         }
         else
         {
-            std::cout << "Texture failed to load at path: " << path << std::endl;
+            Log::WriteLog("Texture failed to load at path: " + std::string(path), LogLevel::Error);
             stbi_image_free(data);
         }
 

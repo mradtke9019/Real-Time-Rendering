@@ -11,6 +11,8 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <vector>
 #include "Shader.h"
+#include "Log.h"
+#include "IRotatable.h"
 
 
 // Ideas used here for model loading via assimp
@@ -49,7 +51,7 @@ struct Texture {
 };
 
 #pragma once
-class Mesh {
+class Mesh: IRotatable {
 public:
     // mesh Data
     vector<Vertex>       vertices;
@@ -57,19 +59,23 @@ public:
     vector<Texture>      textures;
     unsigned int VAO;
 
-    Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<Texture> textures, Shader* shader);
+    //Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<Texture> textures, Shader* shader);
     void SetShader(Shader* Shader);
     Shader* GetShader();
-    void Draw();
+    void Draw(glm::mat4* ModelTransform = nullptr);
 
     // constructor
-    Mesh(vector<Vertex> vertices, vector<unsigned int> indices, vector<Texture> textures)
+    Mesh(vector<Vertex> vertices, vector<unsigned int> indices, vector<Texture> textures, Shader* s)
+        : MeshOrigin(glm::vec3(0,0,0)), ModelOrigin(glm::vec3(0,0,0))
     {
+        MeshTransform = glm::mat4(1);
         this->vertices = vertices;
         this->indices = indices;
         this->textures = textures;
+
+        this->shader = s;
         if (this->vertices.size() <= 0 || this->indices.size() <= 0) {
-            std::cout << "Error on mesh. No vertices or indices." << std::endl;
+            Log::WriteLog("Error on mesh. No vertices or indices.", Error);
         }
         else {
             // now that we have all the required data, set the vertex buffers and its attribute pointers.
@@ -77,48 +83,19 @@ public:
         }
     }
 
-    // render the mesh
-    void Draw(Shader* shader)
-    {
-        // bind appropriate textures
-        unsigned int diffuseNr = 1;
-        unsigned int specularNr = 1;
-        unsigned int normalNr = 1;
-        unsigned int heightNr = 1;
-        for (unsigned int i = 0; i < textures.size(); i++)
-        {
-            glActiveTexture(GL_TEXTURE0 + i); // active proper texture unit before binding
-            // retrieve texture number (the N in diffuse_textureN)
-            string number;
-            string name = textures[i].type;
-            if (name == "texture_diffuse")
-                number = std::to_string(diffuseNr++);
-            else if (name == "texture_specular")
-                number = std::to_string(specularNr++); // transfer unsigned int to string
-            else if (name == "texture_normal")
-                number = std::to_string(normalNr++); // transfer unsigned int to string
-            else if (name == "texture_height")
-                number = std::to_string(heightNr++); // transfer unsigned int to string
+    void RotateX(float x);
+    void RotateY(float x);
+    void RotateZ(float x);
 
-            // now set the sampler to the correct texture unit
-            glUniform1i(glGetUniformLocation(shader->GetShaderProgramID(), (name + number).c_str()), i);
-            // and finally bind the texture
-            glBindTexture(GL_TEXTURE_2D, textures[i].id);
-        }
-
-        // draw mesh
-        glBindVertexArray(VAO);
-        glDrawElements(GL_TRIANGLES, static_cast<unsigned int>(indices.size()), GL_UNSIGNED_INT, 0);
-        glBindVertexArray(0);
-
-        // always good practice to set everything back to defaults once configured.
-        glActiveTexture(GL_TEXTURE0);
-    }
+    void SetOrigin(glm::vec3 mesh, glm::vec3 model);
 
 private:
     // render data 
+    glm::mat4 MeshTransform;
     unsigned int VBO, EBO;
     Shader* shader;
+    glm::vec3 ModelOrigin;
+    glm::vec3 MeshOrigin;
 
     // initializes all the buffer objects/arrays
     void setupMesh()
@@ -141,27 +118,40 @@ private:
 
         // set the vertex attribute pointers
         // vertex Positions
-        glEnableVertexAttribArray(0);
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
+        unsigned int vPosition = shader->GetAttribLocation("vPosition");
+        glEnableVertexAttribArray(vPosition);
+        glVertexAttribPointer(vPosition, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
+        
         // vertex normals
-        glEnableVertexAttribArray(1);
-        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, Normal));
-        // vertex texture coords
-        glEnableVertexAttribArray(2);
-        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, TexCoords));
-        // vertex tangent
-        glEnableVertexAttribArray(3);
-        glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, Tangent));
-        // vertex bitangent
-        glEnableVertexAttribArray(4);
-        glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, Bitangent));
-        // ids
-        glEnableVertexAttribArray(5);
-        glVertexAttribIPointer(5, 4, GL_INT, sizeof(Vertex), (void*)offsetof(Vertex, m_BoneIDs));
+        int vNormal = shader->GetAttribLocation("vNormal");
+        // For some reason cant find vNormal, so just default to 1 if cant be found
+        if (vNormal < 0) {
+            Log::WriteLog("Cant find vNormal", Error);
+            vNormal = 1;
+        }
 
-        // weights
-        glEnableVertexAttribArray(6);
-        glVertexAttribPointer(6, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, m_Weights));
-        glBindVertexArray(0);
+        glEnableVertexAttribArray(vNormal);
+        glVertexAttribPointer(vNormal, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, Normal));
+        
+        // vertex texture coords
+        unsigned int vTexture = shader->GetAttribLocation("vTexture");
+        glEnableVertexAttribArray(vTexture);
+        glVertexAttribPointer(vTexture, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, TexCoords));
+        
+        // vertex tangent
+        unsigned int vTangent = shader->GetAttribLocation("vTangent");
+        glEnableVertexAttribArray(vTangent);
+        glVertexAttribPointer(vTangent, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, Tangent));
+        
+        // vertex bitangent
+        unsigned int vBitangent = shader->GetAttribLocation("vBitangent");
+        glEnableVertexAttribArray(vBitangent);
+        glVertexAttribPointer(vBitangent, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, Bitangent));
+
+    }
+
+    void UpdateMeshTransform()
+    {
+        MeshTransform = IRotatable::GetRotationMatrix();
     }
 };

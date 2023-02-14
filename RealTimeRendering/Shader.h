@@ -11,6 +11,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include "stb_image.h";
+#include "Log.h"
 
 class Shader
 {
@@ -18,6 +19,7 @@ private:
     std::string VertexShaderText;
     std::string FragmentShaderText;
     GLuint ShaderProgramID;
+    
     bool debugShader;
     glm::vec3 LightPosition;
     glm::vec3 LightDirection;
@@ -131,7 +133,8 @@ private:
             }
             else
             {
-                std::cout << "Cubemap tex failed to load at path: " << textures_faces[i] << std::endl;
+                Log::WriteLog("Cubemap tex failed to load at path: " + textures_faces[i], Error);
+                //std::cout << "Cubemap tex failed to load at path: " << textures_faces[i] << std::endl;
                 stbi_image_free(data);
             }
         }

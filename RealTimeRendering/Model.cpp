@@ -27,18 +27,10 @@ void Model::Draw()
 	shader->SetUniformVec3("ObjectColor", ObjectColor);
 	for (int i = 0; i < meshes.size(); i++)
 	{
-		meshes.at(i).Draw(shader);
+		meshes.at(i).Draw(&ModelTransform);
 	}
 }
 
-//void Model::Draw(Shader* shader)
-//{
-//	for (int i = 0; i < meshes.size(); i++)
-//	{
-//		meshes.at(i).SetShader(shader);
-//		meshes.at(i).Draw();
-//	}
-//}
 
 Shader* Model::GetShader()
 {
@@ -98,4 +90,18 @@ void Model::RotateZ(float angle)
 {
 	IRotatable::RotateZ(angle);
 	UpdateModelTransform();
+}
+
+void Model::RotateMeshX(int index, float x)
+{
+	meshes.at(index).RotateX(x);
+}
+void Model::RotateMeshY(int index, float x)
+{
+
+	meshes.at(index).RotateY(x);
+}
+void Model::RotateMeshZ(int index, float x)
+{
+	meshes.at(index).RotateZ(x);
 }

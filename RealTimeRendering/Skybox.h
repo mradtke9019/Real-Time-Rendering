@@ -54,7 +54,8 @@ private:
             }
             else
             {
-                std::cout << "Cubemap tex failed to load at path: " << textures_faces[i] << std::endl;
+                Log::WriteLog("Cubemap tex failed to load at path: " + textures_faces[i], Error);
+                //std::cout << "Cubemap tex failed to load at path: " << textures_faces[i] << std::endl;
                 stbi_image_free(data);
             }
         }

@@ -163,6 +163,7 @@
     <ClInclude Include="Character.h" />
     <ClInclude Include="IRotatable.h" />
     <ClInclude Include="ITranslatable.h" />
+    <ClInclude Include="Log.h" />
     <ClInclude Include="Skybox.h" />
     <ClInclude Include="Direction.h" />
     <ClInclude Include="FixedCamera.h" />
@@ -182,11 +183,6 @@
     </CopyFileToFolders>
   </ItemGroup>
   <ItemGroup>
-    <CopyFileToFolders Include="teapot.obj">
-      <FileType>Document</FileType>
-    </CopyFileToFolders>
-  </ItemGroup>
-  <ItemGroup>
     <CopyFileToFolders Include="fresnel.frag">
       <FileType>Document</FileType>
     </CopyFileToFolders>
@@ -195,12 +191,20 @@
     </CopyFileToFolders>
   </ItemGroup>
   <ItemGroup>
-    <CopyFileToFolders Include="Airplane\textures\diffuse.dds" />
-    <CopyFileToFolders Include="Airplane\textures\normal.png" />
     <Image Include="back.jpg" />
     <Image Include="bottom.jpg" />
     <Image Include="front.jpg" />
     <Image Include="left.jpg" />
+    <CopyFileToFolders Include="Models\Airplane\textures\piper_bump.jpg" />
+    <CopyFileToFolders Include="Models\Airplane\textures\piper_diffuse.jpg" />
+    <CopyFileToFolders Include="Models\Airplane\textures\piper_refl.jpg" />
+    <CopyFileToFolders Include="Models\Gear\textures\Gear_2_BaseColor.png" />
+    <CopyFileToFolders Include="Models\Gear\textures\Gear_2_Diffuse.png" />
+    <CopyFileToFolders Include="Models\Gear\textures\Gear_2_Glossiness.png" />
+    <CopyFileToFolders Include="Models\Gear\textures\Gear_2_Metallic.png" />
+    <CopyFileToFolders Include="Models\Gear\textures\Gear_2_Normal.png" />
+    <CopyFileToFolders Include="Models\Gear\textures\Gear_2_Roughness.png" />
+    <CopyFileToFolders Include="Models\Gear\textures\Gear_2_Specular.png" />
     <Image Include="right.jpg" />
     <Image Include="top.jpg" />
   </ItemGroup>
@@ -227,20 +231,42 @@
     </CopyFileToFolders>
   </ItemGroup>
   <ItemGroup>
-    <CopyFileToFolders Include="Airplane\airplane.3DS">
+    <CopyFileToFolders Include="textures.frag">
       <FileType>Document</FileType>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="Airplane\airplane.fbx">
-      <FileType>Document</FileType>
-    </CopyFileToFolders>
-    <CopyFileToFolders Include="Airplane\airplane.mtl">
+    <CopyFileToFolders Include="textures.vert">
       <FileType>Document</FileType>
     </CopyFileToFolders>
   </ItemGroup>
   <ItemGroup>
-    <CopyFileToFolders Include="Airplane\airplane.obj">
+    <CopyFileToFolders Include="Models\Airplane\piper_pa18.mtl">
       <FileType>Document</FileType>
     </CopyFileToFolders>
+  </ItemGroup>
+  <ItemGroup>
+    <CopyFileToFolders Include="Models\Gear\Gear2.mtl">
+      <FileType>Document</FileType>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="Models\Lightbulb\LightBulb.mtl">
+      <FileType>Document</FileType>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="Models\Teapot\teapot.mtl">
+      <FileType>Document</FileType>
+    </CopyFileToFolders>
+  </ItemGroup>
+  <ItemGroup>
+    <CopyFileToFolders Include="Models\Gear\Gear2.obj">
+      <FileType>Document</FileType>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="Models\Lightbulb\LightBulb.obj">
+      <FileType>Document</FileType>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="Models\Teapot\teapot.obj">
+      <FileType>Document</FileType>
+    </CopyFileToFolders>
+  </ItemGroup>
+  <ItemGroup>
+    <Object Include="Models\Airplane\piper_pa18.obj" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
