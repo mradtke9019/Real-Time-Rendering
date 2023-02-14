@@ -25,7 +25,7 @@
 
 using namespace std;
 
-class Model : IRotatable, ITranslatable
+class Model : public IRotatable, public ITranslatable
 {
 public:
     // model data 
@@ -36,7 +36,8 @@ public:
 
 
     // constructor, expects a filepath to a 3D model.
-    Model(string const& path, bool gamma = false) : gammaCorrection(gamma)
+    Model(string const& path, bool gamma = false) 
+        : gammaCorrection(gamma), IRotatable()
     {
         loadModel(path);
     }
@@ -61,6 +62,10 @@ public:
     void RotateMeshY(int index, float x);
     void RotateMeshZ(int index, float x);
 
+    void SetRotationAxisX(float x);
+    void SetRotationAxisY(float x);
+    void SetRotationAxisZ(float x);
+    void IncreaseRotationAngle(float x);
     // draws the model, and thus all its meshes
     void Draw();
 
@@ -70,7 +75,6 @@ private:
     glm::vec3 ObjectColor;
     glm::vec3 Position;
     glm::mat4 ModelTransform;
-    bool useEuler;
 
     // Uses the objects current model position and rotation to set its model transform
     void UpdateModelTransform()

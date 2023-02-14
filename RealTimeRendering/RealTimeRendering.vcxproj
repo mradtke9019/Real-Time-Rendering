@@ -247,18 +247,12 @@
     <CopyFileToFolders Include="Models\Gear\Gear2.mtl">
       <FileType>Document</FileType>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="Models\Lightbulb\LightBulb.mtl">
-      <FileType>Document</FileType>
-    </CopyFileToFolders>
     <CopyFileToFolders Include="Models\Teapot\teapot.mtl">
       <FileType>Document</FileType>
     </CopyFileToFolders>
   </ItemGroup>
   <ItemGroup>
     <CopyFileToFolders Include="Models\Gear\Gear2.obj">
-      <FileType>Document</FileType>
-    </CopyFileToFolders>
-    <CopyFileToFolders Include="Models\Lightbulb\LightBulb.obj">
       <FileType>Document</FileType>
     </CopyFileToFolders>
     <CopyFileToFolders Include="Models\Teapot\teapot.obj">

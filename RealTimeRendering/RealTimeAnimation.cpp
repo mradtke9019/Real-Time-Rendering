@@ -137,6 +137,7 @@ void LoadShaders()
 
 	Shader* blinnPhongShader = new Shader("./blinnPhong.vert", "./blinnPhong.frag", false);
 	blinnPhongShader->SetUniform1f("specularExp", 64);
+	blinnPhongShader->SetUniform1i("UseNormalMap", 0);
 
 	Shader* reflectionShader = new Shader("./fresnel.vert", "./reflection.frag");
 	reflectionShader->LoadCubemap("cubemap");
@@ -160,7 +161,7 @@ void LoadShaders()
 void LoadCameras()
 {
 	cameraOrbit = 100.0f;
-	cameraHeight = 10.0f;
+	cameraHeight = 5.0f;
 	angleSpeed = 0.01;
 	theta = 0.0f;
 	CameraTarget = glm::vec3(0.0f, 0.0f, 0.0f);
@@ -252,32 +253,104 @@ void keyPress(unsigned char key, int x, int y)
 {
 	float theta = 10.0f;// glm::radians(10.0f);
 	float angle = 0.0f;
+	float axisIncrement = 1.0f;
 	bool rotated = false;
-	glm::mat4 rotate;
+
+	bool usingQuaternions = models.at(0)->UsingQuaternions();
+
 	switch (key) {
+	case '0':
+		shaders.at(0)->SetUniform1i("UseNormalMap", 0);
+		break;
 	case '1':
+		shaders.at(0)->SetUniform1i("UseNormalMap", 1);
 		break;
 	case '2':
 		break;
 	case '3':
 		break;
+	case '9':
+	{
+		Model* model = models.at(0);
+		IRotatable* m = (IRotatable*)model;
+		bool inUse = m->UsingQuaternions();
+		Log::WriteLog("Toggling quaternion policy on main model.", Info);
+		if (inUse)
+		{
+			Log::WriteLog("Setting rotation code to NOT use quaternions.", Info);
+		}
+		else {
+			Log::WriteLog("Setting rotation code to use quaternions.", Info);
+		}
+		m->SetQuaternionPolicy(!inUse);
+		m->RotateX(0); // Rotate by nothing to refresh the model matrix
+	}
+		break;
+
 	case 'd':
-		models.at(0)->RotateY(theta);
+		if (usingQuaternions)
+		{
+			models.at(0)->SetRotationAxisY(models.at(0)->GetRotationAxisY() -axisIncrement);
+		}
+		else {
+			models.at(0)->RotateY(-theta);
+			Log::WriteLog("Y Rotation: " + std::to_string(models.at(0)->GetRotateY()), Info);
+		}
 		break;
 	case 'a':
-		models.at(0)->RotateY(-theta);
+		if (usingQuaternions)
+		{
+			models.at(0)->SetRotationAxisY(models.at(0)->GetRotationAxisY() + axisIncrement);
+		}
+		else
+		{
+			models.at(0)->RotateY(theta);
+			Log::WriteLog("Y Rotation: " + std::to_string(models.at(0)->GetRotateY()), Info);
+		}
 		break;
 	case 'w':
-		models.at(0)->RotateX(theta);
+		if (usingQuaternions)
+		{
+			models.at(0)->SetRotationAxisX(models.at(0)->GetRotationAxisX() - axisIncrement);
+		}
+		else
+		{
+
+			models.at(0)->RotateX(-theta);
+			Log::WriteLog("X Rotation: " + std::to_string(models.at(0)->GetRotateX()), Info);
+		}
 		break;
 	case 's':
-		models.at(0)->RotateX(-theta);
+		if (usingQuaternions)
+		{
+			models.at(0)->SetRotationAxisX(models.at(0)->GetRotationAxisX() + axisIncrement);
+		}
+		else
+		{
+			models.at(0)->RotateX(theta);
+			Log::WriteLog("X Rotation: " + std::to_string(models.at(0)->GetRotateX()), Info);
+		}
 		break;
 	case 'q':
-		models.at(0)->RotateZ(theta);
+		if (usingQuaternions)
+		{
+			models.at(0)->SetRotationAxisZ(models.at(0)->GetRotationAxisZ() - axisIncrement);
+		}
+		else
+		{
+			models.at(0)->RotateZ(-theta);
+			Log::WriteLog("Z Rotation: " + std::to_string(models.at(0)->GetRotateZ()), Info);
+		}
 		break;
 	case 'e':
-		models.at(0)->RotateZ(-theta);
+		if (usingQuaternions)
+		{
+			models.at(0)->SetRotationAxisZ(models.at(0)->GetRotationAxisZ() + axisIncrement);
+		}
+		else {
+			models.at(0)->RotateZ(theta);
+			Log::WriteLog("Z Rotation: " + std::to_string(models.at(0)->GetRotateZ()), Info);
+		}
 		break;
 	case ' ':
 		Pause = !Pause;
@@ -291,12 +364,10 @@ void keyPress(unsigned char key, int x, int y)
 		}
 		break;
 	case '+':
-		rotatationMeshIndex++;
+		models.at(0)->IncreaseRotationAngle(theta);
 		break;
 	case '-':
-		rotatationMeshIndex--;
-		break;
-	case '0':
+		models.at(0)->IncreaseRotationAngle(-theta);
 		break;
 	}
 
@@ -313,11 +384,11 @@ void altKeyPress(int key, int x, int y)
 	switch (key)
 	{
 	case GLUT_KEY_UP:
-		cameraOrbit -= 10.0f;
+		cameraOrbit -= 3.0f;
 		break;
 
 	case GLUT_KEY_DOWN:
-		cameraOrbit += 10.0f;
+		cameraOrbit += 3.0f;
 		break;
 	case GLUT_KEY_LEFT:
 		for (int j = 0; j < models.size(); j++)

@@ -1,7 +1,7 @@
 #include "Model.h"
 
 Model::Model(std::string path, glm::vec3 Position, Shader* Shader)
-	: ModelTransform(glm::mat4(1.0f))
+	: ModelTransform(glm::mat4(1.0f)), IRotatable()
 {
 	shader = Shader;
 	ObjectColor = glm::vec3(1.0, 0.0, 0.0);
@@ -11,7 +11,7 @@ Model::Model(std::string path, glm::vec3 Position, Shader* Shader)
 }
 
 Model::Model(std::string path, glm::vec3 Position, Shader* Shader, glm::vec3 color)
-	: ModelTransform(glm::mat4(1.0f))
+	: ModelTransform(glm::mat4(1.0f)), IRotatable()
 {
 	shader = Shader;
 	ObjectColor = color;
@@ -104,4 +104,27 @@ void Model::RotateMeshY(int index, float x)
 void Model::RotateMeshZ(int index, float x)
 {
 	meshes.at(index).RotateZ(x);
+}
+
+void Model::SetRotationAxisX(float x)
+{
+	IRotatable::SetRotationAxisX(x);
+	UpdateModelTransform();
+}
+
+void Model::SetRotationAxisY(float x)
+{
+	IRotatable::SetRotationAxisY(x);
+	UpdateModelTransform();
+}
+
+void Model::SetRotationAxisZ(float x)
+{
+	IRotatable::SetRotationAxisZ(x);
+	UpdateModelTransform();
+}
+void Model::IncreaseRotationAngle(float x)
+{
+	IRotatable::IncreaseRotationAngle(x);
+	UpdateModelTransform();
 }

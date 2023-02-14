@@ -15,7 +15,6 @@ uniform vec3 LightDirection;
 out vec4 color;
 out vec3 fNormal;
 out vec3 fPosition;
-out vec3 FragPos;
 out vec2 TexCoord;
 
 void main()                                                              

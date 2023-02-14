@@ -51,7 +51,7 @@ struct Texture {
 };
 
 #pragma once
-class Mesh: IRotatable {
+class Mesh: public IRotatable {
 public:
     // mesh Data
     vector<Vertex>       vertices;

@@ -11,7 +11,7 @@ public:
 	static void WriteLog(std::string message, LogLevel level)
 	{
 		LogLevel l = Info;
-		if (level > l)
+		if (level >= l)
 		{
 			std::cout << message << std::endl;
 		}
