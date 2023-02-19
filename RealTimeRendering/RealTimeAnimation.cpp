@@ -226,6 +226,28 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 	glViewport(0, 0, width, height);
 }
 
+// Function where we set our debuggables
+void ImguiData()
+{
+	//ImGui new frame
+	ImGui_ImplOpenGL3_NewFrame();
+	ImGui_ImplGlfw_NewFrame();
+	ImGui::NewFrame();
+	ImGui::SetNextWindowSize(ImVec2(400, 200));
+	ImGui::Begin("ImGUI window");
+
+	ImGui::SliderInt("Model Target", &modelFocused, 0, 3);
+	ImGui::SliderFloat("Orbit Speed", &orbitSpeed, 0.0f, 100.0f);
+	ImGui::SliderFloat("Camera Height", &cameraHeight, -10.0f, 10.0f);
+	ImGui::SliderFloat("Orbit Radius", &cameraOrbit, 0.0f, 100.0f);
+}
+
+void ImguiDraw()
+{
+	ImGui::End();
+	ImGui::Render();
+	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+}
 
 int main()
 {
@@ -274,29 +296,9 @@ int main()
 	while (!glfwWindowShouldClose(window))
 	{
 
-
-		//ImGui new frame
-		ImGui_ImplOpenGL3_NewFrame();
-		ImGui_ImplGlfw_NewFrame();
-		ImGui::NewFrame();
-		ImGui::SetNextWindowSize(ImVec2(400, 200));
-		ImGui::Begin("ImGUI window");
-
-		ImGui::SliderInt("Model Target", &modelFocused,0,3);
-		ImGui::SliderFloat("Orbit Speed", &orbitSpeed, 0.0f, 100.0f);
-		ImGui::SliderFloat("Camera Height", &cameraHeight, -10.0f, 10.0f);
-		ImGui::SliderFloat("Orbit Radius", &cameraOrbit, 0.0f, 100.0f);
-
+		ImguiData();
 		display(window);
-
-		/*
-		ImGui::Render();
-		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-		*/
-
-		ImGui::End();
-		ImGui::Render();
-		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+		ImguiDraw();
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
