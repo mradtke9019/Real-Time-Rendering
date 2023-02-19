@@ -33,16 +33,17 @@ public:
     vector<Mesh>    meshes;
     string directory;
     bool gammaCorrection;
-
+    GLint mipmap;
 
     // constructor, expects a filepath to a 3D model.
     Model(string const& path, bool gamma = false) 
-        : gammaCorrection(gamma), IRotatable()
+        : gammaCorrection(gamma), IRotatable(), mipmap(GL_NEAREST_MIPMAP_NEAREST)
     {
         loadModel(path);
     }
     Model(std::string path, glm::vec3 Position, Shader* Shader);
     Model(std::string path, glm::vec3 Position, Shader* Shader, glm::vec3 color);
+    Model(std::string path, glm::vec3 Position, Shader* Shader, GLint mipmapPolicy);
     Shader* GetShader();
 
     void SetShader(Shader* Shader);
@@ -61,6 +62,7 @@ public:
     void RotateMeshX(int index, float x);
     void RotateMeshY(int index, float x);
     void RotateMeshZ(int index, float x);
+
 
     // draws the model, and thus all its meshes
     void Draw();
@@ -262,7 +264,13 @@ private:
 
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+
+            // Source LearnOpenGL: https://learnopengl.com/Getting-started/Textures
+            //GL_NEAREST_MIPMAP_NEAREST: takes the nearest mipmap to match the pixel sizeand uses nearest neighbor interpolation for texture sampling.
+            //GL_LINEAR_MIPMAP_NEAREST : takes the nearest mipmap leveland samples that level using linear interpolation.
+            //GL_NEAREST_MIPMAP_LINEAR : linearly interpolates between the two mipmaps that most closely match the size of a pixeland samples the interpolated level via nearest neighbor interpolation.
+            //GL_LINEAR_MIPMAP_LINEAR : linearly interpolates between the two closest mipmaps and samples the interpolated level via linear interpolation.
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, mipmap);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
             stbi_image_free(data);

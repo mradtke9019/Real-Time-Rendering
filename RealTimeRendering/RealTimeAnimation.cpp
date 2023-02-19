@@ -27,7 +27,6 @@
 #define BUFFER_OFFSET(i) ((char *)NULL + (i))
 int Width;
 int Height;
-
 using namespace std;
 
 
@@ -36,11 +35,8 @@ vector<Shader*> shaders;
 ICamera* activeCamera;
 FixedCamera defaultCamera;
 
-bool Pause;
-
+int modelFocused;
 vector<Model*> models;
-Model* airplane;
-Model* gear;
 Model* LightBulb;
 Skybox* skybox;
 
@@ -54,7 +50,7 @@ int rotatationMeshIndex = 0;
 
 float cameraOrbit;
 float cameraHeight;
-float angleSpeed;
+float orbitSpeed;
 float theta;
 glm::vec3 CameraTarget;
 
@@ -78,7 +74,7 @@ void display(GLFWwindow* window)
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 
-	auto timeValue = glfwGetTime();
+	float timeValue = static_cast<float>(glfwGetTime());
 	currentFrame = timeValue;
 	deltaTime = currentFrame - lastFrame;
 	lastFrame = currentFrame;
@@ -88,11 +84,13 @@ void display(GLFWwindow* window)
 	glm::mat4 projection = GetProjection();
 
 
-	theta += angleSpeed * deltaTime;
+	theta += orbitSpeed * deltaTime;
 
 	float x = cameraOrbit * cos(glm::radians(theta));
 	float y = cameraOrbit * sin(glm::radians(theta));
 	glm::vec3 cameraPosition = glm::vec3(x, cameraHeight, y);
+
+	defaultCamera.SetTarget(models.at(modelFocused)->GetPosition());
 	defaultCamera.SetPosition(cameraPosition + defaultCamera.GetTarget());
 
 
@@ -108,11 +106,11 @@ void display(GLFWwindow* window)
 		s->SetUniformMatrix4fv("projection", &projection);
 		s->SetUniformVec3("cameraPos", defaultCamera.GetPosition());
 	}
-
-	airplane->RotateMeshZ(29, angleSpeed * 1000);
-	airplane->RotateMeshZ(30, angleSpeed * 1000);
-	airplane->RotateMeshZ(31, angleSpeed * 1000);
-	airplane->RotateMeshZ(32, angleSpeed * 1000);
+	
+	//airplane->RotateMeshZ(29, angleSpeed * 1000);
+	//airplane->RotateMeshZ(30, angleSpeed * 1000);
+	//airplane->RotateMeshZ(31, angleSpeed * 1000);
+	//airplane->RotateMeshZ(32, angleSpeed * 1000);
 
 	for (int i = 0; i < models.size(); i++)
 	{
@@ -154,9 +152,9 @@ void LoadShaders()
 
 void LoadCameras()
 {
-	cameraOrbit = 100.0f;
+	cameraOrbit = 50.0f;
 	cameraHeight = 5.0f;
-	angleSpeed = 0.01;
+	orbitSpeed = 1.0f;
 	theta = 0.0f;
 	CameraTarget = glm::vec3(0.0f, 0.0f, 0.0f);
 	defaultCamera = FixedCamera(glm::vec3(0.0f, cameraHeight, cameraOrbit), CameraTarget, glm::vec3(0.0f, 1.0f, 0.0f));
@@ -165,28 +163,18 @@ void LoadCameras()
 
 void LoadObjects()
 {
-
-	airplane = new Model("./Models/Airplane/piper_pa18.obj", glm::vec3(0, 0, 0), shaders.at(0));
-
-	// Positions of the propellor and the wheels
-	airplane->meshes.at(29).SetOrigin(glm::vec3(0.0f, 1.23, 3.37f), airplane->GetPosition());
-	airplane->meshes.at(30).SetOrigin(glm::vec3(0.0f, 1.23, 3.37f), airplane->GetPosition());
-	airplane->meshes.at(31).SetOrigin(glm::vec3(0.0f, 1.23, 3.37f), airplane->GetPosition());
-	airplane->meshes.at(32).SetOrigin(glm::vec3(0.0f, 1.23, 3.37f), airplane->GetPosition());
-
-	models.push_back(airplane);
-
-
-	gear = new Model("./Models/Gear/Gear2.obj", glm::vec3(100, 0, 0), shaders.at(0));
-	models.push_back(gear);
-
-
+	GLint mimmaps[4] = { GL_NEAREST_MIPMAP_NEAREST , GL_LINEAR_MIPMAP_NEAREST, GL_NEAREST_MIPMAP_LINEAR, GL_LINEAR_MIPMAP_LINEAR };
+	for (int i = 0; i < 4; i++)
+	{
+		Model* model = new Model("./Models/Airplane/piper_pa18.obj", glm::vec3(i * 50, 0, 0), shaders.at(0), mimmaps[i]);
+		models.push_back(model);
+	}
+	// Focus our camera on the first model
+	modelFocused = 0;
 	LightBulb = new Model("./Models/Sphere/Sphere.obj", LightPosition, shaders.at(0));
 	models.push_back(LightBulb);
 
 	skybox = new Skybox();
-
-
 }
 
 void initLight()
@@ -199,6 +187,8 @@ void initLight()
 void init()
 {
 	glEnable(GL_DEPTH_TEST);
+	glClearColor(0.1f, 0.2f, 0.2f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT);
 	initLight();
 	LoadShaders();
 	LoadCameras();
@@ -239,8 +229,8 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 
 int main()
 {
-	Width = 800;
-	Height = 600;
+	Width = 1200;
+	Height = 900;
 	glfwInit();
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -283,32 +273,26 @@ int main()
 
 	while (!glfwWindowShouldClose(window))
 	{
-		display(window);
 
 
 		//ImGui new frame
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
-		ImGui::SetNextWindowSize(ImVec2(200, 200));
+		ImGui::SetNextWindowSize(ImVec2(400, 200));
 		ImGui::Begin("ImGUI window");
 
+		ImGui::SliderInt("Model Target", &modelFocused,0,3);
+		ImGui::SliderFloat("Orbit Speed", &orbitSpeed, 0.0f, 100.0f);
+		ImGui::SliderFloat("Camera Height", &cameraHeight, -10.0f, 10.0f);
+		ImGui::SliderFloat("Orbit Radius", &cameraOrbit, 0.0f, 100.0f);
 
-		//ImGui::SliderFloat("pitch", &rotations.x, -360.0f, 360.0f);
-		//ImGui::SliderFloat("yaw", &rotations.y, -360.0f, 360.0f);
-		//ImGui::SliderFloat("roll", &rotations.z, -360.0f, 360.0f);
-		//ImGui::SliderInt("meshNum", &meshToDraw, 0, 40);
-
-
+		display(window);
 
 		/*
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 		*/
-
-
-
-
 
 		ImGui::End();
 		ImGui::Render();
@@ -328,35 +312,3 @@ int main()
 	glfwTerminate();
 	return 0;
 }
-
-
-//int main(int argc, char** argv) {
-//	Width = 800;
-//	Height = 600;
-//	// Set up the window
-//	glutInit(&argc, argv);
-//	glewExperimental = GL_TRUE;
-//	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
-//	glutInitWindowSize(Width, Height);
-//	glutCreateWindow("Real Time Rendering");
-//	// Tell glut where the display function is
-//	glutDisplayFunc(display);
-//	glutKeyboardFunc(keyPress);
-//	glutMouseFunc(mousePress);
-//	glutSpecialFunc(altKeyPress);
-//	glClearColor(0.1f, 0.2f, 0.2f, 1.0f);
-//	glClear(GL_COLOR_BUFFER_BIT);
-//	// A call to glewInit() must be done after glut is initialized!
-//	GLenum res = glewInit();
-//	// Check for any errors
-//	if (res != GLEW_OK) {
-//		fprintf(stderr, "Error: '%s'\n", glewGetErrorString(res));
-//		return 1;
-//	}
-//	// Set up your objects and shaders
-//	init();
-//
-//	// Begin infinite event loop
-//	glutMainLoop();
-//	return 0;
-//}

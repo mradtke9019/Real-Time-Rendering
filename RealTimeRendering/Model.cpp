@@ -1,7 +1,7 @@
 #include "Model.h"
 
 Model::Model(std::string path, glm::vec3 Position, Shader* Shader)
-	: ModelTransform(glm::mat4(1.0f)), IRotatable()
+	: ModelTransform(glm::mat4(1.0f)), IRotatable(), mipmap(GL_LINEAR_MIPMAP_LINEAR)
 {
 	shader = Shader;
 	ObjectColor = glm::vec3(1.0, 0.0, 0.0);
@@ -11,12 +11,23 @@ Model::Model(std::string path, glm::vec3 Position, Shader* Shader)
 }
 
 Model::Model(std::string path, glm::vec3 Position, Shader* Shader, glm::vec3 color)
-	: ModelTransform(glm::mat4(1.0f)), IRotatable()
+	: ModelTransform(glm::mat4(1.0f)), IRotatable(), mipmap(GL_LINEAR_MIPMAP_LINEAR)
 {
 	shader = Shader;
 	ObjectColor = color;
 	this->Position = Position;
 	ModelTransform = glm::translate(glm::mat4(1.0f), Position);
+	loadModel(path);
+}
+
+// Constructor to control the mip mapping generated
+Model::Model(std::string path, glm::vec3 Position, Shader* Shader, GLint mipmapPolicy)
+	: ModelTransform(glm::mat4(1.0f)), IRotatable(), mipmap(GL_LINEAR_MIPMAP_LINEAR)
+{
+	shader = Shader;
+	ObjectColor = glm::vec3(1.0, 0.0, 0.0);
+	ModelTransform = glm::translate(glm::mat4(1.0f), Position);
+	this->Position = Position;
 	loadModel(path);
 }
 
