@@ -11,8 +11,8 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <vector>
-#include <GL/glew.h>
-#include <GL/freeglut.h>
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
 
 // Camera interface where all cameras must return a view transform
 class ICamera

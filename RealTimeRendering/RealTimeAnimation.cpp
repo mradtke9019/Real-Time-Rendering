@@ -1,5 +1,10 @@
-#include <GL/glew.h>
-#include <GL/freeglut.h>
+#include "imgui.h"
+#include "imgui_impl_glfw.h"
+#include "imgui_impl_opengl3.h"
+
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
+
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -9,12 +14,11 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include "Shader.h"
-#include <vector>
+
 #include "Model.h"
 #include <random>
 #include "Camera.h"
 #include "FixedCamera.h"
-#include <irrKlang.h>
 #include "Skybox.h"
 #include <filesystem>
 #include "Log.h"
@@ -25,12 +29,9 @@ int Width;
 int Height;
 
 using namespace std;
-using namespace irrklang;
 
 
 vector<Shader*> shaders;
-
-ISoundEngine* SoundEngine;
 
 ICamera* activeCamera;
 FixedCamera defaultCamera;
@@ -68,16 +69,16 @@ glm::vec3 LightDirection;
 
 glm::mat4 GetProjection()
 {
-	return glm::perspective(glm::radians(60.0f), (float)glutGet(GLUT_WINDOW_WIDTH) / (float)glutGet(GLUT_WINDOW_HEIGHT), 0.1f, 300.0f);
+	return glm::perspective(glm::radians(60.0f), (float)Width / (float)Height, 0.1f, 300.0f);
 }
 
 
-void display()
+void display(GLFWwindow* window)
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 
-	auto timeValue = glutGet(GLUT_ELAPSED_TIME);
+	auto timeValue = glfwGetTime();
 	currentFrame = timeValue;
 	deltaTime = currentFrame - lastFrame;
 	lastFrame = currentFrame;
@@ -116,18 +117,11 @@ void display()
 	for (int i = 0; i < models.size(); i++)
 	{
 		Model* m = models.at(i);
-		//m->SetShader(activeShader);
-		// Mesh 8 is the propellor
-		//m->RotateMeshZ(8, angleSpeed * 1000);
-		//m->RotateMeshX(9, angleSpeed * 1000);
 		m->Draw();
 	}
 
 	// Draw last
 	skybox->Draw(*activeCamera->GetViewTransform(), &projection);
-
-	glutPostRedisplay();
-	glutSwapBuffers();
 }
 
 void LoadShaders()
@@ -185,11 +179,6 @@ void LoadObjects()
 
 	gear = new Model("./Models/Gear/Gear2.obj", glm::vec3(100, 0, 0), shaders.at(0));
 	models.push_back(gear);
-	//for (int i = 0; i < shaders.size(); i++) 
-	//{
-	//	Model* teapot = new Model("./teapot.obj", glm::vec3(i * 70, 0, 0), shaders.at(i));
-	//	models.push_back(teapot);
-	//}
 
 
 	LightBulb = new Model("./Models/Sphere/Sphere.obj", LightPosition, shaders.at(0));
@@ -197,7 +186,6 @@ void LoadObjects()
 
 	skybox = new Skybox();
 
-	SoundEngine = createIrrKlangDevice();
 
 }
 
@@ -215,7 +203,6 @@ void init()
 	LoadShaders();
 	LoadCameras();
 	LoadObjects();
-	//Log::Level = LogLevel::Info;
 }
 
 
@@ -230,193 +217,146 @@ glm::vec3 GetLightPosition()
 }
 
 
-void mousePress(int button, int state, int x, int y)
-{
-	switch (button) {
-	case GLUT_LEFT_BUTTON:
-		break;
-	case GLUT_MIDDLE_BUTTON:
-		break;
-	case GLUT_RIGHT_BUTTON:
-		break;
-	default:
-		Log::WriteLog("Unhandled mouse input.", Debug);
-		break;
-	}
-}
-
 // function to allow keyboard control
 // it's called a callback function and must be registerd in main() using glutKeyboardFunc();
 // the functions must be of a specific format - see freeglut documentation
 // similar functions exist for mouse control etc
-void keyPress(unsigned char key, int x, int y)
+void keyPress(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
-	float theta = 10.0f;// glm::radians(10.0f);
-	float angle = 0.0f;
-	float axisIncrement = 1.0f;
-	bool rotated = false;
-
-	bool usingQuaternions = models.at(0)->UsingQuaternions();
-
-	switch (key) {
-	case '0':
-		shaders.at(0)->SetUniform1i("UseNormalMap", 0);
-		break;
-	case '1':
-		shaders.at(0)->SetUniform1i("UseNormalMap", 1);
-		break;
-	case '2':
-		break;
-	case '3':
-		break;
-	case '9':
+	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
 	{
-		Model* model = models.at(0);
-		IRotatable* m = (IRotatable*)model;
-		bool inUse = m->UsingQuaternions();
-		Log::WriteLog("Toggling quaternion policy on main model.", Info);
-		if (inUse)
-		{
-			Log::WriteLog("Setting rotation code to NOT use quaternions.", Info);
-		}
-		else {
-			Log::WriteLog("Setting rotation code to use quaternions.", Info);
-		}
-		m->SetQuaternionPolicy(!inUse);
-		model->RotateX(0); // Rotate by nothing to refresh the model matrix
+		glfwSetWindowShouldClose(window, GLFW_TRUE);
 	}
-	break;
+}
 
-	case 'd':
-
-		models.at(0)->RotateY(-theta);
-		Log::WriteLog("Y Rotation: " + std::to_string(models.at(0)->GetRotateY()), Info);
-		break;
-	case 'a':
-
-		models.at(0)->RotateY(theta);
-		Log::WriteLog("Y Rotation: " + std::to_string(models.at(0)->GetRotateY()), Info);
-		break;
-	case 'w':
-
-		models.at(0)->RotateX(-theta);
-		Log::WriteLog("X Rotation: " + std::to_string(models.at(0)->GetRotateX()), Info);
-
-		break;
-	case 's':
-
-		models.at(0)->RotateX(theta);
-		Log::WriteLog("X Rotation: " + std::to_string(models.at(0)->GetRotateX()), Info);
-		break;
-	case 'q':
-
-		models.at(0)->RotateZ(-theta);
-		Log::WriteLog("Z Rotation: " + std::to_string(models.at(0)->GetRotateZ()), Info);
-
-		break;
-	case 'e':
-
-		models.at(0)->RotateZ(theta);
-		Log::WriteLog("Z Rotation: " + std::to_string(models.at(0)->GetRotateZ()), Info);
-
-		break;
-	case ' ':
-		Pause = !Pause;
-		if (Pause)
-		{
-			angleSpeed = 0.0;
-		}
-		else
-		{
-			angleSpeed = 0.01;
-		}
-		break;
-	case '+':
-
-		break;
-	case '-':
-
-		break;
-	}
-
-	// we must call these to redraw the scene after we make any changes 
-	glutPostRedisplay();
+void framebuffer_size_callback(GLFWwindow* window, int width, int height)
+{
+	Height = height;
+	Width = width;
+	glViewport(0, 0, width, height);
 }
 
 
-//https://community.khronos.org/t/what-are-the-codes-for-arrow-keys-to-use-in-glut-keyboard-callback-function/26457/2
-void altKeyPress(int key, int x, int y)
+int main()
 {
-	int i = 0;
-	glm::vec3 position;
-	switch (key)
-	{
-	case GLUT_KEY_UP:
-		cameraOrbit -= 3.0f;
-		break;
-
-	case GLUT_KEY_DOWN:
-		cameraOrbit += 3.0f;
-		break;
-	case GLUT_KEY_LEFT:
-		for (int j = 0; j < models.size(); j++)
-		{
-			if (models.at(j)->GetPosition() == defaultCamera.GetTarget())
-			{
-				i = j - 1;
-				break;
-			}
-		}
-		if (i < 0) {
-			i = models.size() - 1;
-		}
-		defaultCamera.SetTarget(models.at(i)->GetPosition());
-		break;
-	case GLUT_KEY_RIGHT:
-		for (int j = 0; j < models.size(); j++)
-		{
-			if (models.at(j)->GetPosition() == defaultCamera.GetTarget())
-			{
-				i = j + 1;
-				break;
-			}
-		}
-		if (i >= models.size()) {
-			i = 0;
-		}
-		defaultCamera.SetTarget(models.at(i)->GetPosition());
-		break;
-	}
-	glutPostRedisplay();
-}
-
-int main(int argc, char** argv) {
 	Width = 800;
 	Height = 600;
-	// Set up the window
-	glutInit(&argc, argv);
-	glewExperimental = GL_TRUE;
-	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
-	glutInitWindowSize(Width, Height);
-	glutCreateWindow("Real Time Rendering");
-	// Tell glut where the display function is
-	glutDisplayFunc(display);
-	glutKeyboardFunc(keyPress);
-	glutMouseFunc(mousePress);
-	glutSpecialFunc(altKeyPress);
-	glClearColor(0.1f, 0.2f, 0.2f, 1.0f);
-	glClear(GL_COLOR_BUFFER_BIT);
-	// A call to glewInit() must be done after glut is initialized!
-	GLenum res = glewInit();
-	// Check for any errors
-	if (res != GLEW_OK) {
-		fprintf(stderr, "Error: '%s'\n", glewGetErrorString(res));
-		return 1;
+	glfwInit();
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	// --------------------
+	GLFWwindow* window = glfwCreateWindow(Width, Height, "Scene", NULL, NULL);
+
+	if (window == NULL)
+	{
+		std::cout << "Failed to create GLFW window" << std::endl;
+		glfwTerminate();
+		return -1;
 	}
-	// Set up your objects and shaders
+	glfwMakeContextCurrent(window);
+	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+	glfwSetKeyCallback(window, keyPress);
+	// For potential future use
+	//glfwSetCursorPosCallback(window, mouse_callback);
+	//glfwSetScrollCallback(window, scroll_callback);
+
+	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+
+	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+	{
+		std::cout << "Failed to initialize GLAD" << std::endl;
+		return -1;
+	}
+
+
+	//IMGUI code
+	IMGUI_CHECKVERSION();
+	ImGui::CreateContext();
+	ImGuiIO& io = ImGui::GetIO(); (void)io;
+	ImGui::StyleColorsDark();
+	ImGui_ImplGlfw_InitForOpenGL(window, true);
+	ImGui_ImplOpenGL3_Init("#version 330");
+
 	init();
 
-	// Begin infinite event loop
-	glutMainLoop();
+
+	while (!glfwWindowShouldClose(window))
+	{
+		display(window);
+
+
+		//ImGui new frame
+		ImGui_ImplOpenGL3_NewFrame();
+		ImGui_ImplGlfw_NewFrame();
+		ImGui::NewFrame();
+		ImGui::SetNextWindowSize(ImVec2(200, 200));
+		ImGui::Begin("ImGUI window");
+
+
+		//ImGui::SliderFloat("pitch", &rotations.x, -360.0f, 360.0f);
+		//ImGui::SliderFloat("yaw", &rotations.y, -360.0f, 360.0f);
+		//ImGui::SliderFloat("roll", &rotations.z, -360.0f, 360.0f);
+		//ImGui::SliderInt("meshNum", &meshToDraw, 0, 40);
+
+
+
+		/*
+		ImGui::Render();
+		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+		*/
+
+
+
+
+
+		ImGui::End();
+		ImGui::Render();
+		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+		glfwSwapBuffers(window);
+		glfwPollEvents();
+	}
+
+
+	ImGui_ImplOpenGL3_Shutdown();
+	ImGui_ImplGlfw_Shutdown();
+	ImGui::DestroyContext();
+
+	glfwDestroyWindow(window);
+
+	glfwTerminate();
 	return 0;
 }
+
+
+//int main(int argc, char** argv) {
+//	Width = 800;
+//	Height = 600;
+//	// Set up the window
+//	glutInit(&argc, argv);
+//	glewExperimental = GL_TRUE;
+//	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
+//	glutInitWindowSize(Width, Height);
+//	glutCreateWindow("Real Time Rendering");
+//	// Tell glut where the display function is
+//	glutDisplayFunc(display);
+//	glutKeyboardFunc(keyPress);
+//	glutMouseFunc(mousePress);
+//	glutSpecialFunc(altKeyPress);
+//	glClearColor(0.1f, 0.2f, 0.2f, 1.0f);
+//	glClear(GL_COLOR_BUFFER_BIT);
+//	// A call to glewInit() must be done after glut is initialized!
+//	GLenum res = glewInit();
+//	// Check for any errors
+//	if (res != GLEW_OK) {
+//		fprintf(stderr, "Error: '%s'\n", glewGetErrorString(res));
+//		return 1;
+//	}
+//	// Set up your objects and shaders
+//	init();
+//
+//	// Begin infinite event loop
+//	glutMainLoop();
+//	return 0;
+//}

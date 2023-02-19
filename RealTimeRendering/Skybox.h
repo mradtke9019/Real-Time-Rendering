@@ -1,6 +1,5 @@
 #include "Shader.h"
-#include <GL/glew.h>
-#include <GL/freeglut.h>
+#include <glad/glad.h>
 #include <iostream>
 #include <fstream>
 #include <string>
