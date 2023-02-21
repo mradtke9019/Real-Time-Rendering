@@ -220,7 +220,7 @@ private:
                 if (std::strcmp(textures_loaded[j].path.data(), str.C_Str()) == 0)
                 {
                     textures.push_back(textures_loaded[j]);
-                    skip = true; // a texture with the same filepath has already been loaded, continue to next one. (optimization)
+                    //skip = true; // a texture with the same filepath has already been loaded, continue to next one. (optimization)
                     break;
                 }
             }
@@ -271,7 +271,7 @@ private:
             //GL_NEAREST_MIPMAP_LINEAR : linearly interpolates between the two mipmaps that most closely match the size of a pixeland samples the interpolated level via nearest neighbor interpolation.
             //GL_LINEAR_MIPMAP_LINEAR : linearly interpolates between the two closest mipmaps and samples the interpolated level via linear interpolation.
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, mipmap);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
             stbi_image_free(data);
         }

@@ -148,6 +148,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="Cube.cpp" />
     <ClCompile Include="glad\src\glad.c" />
     <ClCompile Include="imgui\imgui.cpp" />
     <ClCompile Include="imgui\imgui_demo.cpp" />
@@ -169,6 +170,7 @@
   <ItemGroup>
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Character.h" />
+    <ClInclude Include="Cube.h" />
     <ClInclude Include="IRotatable.h" />
     <ClInclude Include="ITranslatable.h" />
     <ClInclude Include="Log.h" />
@@ -213,6 +215,7 @@
     <CopyFileToFolders Include="Models\Gear\textures\Gear_2_Normal.png" />
     <CopyFileToFolders Include="Models\Gear\textures\Gear_2_Roughness.png" />
     <CopyFileToFolders Include="Models\Gear\textures\Gear_2_Specular.png" />
+    <CopyFileToFolders Include="Models\Cube\checkerboard.jpg" />
     <Image Include="right.jpg" />
     <Image Include="top.jpg" />
   </ItemGroup>
@@ -272,6 +275,16 @@
       <FileType>Document</FileType>
     </CopyFileToFolders>
     <CopyFileToFolders Include="Models\Sphere\Sphere.obj">
+      <FileType>Document</FileType>
+    </CopyFileToFolders>
+  </ItemGroup>
+  <ItemGroup>
+    <CopyFileToFolders Include="Models\Cube\cube.mtl">
+      <FileType>Document</FileType>
+    </CopyFileToFolders>
+  </ItemGroup>
+  <ItemGroup>
+    <CopyFileToFolders Include="Models\Cube\cube.obj">
       <FileType>Document</FileType>
     </CopyFileToFolders>
   </ItemGroup>

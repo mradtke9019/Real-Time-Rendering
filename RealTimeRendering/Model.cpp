@@ -42,6 +42,10 @@ void Model::Draw()
 	}
 }
 
+void LoadTexture(std::string texturePath, GLint mipmapPolicy)
+{
+
+}
 
 Shader* Model::GetShader()
 {

@@ -35,7 +35,11 @@ vector<Shader*> shaders;
 ICamera* activeCamera;
 FixedCamera defaultCamera;
 
-int modelFocused;
+int MIN_MIMAPidx;
+
+const char* mipmapsDisplay[4];
+GLint mipmaps[4];
+
 vector<Model*> models;
 Model* LightBulb;
 Skybox* skybox;
@@ -90,7 +94,7 @@ void display(GLFWwindow* window)
 	float y = cameraOrbit * sin(glm::radians(theta));
 	glm::vec3 cameraPosition = glm::vec3(x, cameraHeight, y);
 
-	defaultCamera.SetTarget(models.at(modelFocused)->GetPosition());
+	//defaultCamera.SetTarget(models.at(modelFocused)->GetPosition());
 	defaultCamera.SetPosition(cameraPosition + defaultCamera.GetTarget());
 
 
@@ -119,7 +123,7 @@ void display(GLFWwindow* window)
 	}
 
 	// Draw last
-	skybox->Draw(*activeCamera->GetViewTransform(), &projection);
+	//skybox->Draw(*activeCamera->GetViewTransform(), &projection);
 }
 
 void LoadShaders()
@@ -132,17 +136,17 @@ void LoadShaders()
 	blinnPhongShader->SetUniform1i("UseNormalMap", 0);
 
 	Shader* reflectionShader = new Shader("./fresnel.vert", "./reflection.frag");
-	reflectionShader->LoadCubemap("cubemap");
+	//reflectionShader->LoadCubemap("cubemap");
 
 
 	Shader* refractionShader = new Shader("./fresnel.vert", "./refraction.frag");
-	refractionShader->LoadCubemap("cubemap");
+	//refractionShader->LoadCubemap("cubemap");
 
 	Shader* chromaticShader = new Shader("./fresnel.vert", "./chromatic.frag");
-	chromaticShader->LoadCubemap("cubemap");
+	//chromaticShader->LoadCubemap("cubemap");
 
 	Shader* fresnelShader = new Shader("./fresnel.vert", "./fresnel.frag", false);
-	fresnelShader->LoadCubemap("cubemap");
+	//fresnelShader->LoadCubemap("cubemap");
 
 
 	shaders.push_back(blinnPhongShader);
@@ -163,18 +167,33 @@ void LoadCameras()
 
 void LoadObjects()
 {
-	GLint mimmaps[4] = { GL_NEAREST_MIPMAP_NEAREST , GL_LINEAR_MIPMAP_NEAREST, GL_NEAREST_MIPMAP_LINEAR, GL_LINEAR_MIPMAP_LINEAR };
-	for (int i = 0; i < 4; i++)
+	mipmaps[0] = GL_NEAREST_MIPMAP_NEAREST;
+	mipmaps[1] = GL_LINEAR_MIPMAP_NEAREST;
+	mipmaps[2] = GL_NEAREST_MIPMAP_LINEAR;
+	mipmaps[3] = GL_LINEAR_MIPMAP_LINEAR;
+
+
+	mipmapsDisplay[0] = "GL_NEAREST_MIPMAP_NEAREST";
+	mipmapsDisplay[1] = "GL_LINEAR_MIPMAP_NEAREST";
+	mipmapsDisplay[2] = "GL_NEAREST_MIPMAP_LINEAR";
+	mipmapsDisplay[3] = "GL_LINEAR_MIPMAP_LINEAR";
+
+	MIN_MIMAPidx = 0;
+
+	for (int i = 0; i < 1; i++)
 	{
-		Model* model = new Model("./Models/Airplane/piper_pa18.obj", glm::vec3(i * 50, 0, 0), shaders.at(0), mimmaps[i]);
+		//Model* model = new Model("./Models/Airplane/piper_pa18.obj", glm::vec3(i * 50, 0, 0), shaders.at(0), mimmaps[i]);
+		Model* model = new Model("./Models/Cube/cube.obj", glm::vec3(i * 50, 0, 0), shaders.at(0));
 		models.push_back(model);
 	}
-	// Focus our camera on the first model
-	modelFocused = 0;
-	LightBulb = new Model("./Models/Sphere/Sphere.obj", LightPosition, shaders.at(0));
-	models.push_back(LightBulb);
 
-	skybox = new Skybox();
+
+
+
+	//LightBulb = new Model("./Models/Sphere/Sphere.obj", LightPosition, shaders.at(0));
+	//models.push_back(LightBulb);
+
+	//skybox = new Skybox();
 }
 
 void initLight()
@@ -187,7 +206,7 @@ void initLight()
 void init()
 {
 	glEnable(GL_DEPTH_TEST);
-	glClearColor(0.1f, 0.2f, 0.2f, 1.0f);
+	glClearColor(0, 0.749f, 1.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
 	initLight();
 	LoadShaders();
@@ -236,7 +255,9 @@ void ImguiData()
 	ImGui::SetNextWindowSize(ImVec2(400, 200));
 	ImGui::Begin("ImGUI window");
 
-	ImGui::SliderInt("Model Target", &modelFocused, 0, 3);
+	//ImGui::SliderInt("Model Target", &modelFocused, 0, 3);
+	ImGui::Combo("GL_TEXTURE_MIN_FILTER", &MIN_MIMAPidx, mipmapsDisplay,IM_ARRAYSIZE(mipmapsDisplay));
+
 	ImGui::SliderFloat("Orbit Speed", &orbitSpeed, 0.0f, 100.0f);
 	ImGui::SliderFloat("Camera Height", &cameraHeight, -10.0f, 10.0f);
 	ImGui::SliderFloat("Orbit Radius", &cameraOrbit, 0.0f, 100.0f);
