@@ -65,13 +65,14 @@ public:
     void Draw(glm::mat4* ModelTransform = nullptr);
 
     // constructor
-    Mesh(vector<Vertex> vertices, vector<unsigned int> indices, vector<Texture> textures, Shader* s)
+    Mesh(vector<Vertex> vertices, vector<unsigned int> indices, vector<Texture> textures, Shader* s, std::string mipmap = "GL_NEAREST_MIPMAP_NEAREST")
         : MeshOrigin(glm::vec3(0,0,0)), ModelOrigin(glm::vec3(0,0,0))
     {
         MeshTransform = glm::mat4(1);
         this->vertices = vertices;
         this->indices = indices;
         this->textures = textures;
+        this->mipmap = mipmap;
 
         this->shader = s;
         if (this->vertices.size() <= 0 || this->indices.size() <= 0) {
@@ -96,6 +97,7 @@ private:
     Shader* shader;
     glm::vec3 ModelOrigin;
     glm::vec3 MeshOrigin;
+    std::string mipmap;
 
     // initializes all the buffer objects/arrays
     void setupMesh()

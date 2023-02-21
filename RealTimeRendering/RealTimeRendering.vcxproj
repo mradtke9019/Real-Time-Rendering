@@ -148,7 +148,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Camera.cpp" />
-    <ClCompile Include="Cube.cpp" />
     <ClCompile Include="glad\src\glad.c" />
     <ClCompile Include="imgui\imgui.cpp" />
     <ClCompile Include="imgui\imgui_demo.cpp" />
@@ -170,7 +169,6 @@
   <ItemGroup>
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Character.h" />
-    <ClInclude Include="Cube.h" />
     <ClInclude Include="IRotatable.h" />
     <ClInclude Include="ITranslatable.h" />
     <ClInclude Include="Log.h" />
@@ -285,6 +283,14 @@
   </ItemGroup>
   <ItemGroup>
     <CopyFileToFolders Include="Models\Cube\cube.obj">
+      <FileType>Document</FileType>
+    </CopyFileToFolders>
+  </ItemGroup>
+  <ItemGroup>
+    <CopyFileToFolders Include="simple.frag">
+      <FileType>Document</FileType>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="simple.vert">
       <FileType>Document</FileType>
     </CopyFileToFolders>
   </ItemGroup>

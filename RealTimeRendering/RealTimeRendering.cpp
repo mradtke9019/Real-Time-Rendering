@@ -1,386 +1,341 @@
-//#include <GL/glew.h>
-//#include <GL/freeglut.h>
-//#include <iostream>
-//#include <fstream>
-//#include <string>
-//#include <vector>
-//#include <chrono>
-//#include <glm/glm.hpp>
-//#include <glm/gtc/matrix_transform.hpp>
-//#include <glm/gtc/type_ptr.hpp>
-//#include "Shader.h"
-//#include <vector>
-//#include "Model.h"
-//#include <random>
-//#include "Camera.h"
-//#include "FixedCamera.h"
-//#include <irrKlang.h>
-//#include "Skybox.h"
-//#include <filesystem>
-//
-//// Macro for indexing vertex buffer
-//#define BUFFER_OFFSET(i) ((char *)NULL + (i))
-//int Width;
-//int Height;
-//
-//using namespace std;
-//using namespace irrklang;
-//
-//vector<Shader*> shaders;
-//
-//ISoundEngine* SoundEngine;
-//
-//ICamera* activeCamera;
-//FixedCamera defaultCamera;
-//
-//bool Pause;
-//
-//vector<Model*> models;
-//Model* LightBulb;
-//Skybox* skybox;
-//
-//
-//// Idea to use delta frame from here https://learnopengl.com/Getting-started/Camera
-//float deltaTime;// Time between current frame and last frame
-//float lastFrame; // Time of last frame
-//float currentFrame;
-//
-//float rotateX = 0;
-//float rotateY = 0;
-//float rotateZ = 0;
-//
-//float cameraOrbit;
-//float cameraHeight;
-//float angleSpeed;
-//float theta;
-//glm::vec3 CameraTarget;
-//
-////////////// Shader parameters
-//float specularExp;
-//
-//
-//glm::vec3 LightColor;
-//glm::vec3 LightPosition;
-//glm::vec3 LightDirection;
-//
-//
-//glm::mat4 GetProjection()
-//{
-//	return glm::perspective(glm::radians(60.0f), (float)glutGet(GLUT_WINDOW_WIDTH) / (float)glutGet(GLUT_WINDOW_HEIGHT), 0.1f, 300.0f);
-//}
-//
-//// https://stackoverflow.com/questions/538661/how-do-i-draw-text-with-glut-opengl-in-c
-//void RenderString(float x, float y, void* font, const unsigned char* string, glm::vec3 rgb)
-//{
-//	//unsigned char string[] = "The quick god jumps over the lazy brown fox."
-//	//	int w;
-//	//w = glutBitmapLength(GLUT_BITMAP_8_BY_13, string);
-//	char* c;
-//
-//	glColor3f(rgb.r, rgb.g, rgb.b);
-//	//glRasterPos2f(x,y
-//	glRasterPos2i(x, y);
-//
-//	glutBitmapString(font, string);
-//}
-//
-//void display()
-//{
-//	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-//
-//
-//	auto timeValue = glutGet(GLUT_ELAPSED_TIME);
-//	currentFrame = timeValue;
-//	deltaTime = currentFrame - lastFrame;
-//	lastFrame = currentFrame;
-//
-//	float r = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
-//
-//	glm::mat4 projection = GetProjection();
-//
-//
-//	theta += angleSpeed * deltaTime;
-//
-//	float x = cameraOrbit * cos(glm::radians(theta));
-//	float y = cameraOrbit * sin(glm::radians(theta));
-//	glm::vec3 cameraPosition = glm::vec3(x, cameraHeight, y);
-//	defaultCamera.SetPosition(cameraPosition + defaultCamera.GetTarget());
-//
-//
-//	for (int i = 0; i < shaders.size(); i++)
-//	{
-//		Shader* s = shaders.at(i);
-//
-//		s->SetUniformVec3("LightColor", LightColor);
-//		s->SetUniformVec3("LightPosition", LightPosition);
-//		s->SetUniformVec3("LightDirection", LightDirection);
-//		s->SetUniformVec3("LightDirection", cameraPosition);
-//		s->SetUniform1f("time", timeValue);
-//		s->SetUniform1f("rand", r);
-//		s->SetUniformMatrix4fv("view", defaultCamera.GetViewTransform());
-//		s->SetUniformMatrix4fv("projection", &projection);
-//		s->SetUniformVec3("cameraPos", defaultCamera.GetPosition());
-//	}
-//
-//
-//	for (int i = 0; i < models.size(); i++)
-//	{
-//		Model* m = models.at(i);
-//		//m->SetShader(activeShader);
-//		m->Draw();
-//	}
-//
-//	// Draw last
-//	skybox->Draw(*activeCamera->GetViewTransform(), &projection);
-//
-//	glutPostRedisplay();
-//	glutSwapBuffers();
-//}
-//
-//void LoadShaders()
-//{
-//	// Set up the shaders
-//	Shader* blinnPhongShader = new Shader("./blinnPhongVertex.glsl", "./blinnPhongFragment.glsl", true);
-//	blinnPhongShader->SetUniform1f("specularExp", 64);
-//
-//	Shader* reflectionShader = new Shader("./fresnel.vert", "./reflection.frag");
-//	reflectionShader->LoadCubemap("cubemap");
-//
-//
-//	Shader* refractionShader = new Shader("./fresnel.vert", "./refraction.frag");
-//	refractionShader->LoadCubemap("cubemap");
-//
-//	Shader* chromaticShader = new Shader("./fresnel.vert", "./chromatic.frag");
-//	chromaticShader->LoadCubemap("cubemap");
-//
-//	Shader* fresnelShader = new Shader("./fresnel.vert", "./fresnel.frag", true);
-//	fresnelShader->LoadCubemap("cubemap");
-//
-//
-//	shaders.push_back(blinnPhongShader);
-//
-//	//shaders.push_back(reflectionShader);
-//	//shaders.push_back(refractionShader);
-//	//shaders.push_back(fresnelShader);
-//	//shaders.push_back(chromaticShader);
-//}
-//
-//
-//void LoadCameras()
-//{
-//	cameraOrbit = 100.0f;
-//	cameraHeight = 10.0f;
-//	angleSpeed = 0.01;
-//	theta = 0.0f;
-//	CameraTarget = glm::vec3(0.0f, 0.0f, 0.0f);
-//	defaultCamera = FixedCamera(glm::vec3(0.0f, cameraHeight, cameraOrbit), CameraTarget, glm::vec3(0.0f, 1.0f, 0.0f));
-//	activeCamera = &defaultCamera;
-//}
-//
-//void LoadObjects()
-//{
-//
-//	Model* airplane = new Model("./airplane/airplane.obj", glm::vec3(0, 0, 0), shaders.at(0));
-//	models.push_back(airplane);
-//	//for (int i = 0; i < shaders.size(); i++) 
-//	//{
-//	//	Model* teapot = new Model("./teapot.obj", glm::vec3(i * 70, 0, 0), shaders.at(i));
-//	//	models.push_back(teapot);
-//	//}
-//
-//	skybox = new Skybox();
-//
-//	SoundEngine = createIrrKlangDevice();
-//}
-//
-//void initLight()
-//{
-//	LightColor = glm::vec3(0.5, 0.5, 0.5);
-//	LightPosition = glm::vec3(0, 50.0, 0);
-//	LightDirection = glm::vec3(0.0, -1.0, 0.0);
-//}
-//
-//void init()
-//{
-//	glEnable(GL_DEPTH_TEST);
-//	initLight();
-//	LoadShaders();
-//	LoadCameras();
-//	LoadObjects();
-//}
-//
-//
-//void SetLightPosition(glm::vec3 pos) {
-//	LightPosition = pos;
-//	//LightBulb->SetPosition(LightPosition);
-//}
-//
-//glm::vec3 GetLightPosition()
-//{
-//	return LightPosition;
-//}
-//
-//
-//void mousePress(int button, int state, int x, int y)
-//{
-//	switch (button) {
-//	case GLUT_LEFT_BUTTON:
-//		break;
-//	case GLUT_MIDDLE_BUTTON:
-//		break;
-//	case GLUT_RIGHT_BUTTON:
-//		break;
-//	default:
-//		std::cout << "Unhandled mouse input" << std::endl;
-//		break;
-//	}
-//}
-//
-//// function to allow keyboard control
-//// it's called a callback function and must be registerd in main() using glutKeyboardFunc();
-//// the functions must be of a specific format - see freeglut documentation
-//// similar functions exist for mouse control etc
-//void keyPress(unsigned char key, int x, int y)
-//{
-//	float theta = glm::radians(10.0f);
-//	glm::mat4 i = glm::mat4(1);
-//	glm::vec3 xAxis = glm::vec3(1, 0, 0);
-//	glm::vec3 yAxis = glm::vec3(0, 1, 0);
-//	glm::vec3 zAxis = glm::vec3(0, 0, 1);
-//	bool rotated = false;
-//	glm::mat4 rotate;
-//	switch (key) {
-//	case '1':
-//		break;
-//	case '2':
-//		break;
-//	case '3':
-//		break;
-//	case 'd':
-//		rotateY += theta;
-//		rotated = true;
-//		break;
-//	case 'a':
-//		rotateY -= theta;
-//		rotated = true;
-//		break;
-//	case 'w':
-//		rotateX += theta;
-//		rotated = true;
-//		break;
-//	case 's':
-//		rotateX -= theta;
-//		rotated = true;
-//		break;
-//	case 'q':
-//		rotateZ += theta;
-//		rotated = true;
-//		break;
-//	case 'e':
-//		rotateZ -= theta;
-//		rotated = true;
-//		break;
-//	case ' ':
-//		Pause = !Pause;
-//		if (Pause)
-//		{
-//			angleSpeed = 0.0;
-//		}
-//		else
-//		{
-//			angleSpeed = 0.01;
-//		}
-//		break;
-//	case '0':
-//		break;
-//	}
-//
-//	if (rotated)
-//	{
-//		glm::mat4 i = glm::mat4(1);
-//		rotate = models.at(0)->GetModelTransform();
-//		rotate = glm::rotate(i, rotateX, xAxis) * glm::rotate(i, rotateY, yAxis) * glm::rotate(i, rotateZ, zAxis);
-//		models.at(0)->SetModelTransform(rotate);
-//	}
-//
-//	// we must call these to redraw the scene after we make any changes 
-//	glutPostRedisplay();
-//}
-//
-//
-////https://community.khronos.org/t/what-are-the-codes-for-arrow-keys-to-use-in-glut-keyboard-callback-function/26457/2
-//void altKeyPress(int key, int x, int y)
-//{
-//	int i = 0;
-//	glm::vec3 position;
-//	switch (key)
-//	{
-//	case GLUT_KEY_UP:
-//		cameraOrbit -= 10.0f;
-//		break;
-//
-//	case GLUT_KEY_DOWN:
-//		cameraOrbit += 10.0f;
-//		break;
-//	case GLUT_KEY_LEFT:
-//		for (int j = 0; j < models.size(); j++)
-//		{
-//			if (models.at(j)->GetPosition() == defaultCamera.GetTarget())
-//			{
-//				i = j - 1;
-//				break;
-//			}
-//		}
-//		if (i < 0) {
-//			i = models.size() - 1;
-//		}
-//		defaultCamera.SetTarget(models.at(i)->GetPosition());
-//		break;
-//	case GLUT_KEY_RIGHT:
-//		for (int j = 0; j < models.size(); j++)
-//		{
-//			if (models.at(j)->GetPosition() == defaultCamera.GetTarget())
-//			{
-//				i = j + 1;
-//				break;
-//			}
-//		}
-//		if (i >= models.size()) {
-//			i = 0;
-//		}
-//		defaultCamera.SetTarget(models.at(i)->GetPosition());
-//		break;
-//	}
-//	glutPostRedisplay();
-//}
-//
-//int main(int argc, char** argv) {
-//	Width = 800;
-//	Height = 600;
-//	// Set up the window
-//	glutInit(&argc, argv);
-//	glewExperimental = GL_TRUE;
-//	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
-//	glutInitWindowSize(Width, Height);
-//	glutCreateWindow("Real Time Rendering");
-//	// Tell glut where the display function is
-//	glutDisplayFunc(display);
-//	glutKeyboardFunc(keyPress);
-//	glutMouseFunc(mousePress);
-//	glutSpecialFunc(altKeyPress);
-//	glClearColor(0.1f, 0.2f, 0.2f, 1.0f);
-//	glClear(GL_COLOR_BUFFER_BIT);
-//	// A call to glewInit() must be done after glut is initialized!
-//	GLenum res = glewInit();
-//	// Check for any errors
-//	if (res != GLEW_OK) {
-//		fprintf(stderr, "Error: '%s'\n", glewGetErrorString(res));
-//		return 1;
-//	}
-//	// Set up your objects and shaders
-//	init();
-//
-//	// Begin infinite event loop
-//	glutMainLoop();
-//	return 0;
-//}
+#include "imgui.h"
+#include "imgui_impl_glfw.h"
+#include "imgui_impl_opengl3.h"
+
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
+
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <vector>
+#include <chrono>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+#include "Shader.h"
+
+#include "Model.h"
+#include <random>
+#include "Camera.h"
+#include "FixedCamera.h"
+#include "Skybox.h"
+#include <filesystem>
+#include "Log.h"
+#include "Cube.h"
+
+// Macro for indexing vertex buffer
+#define BUFFER_OFFSET(i) ((char *)NULL + (i))
+int Width;
+int Height;
+using namespace std;
+
+
+vector<Shader*> shaders;
+
+ICamera* activeCamera;
+FixedCamera defaultCamera;
+
+int MIN_MIMAPidx;
+
+const char* mipmapsDisplay[4];
+
+Cube* cube;
+vector<Model*> models;
+Model* LightBulb;
+Skybox* skybox;
+
+
+// Idea to use delta frame from here https://learnopengl.com/Getting-started/Camera
+float deltaTime;// Time between current frame and last frame
+float lastFrame; // Time of last frame
+float currentFrame;
+
+int rotatationMeshIndex = 0;
+
+float cameraOrbit;
+float cameraHeight;
+float orbitSpeed;
+float theta;
+glm::vec3 CameraTarget;
+
+//////////// Shader parameters
+float specularExp;
+
+
+glm::vec3 LightColor;
+glm::vec3 LightPosition;
+glm::vec3 LightDirection;
+
+
+glm::mat4 GetProjection()
+{
+	return glm::perspective(glm::radians(60.0f), (float)Width / (float)Height, 0.1f, 300.0f);
+}
+
+
+void display(GLFWwindow* window)
+{
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+
+	float timeValue = static_cast<float>(glfwGetTime());
+	currentFrame = timeValue;
+	deltaTime = currentFrame - lastFrame;
+	lastFrame = currentFrame;
+
+	float r = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+
+	glm::mat4 projection = GetProjection();
+
+
+	theta += orbitSpeed * deltaTime;
+
+	float x = cameraOrbit * cos(glm::radians(theta));
+	float y = cameraOrbit * sin(glm::radians(theta));
+	glm::vec3 cameraPosition = glm::vec3(x, cameraHeight, y);
+
+	//defaultCamera.SetTarget(models.at(modelFocused)->GetPosition());
+	defaultCamera.SetPosition(cameraPosition + defaultCamera.GetTarget());
+
+
+	for (int i = 0; i < shaders.size(); i++)
+	{
+		Shader* s = shaders.at(i);
+
+		s->SetUniformVec3("LightColor", LightColor);
+		s->SetUniformVec3("LightPosition", LightPosition);
+		s->SetUniform1f("time", timeValue);
+		s->SetUniform1f("rand", r);
+		s->SetUniformMatrix4fv("view", defaultCamera.GetViewTransform());
+		s->SetUniformMatrix4fv("projection", &projection);
+		s->SetUniformVec3("cameraPos", defaultCamera.GetPosition());
+	}
+
+	//airplane->RotateMeshZ(29, angleSpeed * 1000);
+	//airplane->RotateMeshZ(30, angleSpeed * 1000);
+	//airplane->RotateMeshZ(31, angleSpeed * 1000);
+	//airplane->RotateMeshZ(32, angleSpeed * 1000);
+
+	for (int i = 0; i < models.size(); i++)
+	{
+		Model* m = models.at(i);
+		m->Draw();
+	}
+
+	//cube->Draw();
+
+	// Draw last
+	//skybox->Draw(*activeCamera->GetViewTransform(), &projection);
+}
+
+void LoadShaders()
+{
+	// Set up the shaders
+	Shader* textureShader = new Shader("./simple.vert", "./simple.frag", true);
+
+	//Shader* blinnPhongShader = new Shader("./blinnPhong.vert", "./blinnPhong.frag", false);
+	//blinnPhongShader->SetUniform1f("specularExp", 64);
+	//blinnPhongShader->SetUniform1i("UseNormalMap", 0);
+
+	//Shader* reflectionShader = new Shader("./fresnel.vert", "./reflection.frag");
+	////reflectionShader->LoadCubemap("cubemap");
+
+
+	//Shader* refractionShader = new Shader("./fresnel.vert", "./refraction.frag");
+	////refractionShader->LoadCubemap("cubemap");
+
+	//Shader* chromaticShader = new Shader("./fresnel.vert", "./chromatic.frag");
+	////chromaticShader->LoadCubemap("cubemap");
+
+	//Shader* fresnelShader = new Shader("./fresnel.vert", "./fresnel.frag", false);
+	//fresnelShader->LoadCubemap("cubemap");
+
+
+	shaders.push_back(textureShader);
+
+}
+
+
+void LoadCameras()
+{
+	cameraOrbit = 30.0f;
+	cameraHeight = 5.0f;
+	orbitSpeed = 1.0f;
+	theta = 0.0f;
+	CameraTarget = glm::vec3(0.0f, 0.0f, 0.0f);
+	defaultCamera = FixedCamera(glm::vec3(0.0f, cameraHeight, cameraOrbit), CameraTarget, glm::vec3(0.0f, 1.0f, 0.0f));
+	activeCamera = &defaultCamera;
+}
+
+void LoadObjects()
+{
+	mipmapsDisplay[0] = "GL_NEAREST_MIPMAP_NEAREST";
+	mipmapsDisplay[1] = "GL_LINEAR_MIPMAP_NEAREST";
+	mipmapsDisplay[2] = "GL_NEAREST_MIPMAP_LINEAR";
+	mipmapsDisplay[3] = "GL_LINEAR_MIPMAP_LINEAR";
+
+	MIN_MIMAPidx = 0;
+
+	for (int i = 0; i < 1; i++)
+	{
+		//Model* model = new Model("./Models/Airplane/piper_pa18.obj", glm::vec3(i * 50, 0, 0), shaders.at(0), mimmaps[i]);
+	}
+
+	Model* model = new Model("./Models/Cube/cube.obj", glm::vec3(0, 0, 0), shaders.at(0), mipmapsDisplay[MIN_MIMAPidx]);
+	models.push_back(model);
+	//cube = new Cube(shaders.at(0), mipmapsDisplay[MIN_MIMAPidx]);
+
+
+
+	//LightBulb = new Model("./Models/Sphere/Sphere.obj", LightPosition, shaders.at(0));
+	//models.push_back(LightBulb);
+
+	//skybox = new Skybox();
+}
+
+void initLight()
+{
+	LightColor = glm::vec3(0.5, 0.5, 0.5);
+	LightPosition = glm::vec3(20, 100.0, 0);
+	LightDirection = glm::vec3(0.0, -1.0, 0.0);
+}
+
+void init()
+{
+	glEnable(GL_DEPTH_TEST);
+	glClearColor(0, 0.749f, 1.0f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT);
+	initLight();
+	LoadShaders();
+	LoadCameras();
+	LoadObjects();
+}
+
+
+void SetLightPosition(glm::vec3 pos) {
+	LightPosition = pos;
+	LightBulb->SetPosition(LightPosition);
+}
+
+glm::vec3 GetLightPosition()
+{
+	return LightPosition;
+}
+
+
+// function to allow keyboard control
+// it's called a callback function and must be registerd in main() using glutKeyboardFunc();
+// the functions must be of a specific format - see freeglut documentation
+// similar functions exist for mouse control etc
+void keyPress(GLFWwindow* window, int key, int scancode, int action, int mods)
+{
+	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
+	{
+		glfwSetWindowShouldClose(window, GLFW_TRUE);
+	}
+}
+
+void framebuffer_size_callback(GLFWwindow* window, int width, int height)
+{
+	Height = height;
+	Width = width;
+	glViewport(0, 0, width, height);
+}
+
+// Function where we set our debuggables
+void ImguiData()
+{
+	//ImGui new frame
+	ImGui_ImplOpenGL3_NewFrame();
+	ImGui_ImplGlfw_NewFrame();
+	ImGui::NewFrame();
+	ImGui::SetNextWindowSize(ImVec2(400, 200));
+	ImGui::Begin("ImGUI window");
+
+	//ImGui::SliderInt("Model Target", &modelFocused, 0, 3);
+	ImGui::Combo("GL_TEXTURE_MIN_FILTER", &MIN_MIMAPidx, mipmapsDisplay, IM_ARRAYSIZE(mipmapsDisplay));
+	if (ImGui::Button("Reload Model")) {
+		//cube = new Cube(shaders.at(0), mipmapsDisplay[MIN_MIMAPidx]);
+		models.clear();
+		Model* model = new Model("./Models/Cube/cube.obj", glm::vec3(0, 0, 0), shaders.at(0), mipmapsDisplay[MIN_MIMAPidx]);
+		models.push_back(model);
+	}
+
+	ImGui::SliderFloat("Orbit Speed", &orbitSpeed, 0.0f, 100.0f);
+	ImGui::SliderFloat("Camera Height", &cameraHeight, -20.0f, 20.0f);
+	ImGui::SliderFloat("Orbit Radius", &cameraOrbit, 0.0f, 100.0f);
+}
+
+void ImguiDraw()
+{
+	ImGui::End();
+	ImGui::Render();
+	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+}
+
+int main()
+{
+	Width = 1200;
+	Height = 900;
+	glfwInit();
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	// --------------------
+	GLFWwindow* window = glfwCreateWindow(Width, Height, "Scene", NULL, NULL);
+
+	if (window == NULL)
+	{
+		std::cout << "Failed to create GLFW window" << std::endl;
+		glfwTerminate();
+		return -1;
+	}
+	glfwMakeContextCurrent(window);
+	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+	glfwSetKeyCallback(window, keyPress);
+	// For potential future use
+	//glfwSetCursorPosCallback(window, mouse_callback);
+	//glfwSetScrollCallback(window, scroll_callback);
+
+	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+
+	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+	{
+		std::cout << "Failed to initialize GLAD" << std::endl;
+		return -1;
+	}
+
+
+	//IMGUI code
+	IMGUI_CHECKVERSION();
+	ImGui::CreateContext();
+	ImGuiIO& io = ImGui::GetIO(); (void)io;
+	ImGui::StyleColorsDark();
+	ImGui_ImplGlfw_InitForOpenGL(window, true);
+	ImGui_ImplOpenGL3_Init("#version 330");
+
+	init();
+
+
+	while (!glfwWindowShouldClose(window))
+	{
+
+		ImguiData();
+		display(window);
+		ImguiDraw();
+
+		glfwSwapBuffers(window);
+		glfwPollEvents();
+	}
+
+
+	ImGui_ImplOpenGL3_Shutdown();
+	ImGui_ImplGlfw_Shutdown();
+	ImGui::DestroyContext();
+
+	glfwDestroyWindow(window);
+
+	glfwTerminate();
+	return 0;
+}

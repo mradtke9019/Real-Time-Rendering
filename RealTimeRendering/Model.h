@@ -33,17 +33,17 @@ public:
     vector<Mesh>    meshes;
     string directory;
     bool gammaCorrection;
-    GLint mipmap;
+    std::string mipmap;
 
     // constructor, expects a filepath to a 3D model.
     Model(string const& path, bool gamma = false) 
-        : gammaCorrection(gamma), IRotatable(), mipmap(GL_NEAREST_MIPMAP_NEAREST)
+        : gammaCorrection(gamma), IRotatable(), mipmap("GL_NEAREST_MIPMAP_NEAREST")
     {
         loadModel(path);
     }
     Model(std::string path, glm::vec3 Position, Shader* Shader);
     Model(std::string path, glm::vec3 Position, Shader* Shader, glm::vec3 color);
-    Model(std::string path, glm::vec3 Position, Shader* Shader, GLint mipmapPolicy);
+    Model(std::string path, glm::vec3 Position, Shader* Shader, std::string mipmapPolicy);
     Shader* GetShader();
 
     void SetShader(Shader* Shader);
@@ -201,7 +201,7 @@ private:
         textures.insert(textures.end(), heightMaps.begin(), heightMaps.end());
 
         // return a mesh object created from the extracted mesh data
-        return Mesh(vertices, indices, textures,shader);
+        return Mesh(vertices, indices, textures,shader, mipmap);
     }
 
     // checks all material textures of a given type and loads the textures if they're not loaded yet.
@@ -270,7 +270,28 @@ private:
             //GL_LINEAR_MIPMAP_NEAREST : takes the nearest mipmap leveland samples that level using linear interpolation.
             //GL_NEAREST_MIPMAP_LINEAR : linearly interpolates between the two mipmaps that most closely match the size of a pixeland samples the interpolated level via nearest neighbor interpolation.
             //GL_LINEAR_MIPMAP_LINEAR : linearly interpolates between the two closest mipmaps and samples the interpolated level via linear interpolation.
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, mipmap);
+
+            if (mipmap == "GL_NEAREST_MIPMAP_NEAREST")
+            {
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
+            }
+            else if (mipmap == "GL_LINEAR_MIPMAP_NEAREST")
+            {
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
+            }
+            else if (mipmap == "GL_NEAREST_MIPMAP_LINEAR")
+            {
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
+            }
+            else if (mipmap == "GL_LINEAR_MIPMAP_LINEAR")
+            {
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+            }
+            // Default
+            else {
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
+            }
+
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
             stbi_image_free(data);

@@ -96,9 +96,6 @@
     <ClCompile Include="imgui\imgui.cpp">
       <Filter>Source Files\imgui</Filter>
     </ClCompile>
-    <ClCompile Include="Cube.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Model.h">
@@ -141,9 +138,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Log.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Cube.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -243,6 +237,12 @@
     </CopyFileToFolders>
     <CopyFileToFolders Include="Models\Cube\cube.obj">
       <Filter>Resource Files\Models\Cube</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="simple.vert">
+      <Filter>Resource Files\Shaders</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="simple.frag">
+      <Filter>Resource Files\Shaders</Filter>
     </CopyFileToFolders>
   </ItemGroup>
   <ItemGroup>
