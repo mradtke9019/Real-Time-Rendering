@@ -38,9 +38,9 @@ public:
 		else
 		{
 			result =
-				glm::rotate(result, glm::radians(GetRotateX()), glm::vec3(1.0f, 0.0f, 0.0f)) *
-				glm::rotate(result, glm::radians(GetRotateY()), glm::vec3(0.0f, 1.0f, 0.0f)) *
-				glm::rotate(result, glm::radians(GetRotateZ()), glm::vec3(0.0f, 0.0f, 1.0f));
+				glm::rotate(result, glm::radians(*GetRotateX()), glm::vec3(1.0f, 0.0f, 0.0f)) *
+				glm::rotate(result, glm::radians(*GetRotateY()), glm::vec3(0.0f, 1.0f, 0.0f)) *
+				glm::rotate(result, glm::radians(*GetRotateZ()), glm::vec3(0.0f, 0.0f, 1.0f));
 		}
 		return result;
 	}
@@ -57,18 +57,18 @@ public:
 	}
 
 
-	float GetRotateX()
+	float* GetRotateX()
 	{
-		return rotateX;
+		return &rotateX;
 	}
 
-	float GetRotateY()
+	float* GetRotateY()
 	{
-		return rotateY;
+		return &rotateY;
 	}
-	float GetRotateZ()
+	float* GetRotateZ()
 	{
-		return rotateZ;
+		return &rotateZ;
 	}
 
 	void RotateX(float x)

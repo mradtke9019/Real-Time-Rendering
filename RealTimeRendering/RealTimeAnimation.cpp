@@ -121,6 +121,8 @@ void display(GLFWwindow* window)
 		m->Draw();
 	}
 
+	Root->Draw();
+
 	//cube->Draw();
 
 	// Draw last
@@ -151,7 +153,7 @@ void LoadShaders()
 
 
 	shaders.push_back(blinnPhongShader);
-
+	activeShader = blinnPhongShader;
 }
 
 
@@ -178,7 +180,10 @@ void LoadObjects()
 	//models.push_back(model);
 
 	Root = new Bone(activeShader);
-
+	Root->AddBone(new Bone(activeShader));
+	Root->GetChild()->AddBone(new Bone(activeShader));
+	Root->GetChild()->GetChild()->AddBone(new Bone(activeShader));
+	Root->GetChild()->GetChild()->GetChild()->AddBone(new Bone(activeShader));
 }
 
 void initLight()
@@ -241,15 +246,25 @@ void ImguiData()
 	ImGui::Begin("ImGUI window");
 
 	//ImGui::SliderInt("Model Target", &modelFocused, 0, 3);
-	ImGui::Combo("GL_TEXTURE_MIN_FILTER", &MIN_MIMAPidx, mipmapsDisplay,IM_ARRAYSIZE(mipmapsDisplay));
-	if (ImGui::Button("Reload Model")) {
+	//ImGui::Combo("GL_TEXTURE_MIN_FILTER", &MIN_MIMAPidx, mipmapsDisplay,IM_ARRAYSIZE(mipmapsDisplay));
+	//if (ImGui::Button("Reload Model")) {
 
 
-	}
+	//}
 
 	ImGui::SliderFloat("Orbit Speed", &orbitSpeed, 0.0f, 100.0f);
 	ImGui::SliderFloat("Camera Height", &cameraHeight, -20.0f, 20.0f);
 	ImGui::SliderFloat("Orbit Radius", &cameraOrbit, 0.0f, 100.0f);
+
+	Bone* curr = Root;
+	int i = 0;
+	while (curr != nullptr)
+	{
+		// Create rotations for each branch in the bone structure
+		ImGui::SliderFloat(("Bone " + std::to_string(i)).c_str(), curr->GetRotateX(), 0.0f, 180.f);
+		curr = curr->GetChild();
+		i++;
+	}
 }
 
 void ImguiDraw()

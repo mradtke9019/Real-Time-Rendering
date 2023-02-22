@@ -10,7 +10,12 @@ private:
 	Model BoneModel;
 	glm::mat4 Transform;
 	const float Length = 1;
-	const glm::vec3 Axis = glm::vec3(0,1,0);
+	const glm::vec3 Axis = glm::vec3(0,2,0);
+
+	glm::mat4 GetLocalTransform()
+	{
+		return GetRotationMatrix() * glm::translate(glm::mat4(1), Axis);
+	}
 
 public:
 
@@ -21,9 +26,9 @@ public:
 	glm::mat4 GetGlobalTransform()
 	{
 		if (parent != nullptr)
-			return parent->GetGlobalTransform() * Transform;
+			return parent->GetGlobalTransform() * GetLocalTransform();
 		else
-			return Transform;
+			return GetLocalTransform();
 	}
 
 	void AddBone(Bone* bone)
@@ -33,14 +38,23 @@ public:
 		child->Transform = glm::translate(glm::mat4(1), Axis);
 	}
 
+	Bone* GetChild()
+	{
+		return this->child;
+	}
+
 	void SetParent(Bone* b)
 	{
 		this->parent = b;
 	}
 
-	void Draw()
+	void Draw(bool drawChildren = true)
 	{
-		BoneModel.Draw();
+		BoneModel.Draw(GetGlobalTransform());
+		if (drawChildren && this->child != nullptr)
+		{
+			child->Draw(drawChildren);
+		}
 	}
 };
 

@@ -49,7 +49,11 @@ void main()
     vec3 viewDir = normalize(ViewPosition - fPosition);
     vec3 reflectDir = reflect(-lightDir, normal);
 
-    ObjectColor = texture(texture_diffuse1, TexCoord).xyz;
+    ObjectColor = texture(texture_diffuse1, TexCoord).rgb;
+    if(ObjectColor == vec3(0,0,0))
+    {
+        ObjectColor = vec3(0.5,0.5,0.5);
+    }
 
     // Ambient
     vec3 ambient = ambientCoeff * ObjectColor;

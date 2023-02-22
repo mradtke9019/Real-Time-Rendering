@@ -43,10 +43,20 @@ void Model::Draw()
 	}
 }
 
-void LoadTexture(std::string texturePath, GLint mipmapPolicy)
-{
 
+// draws the modell with the given transform overriding the existing one
+void Model::Draw(glm::mat4 transform)
+{
+	shader->Use();
+	shader->SetUniformMatrix4fv("model", &transform);
+	shader->SetUniformVec3("ObjectColor", ObjectColor);
+	for (int i = 0; i < meshes.size(); i++)
+	{
+		meshes.at(i).Draw(&transform);
+	}
 }
+
+
 
 Shader* Model::GetShader()
 {
