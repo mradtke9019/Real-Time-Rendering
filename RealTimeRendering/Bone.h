@@ -11,10 +11,18 @@ private:
 	glm::mat4 Transform;
 	const float Length = 1;
 	const glm::vec3 Axis = glm::vec3(0,2,0);
+	const glm::vec3 Origin = glm::vec3(0, 0, 0);
 
 	glm::mat4 GetLocalTransform()
 	{
-		return GetRotationMatrix() * glm::translate(glm::mat4(1), Axis);
+		// Translate to origin based on where it is in the tree
+		glm::vec3 t = glm::vec3(0, 0, 0);
+		// Undo wherever we are in global coordinates
+		if (parent != nullptr)
+		{
+			glm::vec3 t = glm::inverse(parent->GetGlobalTransform()) * glm::vec4(Origin, 1);
+		}
+		return glm::translate(glm::mat4(1), Axis) * glm::translate(glm::mat4(1), t) *  GetRotationMatrix()  * glm::translate(glm::mat4(1), -t);
 	}
 
 public:
@@ -57,4 +65,3 @@ public:
 		}
 	}
 };
-
