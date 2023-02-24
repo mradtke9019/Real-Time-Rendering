@@ -242,8 +242,8 @@ void ImguiData()
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplGlfw_NewFrame();
 	ImGui::NewFrame();
-	ImGui::SetNextWindowSize(ImVec2(400, 200));
-	ImGui::Begin("ImGUI window");
+	ImGui::SetNextWindowSize(ImVec2(400,200));
+	ImGui::Begin("ImGui");
 
 	//ImGui::SliderInt("Model Target", &modelFocused, 0, 3);
 	//ImGui::Combo("GL_TEXTURE_MIN_FILTER", &MIN_MIMAPidx, mipmapsDisplay,IM_ARRAYSIZE(mipmapsDisplay));
@@ -252,19 +252,36 @@ void ImguiData()
 
 	//}
 
-	ImGui::SliderFloat("Orbit Speed", &orbitSpeed, 0.0f, 100.0f);
-	ImGui::SliderFloat("Camera Height", &cameraHeight, -20.0f, 20.0f);
-	ImGui::SliderFloat("Orbit Radius", &cameraOrbit, 0.0f, 100.0f);
+	ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+
+	if (ImGui::TreeNode("Camera Settings"))
+	{
+		ImGui::SliderFloat("Orbit Speed", &orbitSpeed, 0.0f, 100.0f);
+		ImGui::SliderFloat("Camera Height", &cameraHeight, -20.0f, 20.0f);
+		ImGui::SliderFloat("Orbit Radius", &cameraOrbit, 0.0f, 100.0f);
+
+		ImGui::TreePop();
+	}
 
 	Bone* curr = Root;
 	int i = 0;
 	while (curr != nullptr)
 	{
+		if (ImGui::TreeNode(("Bone " + std::to_string(i)).c_str()))
+		{
+			ImGui::SliderFloat("X", curr->GetRotateX(), 0.0f, 180.f);
+			ImGui::SliderFloat("Y", curr->GetRotateY(), 0.0f, 180.f);
+			ImGui::SliderFloat("Z", curr->GetRotateZ(), 0.0f, 180.f);
+
+			ImGui::TreePop();
+		}
+
 		// Create rotations for each branch in the bone structure
-		ImGui::SliderFloat(("Bone " + std::to_string(i)).c_str(), curr->GetRotateX(), 0.0f, 180.f);
 		curr = curr->GetChild();
 		i++;
 	}
+
+
 }
 
 void ImguiDraw()
