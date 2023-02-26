@@ -38,6 +38,8 @@ int MIN_MIMAPidx;
 
 const char* mipmapsDisplay[4];
 
+bool MoveToTarget;
+glm::vec3 Target;
 Bone* Root;
 vector<Model*> models;
 Model* LightBulb;
@@ -96,6 +98,17 @@ void display(GLFWwindow* window)
 	//defaultCamera.SetTarget(models.at(modelFocused)->GetPosition());
 	defaultCamera.SetPosition(cameraPosition + defaultCamera.GetTarget());
 
+
+
+	if (MoveToTarget)
+	{
+		// Check if we made it. If so, dont move anymore
+		CCDResult r = Root->RotateTowardsPosition(Target);
+		if (r == Success)
+		{
+			MoveToTarget = false;
+		}
+	}
 
 	for (int i = 0; i < shaders.size(); i++)
 	{
@@ -159,9 +172,9 @@ void LoadShaders()
 
 void LoadCameras()
 {
-	cameraOrbit = 30.0f;
-	cameraHeight = 5.0f;
-	orbitSpeed = 1.0f;
+	cameraOrbit = 15.0f;
+	cameraHeight = 10.0f;
+	orbitSpeed = 0.0f;
 	theta = 0.0f;
 	CameraTarget = glm::vec3(0.0f, 0.0f, 0.0f);
 	defaultCamera = FixedCamera(glm::vec3(0.0f, cameraHeight, cameraOrbit), CameraTarget, glm::vec3(0.0f, 1.0f, 0.0f));
@@ -181,9 +194,13 @@ void LoadObjects()
 
 	Root = new Bone(activeShader);
 	Root->AddBone(new Bone(activeShader));
-	Root->GetChild()->AddBone(new Bone(activeShader));
-	Root->GetChild()->GetChild()->AddBone(new Bone(activeShader));
-	Root->GetChild()->GetChild()->GetChild()->AddBone(new Bone(activeShader));
+	Root->GetChildren().at(0)->AddBone(new Bone(activeShader));
+	Root->GetChildren().at(0)->GetChildren().at(0)->AddBone(new Bone(activeShader));
+	Root->GetChildren().at(0)->GetChildren().at(0)->GetChildren().at(0)->AddBone(new Bone(activeShader));
+	int depth = Bone::GetTreeHeight(Root);
+
+	Target = glm::vec3(0, 0, 0);
+	MoveToTarget = false;
 }
 
 void initLight()
@@ -263,12 +280,28 @@ void ImguiData()
 		ImGui::TreePop();
 	}
 
+	// Target Settings
+	if (ImGui::TreeNode("Target Settings"))
+	{
+		ImGui::SliderFloat("X", &Target.x, -10.0f, 10.0f);
+		ImGui::SliderFloat("Y", &Target.y, -10.0f, 10.0f);
+		ImGui::SliderFloat("Z", &Target.z, -10.0f, 10.0f);
+		ImGui::TreePop();
+	}
+
+	ImGui::Checkbox("Move Root To Target",&MoveToTarget);
+	
+
 	Bone* curr = Root;
 	int i = 0;
 	while (curr != nullptr)
 	{
 		if (ImGui::TreeNode(("Bone " + std::to_string(i)).c_str()))
 		{
+			glm::vec3 rootPos = curr->GetGlobalRootPosition();
+			glm::vec3 pos = curr->GetGlobalTipPosition();
+			ImGui::Text(("Root Global Position: (" + std::to_string(rootPos.x) + "," + std::to_string(rootPos.y) + "," + std::to_string(rootPos.z) + ")").c_str());
+			ImGui::Text(("Tip Global Position: (" + std::to_string(pos.x) + "," + std::to_string(pos.y) + "," + std::to_string(pos.z) + ")").c_str());
 			ImGui::SliderFloat("X", curr->GetRotateX(), 0.0f, 180.f);
 			ImGui::SliderFloat("Y", curr->GetRotateY(), 0.0f, 180.f);
 			ImGui::SliderFloat("Z", curr->GetRotateZ(), 0.0f, 180.f);
@@ -277,7 +310,15 @@ void ImguiData()
 		}
 
 		// Create rotations for each branch in the bone structure
-		curr = curr->GetChild();
+		std::vector<Bone*> children = curr->GetChildren();
+		if(children.size() > 0)
+		{
+			curr = children.at(0);
+		}
+		else
+		{
+			curr = nullptr;
+		}
 		i++;
 	}
 

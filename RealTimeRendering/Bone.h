@@ -2,16 +2,20 @@
 #include "Model.h"
 
 #pragma once
+enum CCDResult {Success,Processing,Failure};
+
 class Bone : public IRotatable
 {
 private:
 	Bone* parent;
-	Bone* child;
+	std::vector<Bone*> children;
 	Model BoneModel;
-	glm::mat4 Transform;
+	glm::vec3 LocalPosition;
 	const float Length = 1;
-	const glm::vec3 Axis = glm::vec3(0,2,0);
+	const glm::vec3 Axis = glm::vec3(0,1,0);
 	const glm::vec3 Origin = glm::vec3(0, 0, 0);
+
+
 
 	glm::mat4 GetLocalTransform()
 	{
@@ -22,13 +26,22 @@ private:
 		{
 			glm::vec3 t = glm::inverse(parent->GetGlobalTransform()) * glm::vec4(Origin, 1);
 		}
-		return glm::translate(glm::mat4(1), Axis) * glm::translate(glm::mat4(1), t) *  GetRotationMatrix()  * glm::translate(glm::mat4(1), -t);
+		return glm::translate(glm::mat4(1), LocalPosition) * glm::translate(glm::mat4(1), t) *  GetRotationMatrix()  * glm::translate(glm::mat4(1), -t);
+		//return glm::translate(glm::mat4(1), Axis * Length) * glm::translate(glm::mat4(1), t) * GetRotationMatrix() * glm::translate(glm::mat4(1), -t);
 	}
 
 public:
-
-	Bone(Shader * s);
+	Bone() {};
+	Bone(Shader* s);
 	Bone(Shader* s, Bone* parent);
+	Bone(Shader* s, Bone* parent, glm::vec3 pos);
+
+	/// <summary>
+	/// Will update and move this bone and its children towards the target position
+	/// </summary>
+	/// <param name="target"></param>
+	/// <returns></returns>
+	CCDResult RotateTowardsPosition(glm::vec3 target);
 
 	// Retrieves the global transform that the current bone would take place in. Recursive and will use its parents transform if it exists.
 	glm::mat4 GetGlobalTransform()
@@ -39,16 +52,105 @@ public:
 			return GetLocalTransform();
 	}
 
-	void AddBone(Bone* bone)
+	Bone* GetRoot()
 	{
-		child = bone;
-		child->SetParent(this);
-		child->Transform = glm::translate(glm::mat4(1), Axis);
+		Bone* curr = this;
+
+		while (curr->parent != nullptr)
+		{
+			curr = curr->parent;
+		}
+		return curr;
 	}
 
-	Bone* GetChild()
+	glm::vec3 GetGlobalRootPosition()
 	{
-		return this->child;
+		return GetGlobalTransform() * glm::vec4(GetRoot()->LocalPosition, 1.0f);
+	}
+
+	// Get the tip position of the cylinder bone based off the root position
+	glm::vec3 GetGlobalTipPosition()
+	{
+		// I know the root position code works, so use child position as root if it exists
+		if (children.size() > 0)
+		{
+			return children.at(0)->GetGlobalRootPosition();
+		}
+
+		// To find tip, create bone child and get its root position, then remove bone
+		int idx = children.size();
+		AddBone(new Bone());
+
+		glm::vec3 tip = children.at(idx)->GetGlobalRootPosition();
+		Bone* t = RemoveBone(idx);
+		delete t;
+		t = nullptr;
+
+		return tip;
+
+		//glm::vec3 tip = GetGlobalRootPosition();
+		//tip += glm::vec3(GetRotationMatrix() * glm::vec4(Axis * Length,1.0f));// *glm::vec4(LocalPosition, 1));
+		//return tip;
+	}
+
+	void AddBone(Bone* bone)
+	{
+		children.push_back(bone);
+		bone->SetParent(this);
+		bone->LocalPosition = Axis * Length;
+	}
+
+	// Remove bone from children list
+	Bone* RemoveBone(int idx)
+	{
+		Bone* bone = children.at(idx);
+		children.erase(children.begin() + idx);
+		return bone;
+	}
+
+	int GetDepth()
+	{
+		int depth = 0;
+		Bone* curr = this->parent;
+		while (curr != nullptr)
+		{
+			curr = curr->parent;
+			depth++;
+		}
+		return depth;
+	}
+
+	static int GetTreeHeight(Bone* root, int currHeight = 1)
+	{
+		int max = -1;
+		std::vector<int> depths = std::vector<int>();
+		for (int i = 0; i < root->children.size(); i++)
+		{
+			depths.push_back(GetTreeHeight(root->children.at(i), currHeight + 1));
+		}
+		for (int j = 0; j < depths.size(); j++)
+			if (depths[j] > max)
+				max = depths[j];
+		if (currHeight > max)
+			max = currHeight;
+		return max;
+	}
+
+	std::vector<Bone*> GetChildren()
+	{
+		return this->children;
+	}
+
+	Bone* GetFirstChild()
+	{
+		Bone* r = nullptr;
+
+		if (this->children.size() > 0)
+		{
+			r = children.at(0);
+		}
+
+		return r;
 	}
 
 	void SetParent(Bone* b)
@@ -59,9 +161,12 @@ public:
 	void Draw(bool drawChildren = true)
 	{
 		BoneModel.Draw(GetGlobalTransform());
-		if (drawChildren && this->child != nullptr)
+		if (drawChildren)
 		{
-			child->Draw(drawChildren);
+			for (int i = 0; i < children.size(); i++)
+			{
+				children.at(i)->Draw(drawChildren);
+			}
 		}
 	}
 };
