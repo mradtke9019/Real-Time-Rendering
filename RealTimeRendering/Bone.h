@@ -87,10 +87,6 @@ public:
 		t = nullptr;
 
 		return tip;
-
-		//glm::vec3 tip = GetGlobalRootPosition();
-		//tip += glm::vec3(GetRotationMatrix() * glm::vec4(Axis * Length,1.0f));// *glm::vec4(LocalPosition, 1));
-		//return tip;
 	}
 
 	void AddBone(Bone* bone)

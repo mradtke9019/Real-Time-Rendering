@@ -10,8 +10,10 @@ private:
 	float rotateX;
 	float rotateY;
 	float rotateZ;
+	glm::vec3 Axis;
+	float angle;
 
-	bool useQuaternions;
+	bool useAxisAngle;
 
 
 public:
@@ -21,7 +23,9 @@ public:
 		rotateY = 0;
 		rotateZ = 0;
 
-		useQuaternions = false;
+		useAxisAngle = false;
+		Axis = glm::vec3(0,0,0);
+		angle = 0.0f;
 	}
 
 
@@ -51,17 +55,11 @@ public:
 	glm::mat4 GetRotationMatrix()
 	{
 		glm::mat4 result = glm::mat4(1);
-		if (useQuaternions) 
+		if (useAxisAngle) 
 		{
-
-			// Reference: https://www.opengl-tutorial.org/intermediate-tutorials/tutorial-17-quaternions
-			glm::quat x = glm::angleAxis(glm::radians(rotateX), glm::vec3(1, 0, 0));
-			glm::quat y = glm::angleAxis(glm::radians(rotateY), glm::vec3(0, 1, 0));
-			glm::quat z = glm::angleAxis(glm::radians(rotateZ), glm::vec3(0, 0, 1));
-
-			// Order matters?
-			glm::quat quaternion = y * z * x;
-			result = glm::toMat4(quaternion);
+			if (glm::length(Axis) <= 0 || Axis == glm::vec3(0, 0, 0))
+				return glm::mat4(1);
+			result = glm::toMat4(glm::angleAxis(angle, Axis));
 		}
 		else
 		{
@@ -74,16 +72,15 @@ public:
 	}
 	
 
-	bool UsingQuaternions()
+	bool UsingAxisAngle()
 	{
-		return useQuaternions;
+		return useAxisAngle;
 	}
 
-	void SetQuaternionPolicy(bool use)
+	void UseAxisAngle(bool use)
 	{
-		useQuaternions = use;
+		useAxisAngle = use;
 	}
-
 
 	float* GetRotateX()
 	{
@@ -129,6 +126,24 @@ public:
 		rotateZ += z;
 	}
 
+	void SetAxis(glm::vec3 a)
+	{
+		Axis = a;
+	}
 
+	void SetAxisAngle(float a)
+	{
+		angle = a;
+	}
+
+	void IncrementAxisAngle(float a)
+	{
+		angle += a;
+	}
+
+	float GetAxisAngle()
+	{
+		return angle;
+	}
 	
 };
