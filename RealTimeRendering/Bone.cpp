@@ -30,9 +30,9 @@ Bone::Bone(Shader* s, Bone* parent, glm::vec3 pos)
 /// </summary>
 /// <param name="target"></param>
 /// <returns></returns>
-CCDResult Bone::RotateTowardsPosition(glm::vec3 target)
+void Bone::RotateTowardsPosition(glm::vec3 target)
 {
-	const float arrivalDistance = 0.25f;
+	const float arrivalDistance = 0.1f;
 
 	// Set an epsilon value to prevent division by small numbers.
 	const float epsilon = 0.0001;
@@ -49,71 +49,111 @@ CCDResult Bone::RotateTowardsPosition(glm::vec3 target)
 
 	
 	// Just do depth first layer of bones
-	Bone* curr = this->GetFirstChild();
+	Bone* joint = this->GetFirstChild();
 
-	while (curr != nullptr)
+	while (joint != nullptr)
 	{
 		numBones++;
-		bones.push_back(curr);
-		curr = curr->GetFirstChild();
+		bones.push_back(joint);
+		joint = joint->GetFirstChild();
 	}
 
 	Bone* leafBone = bones[numBones - 1];
-	glm::vec3 leafBonePosition = leafBone->GetGlobalTipPosition();
+	// Tip of our point e
+	glm::vec3 end = leafBone->GetGlobalTipPosition();
+
+	// Stop if we hvae reached our threshold
+	if (glm::length(end - target) < arrivalDistance)
+	{
+		return;
+	}
+
 	bool modified = false;
 
 	// Iterate through each bone and move them slightly towards the target
-	for (int i = numBones - 2; i >= 0; i--)
+	for (int i = numBones - 1; i >= 0; --i)
 	{
-		curr = bones[i];
-		glm::vec3 currPos = curr->GetGlobalTipPosition();
-
-		// Get the current bones difference from the leaf position
-		glm::vec3 currLeafDiff = leafBonePosition - currPos;
-		float currLeafDiffMagnitude = glm::length(currLeafDiff);
-
-
-		glm::vec3 currTargetDiff = target - currPos;
-		float currTargetDiffMagnitude = glm::length(currTargetDiff);
-
-		float cosRotAng;
-		float sinRotAng;
-		float leafTargetMagntitude = (currLeafDiffMagnitude * currTargetDiffMagnitude);
-
-		if (leafTargetMagntitude <= epsilon)
+		for (int itr = 0; itr < 3; itr++)
 		{
-			cosRotAng = 1;
-			sinRotAng = 0;
-		}
-		else
-		{
-			cosRotAng = glm::dot(currLeafDiff, currTargetDiff) / leafTargetMagntitude;  //(curToEndX * curToTargetX + curToEndY * curToTargetY) / endTargetMag;
-			sinRotAng = 0;// glm::cross(currLeafDiff, currTargetDiff) / leafTargetMagntitude;// (curToEndX * curToTargetY - curToEndY * curToTargetX) / endTargetMag;
-		}
+			// Imagine 3 different planes that we need to get to at the same time for each xy, xz, and yz plane
+			// Represent the current bone as joint j
+			joint = bones[i];
+			glm::vec3 j3D = joint->GetGlobalRootPosition();
+			glm::vec2 j;
+			glm::vec2 e;
+			glm::vec2 t;
 
-		double rotAng = glm::acos(glm::max(-1.0f, glm::min(1.0f, cosRotAng)));
-		rotAng = IRotatable::SimplifyAngle(rotAng, true);
-		curr->SetRotateX(*curr->GetRotateX() + rotAng);
+			switch (itr)
+			{
+			case 0:
+				j = glm::vec2(j3D.x, j3D.y);
+				e = glm::vec2(end.x, end.y);
+				t = glm::vec2(target.x, target.y);
+				break;
+			case 1:
+				j = glm::vec2(j3D.x, j3D.z);
+				e = glm::vec2(end.x, end.z);
+				t = glm::vec2(target.x, target.z);
+				break;
+			case 2:
+				j = glm::vec2(j3D.y, j3D.z);
+				e = glm::vec2(end.y, end.z);
+				t = glm::vec2(target.y, target.z);
+				break;
+			}
 
-		glm::vec3 newLeafPosition = leafBone->GetGlobalTipPosition();
+			//glm::vec3 j = joint->GetGlobalTipPosition();
 
-		float newDistance = glm::length(newLeafPosition - target);
+			// Get the current bones difference from the leaf position
+			glm::vec2 ej = e - j;
+			float ejMag = glm::length(ej);
 
-		// We made it
-		if (newDistance < arrivalDistance)
-		{
-			return Success;
-		}
 
-		if (!modified && glm::abs(rotAng) * currLeafDiffMagnitude > trivialArcLength)
-		{
-			modified = true;
+			glm::vec2 tj = t - j;
+			float tjMag = glm::length(tj);
+
+			float cosRotAng;
+			float sinRotAng;
+			float ejMag_tjMag = (ejMag * tjMag);
+
+
+			cosRotAng = glm::dot(ej, tj) / ejMag_tjMag;
+
+			double rotAng = glm::acos(glm::max(-1.0f, glm::min(1.0f, cosRotAng)));
+			rotAng = IRotatable::SimplifyAngle(rotAng, true);
+
+			//Find sign of angle using cross product
+			glm::vec3 signedCross = glm::cross(glm::vec3(ej, 0), glm::vec3(tj, 0));// (curToEndX * curToTargetY - curToEndY * curToTargetX) / endTargetMag;
+			sinRotAng = signedCross.z;
+
+			if (sinRotAng < 0)
+			{
+				rotAng = -rotAng;
+			}
+
+			switch (itr)
+			{
+			case 0:
+				joint->SetRotateX(*joint->GetRotateX() + rotAng);
+				break;
+			case 1:
+				joint->SetRotateY(*joint->GetRotateY() + rotAng);
+				break;
+			case 2:
+				joint->SetRotateZ(*joint->GetRotateZ() + rotAng);
+				break;
+			}
+
+			glm::vec3 newLeafPosition = leafBone->GetGlobalTipPosition();
+
+			float newDistance = glm::length(newLeafPosition - target);
+
+			// Stop if we are already there
+			if (newDistance < arrivalDistance)
+			{
+				return;
+			}
 		}
 	}
 
-	// We failed to find a valid solution during this iteration.
-	if (modified)
-		return Processing;
-	else
-		return Failure;
 }

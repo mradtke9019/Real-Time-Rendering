@@ -40,6 +40,7 @@ const char* mipmapsDisplay[4];
 
 bool MoveToTarget;
 glm::vec3 Target;
+Model* SphereTarget;
 Bone* Root;
 vector<Model*> models;
 Model* LightBulb;
@@ -103,11 +104,7 @@ void display(GLFWwindow* window)
 	if (MoveToTarget)
 	{
 		// Check if we made it. If so, dont move anymore
-		CCDResult r = Root->RotateTowardsPosition(Target);
-		if (r == Success)
-		{
-			MoveToTarget = false;
-		}
+		Root->RotateTowardsPosition(SphereTarget->GetPosition());
 	}
 
 	for (int i = 0; i < shaders.size(); i++)
@@ -135,6 +132,7 @@ void display(GLFWwindow* window)
 	}
 
 	Root->Draw();
+	SphereTarget->Draw();
 
 	//cube->Draw();
 
@@ -200,6 +198,9 @@ void LoadObjects()
 	int depth = Bone::GetTreeHeight(Root);
 
 	Target = glm::vec3(0, 0, 0);
+
+	SphereTarget = new Model("./Models/Sphere/Sphere.obj", Target, activeShader);
+
 	MoveToTarget = false;
 }
 
@@ -286,6 +287,7 @@ void ImguiData()
 		ImGui::SliderFloat("X", &Target.x, -10.0f, 10.0f);
 		ImGui::SliderFloat("Y", &Target.y, -10.0f, 10.0f);
 		ImGui::SliderFloat("Z", &Target.z, -10.0f, 10.0f);
+		SphereTarget->SetPosition(Target);
 		ImGui::TreePop();
 	}
 

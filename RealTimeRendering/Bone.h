@@ -41,7 +41,7 @@ public:
 	/// </summary>
 	/// <param name="target"></param>
 	/// <returns></returns>
-	CCDResult RotateTowardsPosition(glm::vec3 target);
+	void RotateTowardsPosition(glm::vec3 target);
 
 	// Retrieves the global transform that the current bone would take place in. Recursive and will use its parents transform if it exists.
 	glm::mat4 GetGlobalTransform()

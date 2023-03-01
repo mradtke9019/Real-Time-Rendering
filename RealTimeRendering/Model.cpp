@@ -93,6 +93,21 @@ glm::vec3 Model::GetPosition()
 	return this->Position;
 }
 
+float* Model::GetPositionX()
+{
+	return &(this->Position.x);
+}
+
+float* Model::GetPositionY()
+{
+	return &(this->Position.y);
+}
+
+float* Model::GetPositionZ()
+{
+	return &(this->Position.z);
+}
+
 void Model::SetPosition(glm::vec3 pos)
 {
 	this->Position = pos;
