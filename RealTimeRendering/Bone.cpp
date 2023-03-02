@@ -100,7 +100,7 @@ void Bone::RotateTowardsPosition(glm::vec3 target)
 		glm::vec3 cross = glm::cross(ej, tj);// (curToEndX * curToTargetY - curToEndY * curToTargetX) / endTargetMag;
 
 		joint->SetAxis(cross);
-		joint->SetAxisAngle(rotAng);
+		joint->IncrementAxisAngle(rotAng);
 		joint->UseAxisAngle(true);
 
 		glm::vec3 newLeafPosition = leafBone->GetGlobalTipPosition();

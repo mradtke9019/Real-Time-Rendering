@@ -24,7 +24,7 @@ private:
 		// Undo wherever we are in global coordinates
 		if (parent != nullptr)
 		{
-			glm::vec3 t = glm::inverse(parent->GetGlobalTransform()) * glm::vec4(Origin, 1);
+			glm::vec3 t = parent->GetGlobalRootPosition();// *glm::vec4(Origin, 1);
 		}
 		return glm::translate(glm::mat4(1), LocalPosition) * glm::translate(glm::mat4(1), t) *  GetRotationMatrix()  * glm::translate(glm::mat4(1), -t);
 		//return glm::translate(glm::mat4(1), Axis * Length) * glm::translate(glm::mat4(1), t) * GetRotationMatrix() * glm::translate(glm::mat4(1), -t);
@@ -65,7 +65,7 @@ public:
 
 	glm::vec3 GetGlobalRootPosition()
 	{
-		return GetGlobalTransform() * glm::vec4(GetRoot()->LocalPosition, 1.0f);
+		return glm::vec3(GetGlobalTransform() * glm::vec4(GetRoot()->LocalPosition, 1.0f));
 	}
 
 	// Get the tip position of the cylinder bone based off the root position

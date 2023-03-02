@@ -116,7 +116,7 @@ public:
 
 	void SetAxis(glm::vec3 a)
 	{
-		Axis = a;
+		Axis = glm::normalize(a);
 	}
 
 	void SetAxisAngle(float a)
