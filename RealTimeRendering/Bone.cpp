@@ -32,7 +32,7 @@ Bone::Bone(Shader* s, Bone* parent, glm::vec3 pos)
 /// <returns></returns>
 void Bone::RotateTowardsPosition(glm::vec3 target)
 {
-	const float arrivalDistance = 0.1f;
+	const float arrivalDistance = 0.2f;
 
 	// Set an epsilon value to prevent division by small numbers.
 	const float epsilon = 0.0001;
@@ -68,7 +68,6 @@ void Bone::RotateTowardsPosition(glm::vec3 target)
 		return;
 	}
 
-	bool modified = false;
 
 	// Iterate through each bone and move them slightly towards the target
 	for (int i = numBones - 1; i >= 0; --i)
@@ -76,6 +75,7 @@ void Bone::RotateTowardsPosition(glm::vec3 target)
 		// Imagine 3 different planes that we need to get to at the same time for each xy, xz, and yz plane
 		// Represent the current bone as joint j
 		joint = bones[i];
+		end = leafBone->GetGlobalTipPosition();
 
 		glm::vec3 j = joint->GetGlobalRootPosition();
 		glm::vec3 e = end;
@@ -83,26 +83,24 @@ void Bone::RotateTowardsPosition(glm::vec3 target)
 
 		// Get the current bones difference from the leaf position
 		glm::vec3 ej = e - j;
-		float ejMag = glm::length(ej);
+		ej = glm::normalize(ej);
 
 
 		glm::vec3 tj = t - j;
-		float tjMag = glm::length(tj);
+		tj = glm::normalize(tj);
 
 		float cosRotAng;
-		float sinRotAng;
-		float ejMag_tjMag = (ejMag * tjMag);
 
-		cosRotAng = glm::dot(ej, tj) / ejMag_tjMag;
+		cosRotAng = glm::dot(ej, tj);// Length of vectors should be 1 at this point, so do not need to divide by their magnitude, which is 1 anyway
 
 		double rotAng = glm::acos(glm::max(-1.0f, glm::min(1.0f, cosRotAng)));
-		rotAng = IRotatable::SimplifyAngle(rotAng, false);
+		rotAng = IRotatable::SimplifyAngle(rotAng);
 
 		//Find sign of angle using cross product
 		glm::vec3 cross = glm::cross(ej, tj);// (curToEndX * curToTargetY - curToEndY * curToTargetX) / endTargetMag;
 
 		joint->SetAxis(cross);
-		joint->IncrementAxisAngle(rotAng);
+		joint->SetAxisAngle(rotAng);
 		joint->UseAxisAngle(true);
 
 		glm::vec3 newLeafPosition = leafBone->GetGlobalTipPosition();

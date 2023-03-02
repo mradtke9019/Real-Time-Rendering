@@ -29,27 +29,15 @@ public:
 	}
 
 
-	//Return angle clamped between 0 and 360 or 0 and 2 pi
-	static float SimplifyAngle(float angle, bool isDegrees = false)
+	//Return angle clamped between 0 and 2 pi
+	static float SimplifyAngle(float angle)
 	{
-		if (!isDegrees)
-		{
-			angle = fmod(angle, (2.0 * M_PI));
-			if (angle < -M_PI)
-				angle += (2.0 * M_PI);
-			else if (angle > M_PI)
-				angle -= (2.0 * M_PI);
-			return angle;
-		}
-		else
-		{
-			angle = fmod(angle, 360.0f);
-			if (angle < -M_PI)
-				angle += 360.0f;
-			else if (angle > M_PI)
-				angle -= 360.0f;
-			return angle;
-		}
+		angle = fmod(angle, (2.0 * M_PI));
+		if (angle < -M_PI)
+			angle += (2.0 * M_PI);
+		else if (angle > M_PI)
+			angle -= (2.0 * M_PI);
+		return angle;
 	}
 
 	glm::mat4 GetRotationMatrix()
