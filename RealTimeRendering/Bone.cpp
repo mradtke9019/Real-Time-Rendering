@@ -6,6 +6,9 @@ Bone::Bone(Shader* s)
 	BoneModel = Model("./Models/Cylinder/cylinder.obj", LocalPosition,s);
 	parent = nullptr;
 	children = std::vector<Bone*>();
+	Target = glm::vec3(0, 0, 0);
+	MoveToTarget = false;
+	Idx = 0;
 }
 
 
@@ -15,6 +18,9 @@ Bone::Bone(Shader* s, Bone* parent)
 	BoneModel = Model("./Models/Cylinder/cylinder.obj", LocalPosition, s);
 	this->parent = parent;
 	children = std::vector<Bone*>();
+	Target = glm::vec3(0, 0, 0);
+	MoveToTarget = false;
+	Idx = 0;
 }
 
 Bone::Bone(Shader* s, Bone* parent, glm::vec3 pos)
@@ -23,31 +29,41 @@ Bone::Bone(Shader* s, Bone* parent, glm::vec3 pos)
 	BoneModel = Model("./Models/Cylinder/cylinder.obj", LocalPosition, s);
 	this->parent = parent;
 	children = std::vector<Bone*>();
+	Target = glm::vec3(0, 0, 0);
+	MoveToTarget = false;
+	Idx = 0;
 }
 
 /// <summary>
-/// Uses the current bone as the root and attempts to move itself as well as its children so that all of its children will try to move towards the target point
+/// Sets the target that this bone and its children should move towards.
+/// </summary>
+/// <param name="t"></param>
+void Bone::SetTarget(glm::vec3 t)
+{
+	Target = t;
+}
+
+glm::vec3* Bone::GetTarget()
+{
+	return &Target;
+}
+
+/// <summary>
+/// Uses the current bone as the root and attempts to move itself as well as its children so that all of its children will try to move towards the target point.
+/// Sources: https://www.ryanjuckett.com/cyclic-coordinate-descent-in-2d/ 
+/// 
 /// </summary>
 /// <param name="target"></param>
 /// <returns></returns>
-void Bone::RotateTowardsPosition(glm::vec3 target)
+void Bone::IterateTowardsTarget()
 {
-	const float arrivalDistance = 0.2f;
-
-	// Set an epsilon value to prevent division by small numbers.
-	const float epsilon = 0.0001;
-
-	// Set max arc length a bone can move the end effector an be considered no motion
-	// so that we can detect a failure state.
-	const float trivialArcLength = 0.00001;
+	const float arrivalDistance = 0.5f;
 
 	Bone* root = this;
 	std::vector<Bone*> bones = std::vector<Bone*>();
 	bones.push_back(root);
 	int numBones = 1;
 
-
-	
 	// Just do depth first layer of bones
 	Bone* joint = this->GetFirstChild();
 
@@ -63,13 +79,13 @@ void Bone::RotateTowardsPosition(glm::vec3 target)
 	glm::vec3 end = leafBone->GetGlobalTipPosition();
 
 	// Stop if we hvae reached our threshold
-	if (glm::length(end - target) < arrivalDistance)
+	if (glm::length(end - Target) < arrivalDistance)
 	{
 		return;
 	}
 
-
-	// Iterate through each bone and move them slightly towards the target
+	// Search for 
+		// Iterate through each bone and move them slightly towards the target
 	for (int i = numBones - 1; i >= 0; --i)
 	{
 		// Imagine 3 different planes that we need to get to at the same time for each xy, xz, and yz plane
@@ -79,7 +95,7 @@ void Bone::RotateTowardsPosition(glm::vec3 target)
 
 		glm::vec3 j = joint->GetGlobalRootPosition();
 		glm::vec3 e = end;
-		glm::vec3 t = target;
+		glm::vec3 t = Target;
 
 		// Get the current bones difference from the leaf position
 		glm::vec3 ej = e - j;
@@ -96,8 +112,8 @@ void Bone::RotateTowardsPosition(glm::vec3 target)
 		double rotAng = glm::acos(glm::max(-1.0f, glm::min(1.0f, cosRotAng)));
 		rotAng = IRotatable::SimplifyAngle(rotAng);
 
-		//Find sign of angle using cross product
-		glm::vec3 cross = glm::cross(ej, tj);// (curToEndX * curToTargetY - curToEndY * curToTargetX) / endTargetMag;
+		// Axis to rotate on with cross product
+		glm::vec3 cross = glm::cross(ej, tj);
 
 		joint->SetAxis(cross);
 		joint->IncrementAxisAngle(rotAng);
@@ -105,14 +121,14 @@ void Bone::RotateTowardsPosition(glm::vec3 target)
 
 		glm::vec3 newLeafPosition = leafBone->GetGlobalTipPosition();
 
-		float newDistance = glm::length(newLeafPosition - target);
-
+		float newDistance = glm::length(newLeafPosition - Target);
+		//joint->Draw(false);
 		// Stop if we are already there
 		if (newDistance < arrivalDistance)
 		{
 			return;
 		}
-
 	}
+	
 
 }

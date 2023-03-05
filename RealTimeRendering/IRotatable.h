@@ -30,6 +30,7 @@ public:
 
 
 	//Return angle clamped between 0 and 2 pi
+	// https://www.ryanjuckett.com/cyclic-coordinate-descent-in-2d/
 	static float SimplifyAngle(float angle)
 	{
 		angle = fmod(angle, (2.0 * M_PI));
@@ -48,6 +49,12 @@ public:
 			if (glm::length(Axis) <= 0 || Axis == glm::vec3(0, 0, 0))
 				return glm::mat4(1);
 			result = glm::toMat4(glm::angleAxis(angle, Axis));
+			glm::vec3 euler =glm::eulerAngles(glm::angleAxis(angle, Axis));
+			// Update our euler angles representation
+
+			rotateX = glm::degrees(euler.x);
+			rotateY = glm::degrees(euler.y);
+			rotateZ = glm::degrees(euler.z);
 		}
 		else
 		{
@@ -116,7 +123,10 @@ public:
 
 	void SetAxis(glm::vec3 a)
 	{
-		Axis = glm::normalize(a);
+		if (a == glm::vec3(0, 0, 0))
+			Axis = -Axis;
+		else
+			Axis = glm::normalize(a);
 	}
 
 	void SetAxisAngle(float a)

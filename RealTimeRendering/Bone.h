@@ -14,7 +14,9 @@ private:
 	const float Length = 1;
 	const glm::vec3 Axis = glm::vec3(0,1,0);
 	const glm::vec3 Origin = glm::vec3(0, 0, 0);
-
+	glm::vec3 Target;
+	int Idx;
+	bool MoveToTarget;
 
 
 	glm::mat4 GetLocalTransform()
@@ -37,11 +39,45 @@ public:
 	Bone(Shader* s, Bone* parent, glm::vec3 pos);
 
 	/// <summary>
-	/// Will update and move this bone and its children towards the target position
+	/// Sets the target that this bone and its children should move towards.
 	/// </summary>
-	/// <param name="target"></param>
+	/// <param name="t"></param>
+	void SetTarget(glm::vec3 t);
+
+	glm::vec3* GetTarget();
+
+	bool* MovingToTarget()
+	{
+		return &MoveToTarget;
+	}
+
+	int* GetIdx()
+	{
+		return &Idx;
+	}
+
+	/// <summary>
+	/// Returns all bones in the current sub tree
+	/// </summary>
 	/// <returns></returns>
-	void RotateTowardsPosition(glm::vec3 target);
+	std::vector<Bone*> GetAllBones()
+	{
+		std::vector<Bone*> result = std::vector<Bone*>();
+
+		for (auto x : this->GetChildren())
+		{
+			result.push_back(x);
+			for (auto y : x->GetAllBones())
+			{
+				result.push_back(y);
+			}
+		}
+
+		return result;
+	}
+
+
+	void IterateTowardsTarget();
 
 	// Retrieves the global transform that the current bone would take place in. Recursive and will use its parents transform if it exists.
 	glm::mat4 GetGlobalTransform()
@@ -132,6 +168,24 @@ public:
 		return max;
 	}
 
+	std::vector<Bone*> GetAllDescendants()
+	{
+		std::vector<Bone*> result = std::vector<Bone*>();
+		std::vector<Bone*> children = GetChildren();
+		result.push_back(this);
+		for (int i = 0; i < children.size(); i++)
+		{
+			std::vector<Bone*> other = children.at(i)->GetAllDescendants();
+			result.push_back(children[i]);
+			for (int j = 0; j < other.size(); j++)
+			{
+				result.push_back(other[i]);
+			}
+		}
+
+		return result;
+	}
+
 	std::vector<Bone*> GetChildren()
 	{
 		return this->children;
@@ -156,6 +210,10 @@ public:
 
 	void Draw(bool drawChildren = true)
 	{
+		if (MoveToTarget)
+		{
+			IterateTowardsTarget();
+		}
 		BoneModel.Draw(GetGlobalTransform());
 		if (drawChildren)
 		{
