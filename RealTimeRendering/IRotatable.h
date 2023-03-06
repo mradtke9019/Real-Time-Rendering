@@ -48,10 +48,10 @@ public:
 		{
 			if (glm::length(Axis) <= 0 || Axis == glm::vec3(0, 0, 0))
 				return glm::mat4(1);
-			result = glm::toMat4(glm::angleAxis(angle, Axis));
-			glm::vec3 euler =glm::eulerAngles(glm::angleAxis(angle, Axis));
-			// Update our euler angles representation
 
+			result = glm::toMat4(glm::angleAxis(angle, Axis));
+
+			glm::vec3 euler =glm::eulerAngles(glm::angleAxis(angle, Axis));
 			rotateX = glm::degrees(euler.x);
 			rotateY = glm::degrees(euler.y);
 			rotateZ = glm::degrees(euler.z);

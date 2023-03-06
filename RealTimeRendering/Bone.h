@@ -83,7 +83,7 @@ public:
 	glm::mat4 GetGlobalTransform()
 	{
 		if (parent != nullptr)
-			return parent->GetGlobalTransform() * GetLocalTransform();
+			return  parent->GetGlobalTransform() * GetLocalTransform();
 		else
 			return GetLocalTransform();
 	}
@@ -213,6 +213,9 @@ public:
 		if (MoveToTarget)
 		{
 			IterateTowardsTarget();
+		}
+		else {
+			UseAxisAngle(false);
 		}
 		BoneModel.Draw(GetGlobalTransform());
 		if (drawChildren)
