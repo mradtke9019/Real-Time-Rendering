@@ -157,8 +157,7 @@
     <ClCompile Include="imgui\imgui_impl_opengl3.cpp" />
     <ClCompile Include="imgui\imgui_tables.cpp" />
     <ClCompile Include="imgui\imgui_widgets.cpp" />
-    <ClCompile Include="RealTimeAnimation.cpp" />
-    <ClCompile Include="RealTimeRendering.cpp" />
+    <ClCompile Include="main.cpp" />
     <ClCompile Include="Skybox.cpp" />
     <ClCompile Include="FixedCamera.cpp" />
     <ClCompile Include="FreeCamera.cpp" />
@@ -171,6 +170,7 @@
     <ClInclude Include="Bone.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="IRotatable.h" />
+    <ClInclude Include="ITransformable.h" />
     <ClInclude Include="ITranslatable.h" />
     <ClInclude Include="Log.h" />
     <ClInclude Include="Skybox.h" />

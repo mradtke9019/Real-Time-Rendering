@@ -116,7 +116,7 @@ void display(GLFWwindow* window)
 		s->SetUniformMatrix4fv("projection", &projection);
 		s->SetUniformVec3("cameraPos", defaultCamera.GetPosition());
 	}
-	
+
 	for (int i = 0; i < models.size(); i++)
 	{
 		Model* m = models.at(i);
@@ -131,7 +131,7 @@ void display(GLFWwindow* window)
 	{
 		Structure2->Draw();
 	}
-	
+
 	for (int i = 0; i < SphereTargets.size(); i++)
 	{
 		SphereTargets[i]->Draw();
@@ -200,7 +200,7 @@ void LoadObjects()
 	Root->GetChildren().at(0)->GetChildren().at(0)->AddBone(new Bone(activeShader));
 	Root->GetChildren().at(0)->GetChildren().at(0)->GetChildren().at(0)->AddBone(new Bone(activeShader));
 	int depth = Bone::GetTreeHeight(Root);
-	
+
 	Targets.push_back(glm::vec3(2, 0, 2));
 	Targets.push_back(glm::vec3(2, 0, -2));
 	Targets.push_back(glm::vec3(-2, 0, 2));
@@ -287,7 +287,7 @@ void ImguiData()
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplGlfw_NewFrame();
 	ImGui::NewFrame();
-	ImGui::SetNextWindowSize(ImVec2(400,200));
+	ImGui::SetNextWindowSize(ImVec2(400, 200));
 	ImGui::Begin("ImGui");
 
 	ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
@@ -326,7 +326,7 @@ void ImguiData()
 		SphereTargets[i]->SetPosition(Targets[i]);
 	}
 	//ImGui::Checkbox("Move Root To Target",&MoveToTarget);
-	
+
 	if (drawStructure1)
 	{
 		ImGui::Text("Structure 1");
