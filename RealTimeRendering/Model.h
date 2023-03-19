@@ -20,12 +20,11 @@
 #include <map>
 #include <vector>
 #include "stb_image.h"
-#include "IRotatable.h"
-#include "ITranslatable.h"
+#include "ITransformable.h"
 
 using namespace std;
 
-class Model : public IRotatable, public ITranslatable
+class Model : public ITransformable
 {
 public:
     // model data 
@@ -37,7 +36,7 @@ public:
 
     // constructor, expects a filepath to a 3D model.
     Model(string const& path, bool gamma = false)
-        : gammaCorrection(gamma), IRotatable(), mipmap(GL_NEAREST_MIPMAP_NEAREST)
+        : gammaCorrection(gamma), ITransformable(), mipmap(GL_NEAREST_MIPMAP_NEAREST)
     {
         loadModel(path);
     }
@@ -47,22 +46,9 @@ public:
     Shader* GetShader();
 
     void SetShader(Shader* Shader);
-    glm::mat4 GetModelTransform();
     //void SetModelTransform(glm::mat4 model);
     void SetColor(glm::vec3 color);
     glm::vec3 GetColor();
-    glm::vec3 GetPosition();
-    void SetPosition(glm::vec3 pos);
-
-
-    void RotateX(float x);
-    void RotateY(float y);
-    void RotateZ(float z);
-
-    void RotateMeshX(int index, float x);
-    void RotateMeshY(int index, float x);
-    void RotateMeshZ(int index, float x);
-
 
     // draws the model, and thus all its meshes
     void Draw();
@@ -71,16 +57,7 @@ private:
 
     Shader* shader;
     glm::vec3 ObjectColor;
-    glm::vec3 Position;
-    glm::mat4 ModelTransform;
 
-    // Uses the objects current model position and rotation to set its model transform
-    void UpdateModelTransform()
-    {
-        glm::mat4 transform = glm::translate(glm::mat4(1.0f), Position);
-
-        ModelTransform = transform * IRotatable::GetRotationMatrix();
-    }
 
     // loads a model with supported ASSIMP extensions from file and stores the resulting meshes in the meshes vector.
     void loadModel(string const& path)

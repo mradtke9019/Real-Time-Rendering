@@ -43,6 +43,15 @@
     <Filter Include="Resource Files\Models\Cylinder">
       <UniqueIdentifier>{e1224ce4-1053-4977-a66f-405a2a9f0a54}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource Files\Images">
+      <UniqueIdentifier>{8f2b4e1d-739a-4bf0-808f-6f7c80bd9123}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Images\wood_color_maps">
+      <UniqueIdentifier>{c22b6921-4e55-48e0-9753-4c1afbed6ac1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Images\tree_geo_maps">
+      <UniqueIdentifier>{b3552309-067d-4a31-8bf4-161705a12ab5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Shader.cpp">
@@ -252,6 +261,36 @@
     </CopyFileToFolders>
     <CopyFileToFolders Include="Models\Cylinder\cylinder.mtl">
       <Filter>Resource Files\Models\Cylinder</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="Images\tree_geo_maps\knot_height_map.bmp">
+      <Filter>Resource Files\Images\tree_geo_maps</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="Images\tree_geo_maps\knot_orientation_map.bmp">
+      <Filter>Resource Files\Images\tree_geo_maps</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="Images\tree_geo_maps\knot_state_map.bmp">
+      <Filter>Resource Files\Images\tree_geo_maps</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="Images\tree_geo_maps\map_params.json">
+      <Filter>Resource Files\Images\tree_geo_maps</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="Images\tree_geo_maps\pith_and_radius_map.bmp">
+      <Filter>Resource Files\Images\tree_geo_maps</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="Images\wood_color_maps\wood_bar_color.bmp">
+      <Filter>Resource Files\Images\wood_color_maps</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="Images\wood_color_maps\wood_bar_normal.bmp">
+      <Filter>Resource Files\Images\wood_color_maps</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="Images\wood_color_maps\wood_bar_specular.bmp">
+      <Filter>Resource Files\Images\wood_color_maps</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="main.frag">
+      <Filter>Resource Files\Shaders</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="main.vert">
+      <Filter>Resource Files\Shaders</Filter>
     </CopyFileToFolders>
   </ItemGroup>
   <ItemGroup>

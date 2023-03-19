@@ -202,6 +202,13 @@
     <Image Include="back.jpg" />
     <Image Include="bottom.jpg" />
     <Image Include="front.jpg" />
+    <CopyFileToFolders Include="Images\tree_geo_maps\knot_height_map.bmp" />
+    <CopyFileToFolders Include="Images\tree_geo_maps\knot_orientation_map.bmp" />
+    <CopyFileToFolders Include="Images\tree_geo_maps\knot_state_map.bmp" />
+    <CopyFileToFolders Include="Images\tree_geo_maps\pith_and_radius_map.bmp" />
+    <CopyFileToFolders Include="Images\wood_color_maps\wood_bar_color.bmp" />
+    <CopyFileToFolders Include="Images\wood_color_maps\wood_bar_normal.bmp" />
+    <CopyFileToFolders Include="Images\wood_color_maps\wood_bar_specular.bmp" />
     <Image Include="left.jpg" />
     <CopyFileToFolders Include="Models\Airplane\textures\piper_bump.jpg" />
     <CopyFileToFolders Include="Models\Airplane\textures\piper_diffuse.jpg" />
@@ -301,6 +308,19 @@
   </ItemGroup>
   <ItemGroup>
     <CopyFileToFolders Include="Models\Cylinder\cylinder.obj">
+      <FileType>Document</FileType>
+    </CopyFileToFolders>
+  </ItemGroup>
+  <ItemGroup>
+    <CopyFileToFolders Include="Images\tree_geo_maps\map_params.json">
+      <FileType>Document</FileType>
+    </CopyFileToFolders>
+  </ItemGroup>
+  <ItemGroup>
+    <CopyFileToFolders Include="main.frag">
+      <FileType>Document</FileType>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="main.vert">
       <FileType>Document</FileType>
     </CopyFileToFolders>
   </ItemGroup>

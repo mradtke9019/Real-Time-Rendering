@@ -2,18 +2,47 @@
 
 #define _USE_MATH_DEFINES
 #include <math.h>
+#include <exception>
+#include "Log.h"
 
 #pragma once
+enum RotationType { Euler, AxisAngle };
+
+/// <summary>
+/// Interface representing a rotatable object. Uses radians for its angle representations.
+/// </summary>
 class IRotatable {
 private:
-
+	/// <summary>
+	/// The rotation method to be used by this object such as using euler angles or the axis angle method.
+	/// </summary>
+	RotationType rotationType;
+	/// <summary>
+	/// The angle in radians in which we will rotate about the x axis.
+	/// </summary>
 	float rotateX;
+	/// <summary>
+	/// The angle in radians in which we will rotate about the y axis.
+	/// </summary>
 	float rotateY;
+	/// <summary>
+	/// The angle in radians in which we will rotate about the z axis.
+	/// </summary>
 	float rotateZ;
-	glm::vec3 Axis;
-	float angle;
 
-	bool useAxisAngle;
+	/// <summary>
+	/// The point in which the rotation will happen about.
+	/// </summary>
+	glm::vec3 pivot;
+
+	/// <summary>
+	/// The axis in which we will rotate about in  the axis angle representation;
+	/// </summary>
+	glm::vec3 Axis;
+	/// <summary>
+	/// The angle in radians in which we will rotate about the axis specified.
+	/// </summary>
+	float angle;
 
 
 public:
@@ -23,9 +52,10 @@ public:
 		rotateY = 0;
 		rotateZ = 0;
 
-		useAxisAngle = false;
-		Axis = glm::vec3(0,0,0);
+		pivot = glm::vec3(0, 0, 0);
+		Axis = glm::vec3(0, 0, 0);
 		angle = 0.0f;
+		rotationType = Euler;
 	}
 
 
@@ -41,40 +71,60 @@ public:
 		return angle;
 	}
 
+	/// <summary>
+	/// Returns the rotation matrix about a pivot and the currently chosen rotation type.
+	/// </summary>
+	/// <returns></returns>
 	glm::mat4 GetRotationMatrix()
 	{
 		glm::mat4 result = glm::mat4(1);
-		if (useAxisAngle) 
+		switch (rotationType)
 		{
+		case Euler:
+			result =
+				glm::rotate(result, *GetRotateY(), glm::vec3(0.0f, 1.0f, 0.0f)) *
+				glm::rotate(result, *GetRotateZ(), glm::vec3(0.0f, 0.0f, 1.0f)) *
+				glm::rotate(result, *GetRotateX(), glm::vec3(1.0f, 0.0f, 0.0f));
+			break;
+
+		case AxisAngle:
 			if (glm::length(Axis) <= 0 || Axis == glm::vec3(0, 0, 0))
+			{
+				Log::WriteLog("Axis angle using the 0 vector or the length of the axis is less than or equal to 0.", Warning);
 				return glm::mat4(1);
+			}
 
 			result = glm::toMat4(glm::angleAxis(angle, Axis));
+			break;
 
-			glm::vec3 euler =glm::eulerAngles(glm::angleAxis(angle, Axis));
-			rotateX = glm::degrees(euler.x);
-			rotateY = glm::degrees(euler.y);
-			rotateZ = glm::degrees(euler.z);
+		default:
+			Log::WriteLog("Rotation Method not found", Error);
+			break;
 		}
-		else
-		{
-			result =
-				glm::rotate(result, glm::radians(*GetRotateY()), glm::vec3(0.0f, 1.0f, 0.0f)) *
-				glm::rotate(result, glm::radians(*GetRotateZ()), glm::vec3(0.0f, 0.0f, 1.0f)) *
-				glm::rotate(result, glm::radians(*GetRotateX()), glm::vec3(1.0f, 0.0f, 0.0f));
-		}
-		return result;
-	}
-	
+		if (pivot == glm::vec3(0))
+			return result;
 
-	bool UsingAxisAngle()
-	{
-		return useAxisAngle;
+		return glm::translate(glm::mat4(1), pivot) * result * glm::translate(glm::mat4(1), -pivot);
 	}
 
-	void UseAxisAngle(bool use)
+	void SetPivot(glm::vec3 p)
 	{
-		useAxisAngle = use;
+		pivot = p;
+	}
+
+	glm::vec3 GetPivot()
+	{
+		return pivot;
+	}
+
+	bool GetRotationMethod()
+	{
+		return rotationType;
+	}
+
+	void SetRotationMethod(RotationType type)
+	{
+		rotationType = type;
 	}
 
 	float* GetRotateX()
@@ -143,5 +193,5 @@ public:
 	{
 		return angle;
 	}
-	
+
 };
