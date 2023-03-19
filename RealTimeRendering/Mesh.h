@@ -51,7 +51,7 @@ struct Texture {
 };
 
 #pragma once
-class Mesh: public IRotatable {
+class Mesh : public IRotatable {
 public:
     // mesh Data
     vector<Vertex>       vertices;
@@ -65,14 +65,13 @@ public:
     void Draw(glm::mat4* ModelTransform = nullptr);
 
     // constructor
-    Mesh(vector<Vertex> vertices, vector<unsigned int> indices, vector<Texture> textures, Shader* s, std::string mipmap = "GL_NEAREST_MIPMAP_NEAREST")
-        : MeshOrigin(glm::vec3(0,0,0)), ModelOrigin(glm::vec3(0,0,0))
+    Mesh(vector<Vertex> vertices, vector<unsigned int> indices, vector<Texture> textures, Shader* s)
+        : MeshOrigin(glm::vec3(0, 0, 0)), ModelOrigin(glm::vec3(0, 0, 0))
     {
         MeshTransform = glm::mat4(1);
         this->vertices = vertices;
         this->indices = indices;
         this->textures = textures;
-        this->mipmap = mipmap;
 
         this->shader = s;
         if (this->vertices.size() <= 0 || this->indices.size() <= 0) {
@@ -97,7 +96,6 @@ private:
     Shader* shader;
     glm::vec3 ModelOrigin;
     glm::vec3 MeshOrigin;
-    std::string mipmap;
 
     // initializes all the buffer objects/arrays
     void setupMesh()
@@ -123,7 +121,7 @@ private:
         unsigned int vPosition = shader->GetAttribLocation("vPosition");
         glEnableVertexAttribArray(vPosition);
         glVertexAttribPointer(vPosition, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
-        
+
         // vertex normals
         int vNormal = shader->GetAttribLocation("vNormal");
         // For some reason cant find vNormal, so just default to 1 if cant be found
@@ -134,17 +132,17 @@ private:
 
         glEnableVertexAttribArray(vNormal);
         glVertexAttribPointer(vNormal, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, Normal));
-        
+
         // vertex texture coords
         unsigned int vTexture = shader->GetAttribLocation("vTexture");
         glEnableVertexAttribArray(vTexture);
         glVertexAttribPointer(vTexture, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, TexCoords));
-        
+
         // vertex tangent
         unsigned int vTangent = shader->GetAttribLocation("vTangent");
         glEnableVertexAttribArray(vTangent);
         glVertexAttribPointer(vTangent, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, Tangent));
-        
+
         // vertex bitangent
         unsigned int vBitangent = shader->GetAttribLocation("vBitangent");
         glEnableVertexAttribArray(vBitangent);

@@ -33,18 +33,17 @@ public:
     vector<Mesh>    meshes;
     string directory;
     bool gammaCorrection;
-    std::string mipmap;
-    Model() {};
+    GLint mipmap;
 
     // constructor, expects a filepath to a 3D model.
-    Model(string const& path, bool gamma = false) 
-        : gammaCorrection(gamma), IRotatable(), mipmap("GL_NEAREST_MIPMAP_NEAREST")
+    Model(string const& path, bool gamma = false)
+        : gammaCorrection(gamma), IRotatable(), mipmap(GL_NEAREST_MIPMAP_NEAREST)
     {
         loadModel(path);
     }
     Model(std::string path, glm::vec3 Position, Shader* Shader);
     Model(std::string path, glm::vec3 Position, Shader* Shader, glm::vec3 color);
-    Model(std::string path, glm::vec3 Position, Shader* Shader, std::string mipmapPolicy);
+    Model(std::string path, glm::vec3 Position, Shader* Shader, GLint mipmapPolicy);
     Shader* GetShader();
 
     void SetShader(Shader* Shader);
@@ -53,9 +52,6 @@ public:
     void SetColor(glm::vec3 color);
     glm::vec3 GetColor();
     glm::vec3 GetPosition();
-    float* GetPositionX();
-    float* GetPositionY();
-    float* GetPositionZ();
     void SetPosition(glm::vec3 pos);
 
 
@@ -71,10 +67,6 @@ public:
     // draws the model, and thus all its meshes
     void Draw();
 
-
-    // draws the modell with the given transform overriding the existing one
-    void Draw(glm::mat4 transform);
-
 private:
 
     Shader* shader;
@@ -86,10 +78,10 @@ private:
     void UpdateModelTransform()
     {
         glm::mat4 transform = glm::translate(glm::mat4(1.0f), Position);
-        
+
         ModelTransform = transform * IRotatable::GetRotationMatrix();
     }
-    
+
     // loads a model with supported ASSIMP extensions from file and stores the resulting meshes in the meshes vector.
     void loadModel(string const& path)
     {
@@ -209,7 +201,7 @@ private:
         textures.insert(textures.end(), heightMaps.begin(), heightMaps.end());
 
         // return a mesh object created from the extracted mesh data
-        return Mesh(vertices, indices, textures,shader, mipmap);
+        return Mesh(vertices, indices, textures, shader);
     }
 
     // checks all material textures of a given type and loads the textures if they're not loaded yet.
@@ -228,7 +220,7 @@ private:
                 if (std::strcmp(textures_loaded[j].path.data(), str.C_Str()) == 0)
                 {
                     textures.push_back(textures_loaded[j]);
-                    //skip = true; // a texture with the same filepath has already been loaded, continue to next one. (optimization)
+                    skip = true; // a texture with the same filepath has already been loaded, continue to next one. (optimization)
                     break;
                 }
             }
@@ -278,29 +270,8 @@ private:
             //GL_LINEAR_MIPMAP_NEAREST : takes the nearest mipmap leveland samples that level using linear interpolation.
             //GL_NEAREST_MIPMAP_LINEAR : linearly interpolates between the two mipmaps that most closely match the size of a pixeland samples the interpolated level via nearest neighbor interpolation.
             //GL_LINEAR_MIPMAP_LINEAR : linearly interpolates between the two closest mipmaps and samples the interpolated level via linear interpolation.
-
-            if (mipmap == "GL_NEAREST_MIPMAP_NEAREST")
-            {
-                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
-            }
-            else if (mipmap == "GL_LINEAR_MIPMAP_NEAREST")
-            {
-                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
-            }
-            else if (mipmap == "GL_NEAREST_MIPMAP_LINEAR")
-            {
-                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
-            }
-            else if (mipmap == "GL_LINEAR_MIPMAP_LINEAR")
-            {
-                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-            }
-            // Default
-            else {
-                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
-            }
-
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, mipmap);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
             stbi_image_free(data);
         }

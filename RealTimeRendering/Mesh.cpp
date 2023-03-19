@@ -5,18 +5,18 @@
 
 void Mesh::SetShader(Shader* shader)
 {
-	this->shader = shader;
+    this->shader = shader;
 }
 
 Shader* Mesh::GetShader()
 {
-	return shader;
+    return shader;
 }
 
 
 void Mesh::Draw(glm::mat4* ModelTransform)
 {
-	shader->Use();
+    shader->Use();
     // bind appropriate textures
     unsigned int diffuseNr = 1;
     unsigned int specularNr = 1;
@@ -40,35 +40,7 @@ void Mesh::Draw(glm::mat4* ModelTransform)
         // now set the sampler to the correct texture unit
         glUniform1i(glGetUniformLocation(shader->GetShaderProgramID(), (name + number).c_str()), i);
         // and finally bind the texture
-
         glBindTexture(GL_TEXTURE_2D, textures[i].id);
-
-
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-
-        if (mipmap == "GL_NEAREST_MIPMAP_NEAREST")
-        {
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
-        }
-        else if (mipmap == "GL_LINEAR_MIPMAP_NEAREST")
-        {
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
-        }
-        else if (mipmap == "GL_NEAREST_MIPMAP_LINEAR")
-        {
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
-        }
-        else if (mipmap == "GL_LINEAR_MIPMAP_LINEAR")
-        {
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-        }
-        // Default
-        else {
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
-        }
     }
 
     // Translate mesh back to origin, rotate, then re apply the translation
@@ -104,6 +76,6 @@ void Mesh::RotateZ(float x)
 
 void Mesh::SetOrigin(glm::vec3 mesh, glm::vec3 model)
 {
-    this->ModelOrigin= model;
+    this->ModelOrigin = model;
     this->MeshOrigin = mesh;
 }

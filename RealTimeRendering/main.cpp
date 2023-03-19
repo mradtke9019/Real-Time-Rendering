@@ -34,19 +34,6 @@ vector<Shader*> shaders;
 ICamera* activeCamera;
 FixedCamera defaultCamera;
 
-bool MoveToTarget;
-
-std::vector<glm::vec3> Targets;
-
-bool drawStructure1;
-bool drawStructure2;
-
-std::vector<Model*> SphereTargets;
-
-glm::vec3 Target;
-Model* SphereTarget;
-Bone* Root;
-Bone* Structure2;
 vector<Model*> models;
 Model* LightBulb;
 Skybox* skybox;
@@ -122,26 +109,6 @@ void display(GLFWwindow* window)
 		Model* m = models.at(i);
 		m->Draw();
 	}
-
-	if (drawStructure1)
-	{
-		Root->Draw();
-	}
-	if (drawStructure2)
-	{
-		Structure2->Draw();
-	}
-
-	for (int i = 0; i < SphereTargets.size(); i++)
-	{
-		SphereTargets[i]->Draw();
-	}
-	//SphereTarget->Draw();
-
-	//cube->Draw();
-
-	// Draw last
-	//skybox->Draw(*activeCamera->GetViewTransform(), &projection);
 }
 
 void LoadShaders()
@@ -185,50 +152,9 @@ void LoadCameras()
 
 void LoadObjects()
 {
+	Model* model = new Model("./Models/Airplane/piper_pa18.obj", glm::vec3(0, 0, 0), activeShader);
+	models.push_back(model);
 
-	for (int i = 0; i < 1; i++)
-	{
-		//Model* model = new Model("./Models/Airplane/piper_pa18.obj", glm::vec3(i * 50, 0, 0), shaders.at(0), mimmaps[i]);
-	}
-
-	//Model* model = new Model("./Models/Cube/cube.obj", glm::vec3(0, 0, 0), shaders.at(0), mipmapsDisplay[MIN_MIMAPidx]);
-	//models.push_back(model);
-
-	Root = new Bone(activeShader);
-	Root->AddBone(new Bone(activeShader));
-	Root->GetChildren().at(0)->AddBone(new Bone(activeShader));
-	Root->GetChildren().at(0)->GetChildren().at(0)->AddBone(new Bone(activeShader));
-	Root->GetChildren().at(0)->GetChildren().at(0)->GetChildren().at(0)->AddBone(new Bone(activeShader));
-	int depth = Bone::GetTreeHeight(Root);
-
-	Targets.push_back(glm::vec3(2, 0, 2));
-	Targets.push_back(glm::vec3(2, 0, -2));
-	Targets.push_back(glm::vec3(-2, 0, 2));
-	Targets.push_back(glm::vec3(-2, 0, -2));
-
-	for (int i = 0; i < 4; i++)
-	{
-		SphereTargets.push_back(new Model("./Models/Sphere/Sphere.obj", Targets[i], activeShader));
-		//Target = glm::vec3(0, 0, 1);
-		//SphereTarget = new Model("./Models/Sphere/Sphere.obj", Target, activeShader);
-		//MoveToTarget = false;
-	}
-
-
-	Structure2 = new Bone(activeShader);
-	Structure2->AddBone(new Bone(activeShader));
-	Structure2->GetChildren().at(0)->AddBone(new Bone(activeShader));
-	Structure2->GetChildren().at(0)->GetChildren().at(0)->AddBone(new Bone(activeShader));
-	Structure2->GetChildren().at(0)->GetChildren().at(0)->GetChildren().at(0)->AddBone(new Bone(activeShader));
-
-	Structure2->AddBone(new Bone(activeShader));
-	Structure2->GetChildren().at(1)->AddBone(new Bone(activeShader));
-	Structure2->GetChildren().at(1)->GetChildren().at(0)->AddBone(new Bone(activeShader));
-	Structure2->GetChildren().at(1)->GetChildren().at(0)->GetChildren().at(0)->AddBone(new Bone(activeShader));
-
-
-	drawStructure1 = true;
-	drawStructure2 = false;
 }
 
 void initLight()
@@ -301,105 +227,6 @@ void ImguiData()
 		ImGui::TreePop();
 	}
 
-	// Target Settings
-	if (ImGui::TreeNode("Target Settings"))
-	{
-		for (int i = 0; i < SphereTargets.size(); i++)
-		{
-			ImGui::Text(std::string("Target " + std::to_string(i)).c_str());
-			ImGui::SliderFloat(std::string("X" + std::to_string(i)).c_str(), &(Targets[i].x), -10.0f, 10.0f);
-			ImGui::SliderFloat(std::string("Y" + std::to_string(i)).c_str(), &(Targets[i].y), -10.0f, 10.0f);
-			ImGui::SliderFloat(std::string("Z" + std::to_string(i)).c_str(), &(Targets[i].z), -10.0f, 10.0f);
-		}
-		ImGui::TreePop();
-	}
-
-	if (ImGui::TreeNode("Structure Options"))
-	{
-		ImGui::Checkbox(std::string("Show Structure 1").c_str(), &drawStructure1);
-		ImGui::Checkbox(std::string("Show Structure 2").c_str(), &drawStructure2);
-		ImGui::TreePop();
-	}
-
-	for (int i = 0; i < SphereTargets.size(); i++)
-	{
-		SphereTargets[i]->SetPosition(Targets[i]);
-	}
-	//ImGui::Checkbox("Move Root To Target",&MoveToTarget);
-
-	if (drawStructure1)
-	{
-		ImGui::Text("Structure 1");
-		Bone* curr = Root;
-		int i = 0;
-		while (curr != nullptr)
-		{
-			if (ImGui::TreeNode(("Bone " + std::to_string(i)).c_str()))
-			{
-				glm::vec3 rootPos = curr->GetGlobalRootPosition();
-				glm::vec3 pos = curr->GetGlobalTipPosition();
-				ImGui::Text(("Root Global Position: (" + std::to_string(rootPos.x) + "," + std::to_string(rootPos.y) + "," + std::to_string(rootPos.z) + ")").c_str());
-				ImGui::Text(("Tip Global Position: (" + std::to_string(pos.x) + "," + std::to_string(pos.y) + "," + std::to_string(pos.z) + ")").c_str());
-
-				ImGui::SliderFloat("X", curr->GetRotateX(), 0.0f, 180.f);
-				ImGui::SliderFloat("Y", curr->GetRotateY(), 0.0f, 180.f);
-				ImGui::SliderFloat("Z", curr->GetRotateZ(), 0.0f, 180.f);
-
-
-				ImGui::SliderInt("Target Index", curr->GetIdx(), 0, 3);
-				ImGui::Checkbox("Move To Target", curr->MovingToTarget());
-				ImGui::TreePop();
-			}
-
-			curr->SetTarget(Targets[*curr->GetIdx()]);
-
-			// Create rotations for each branch in the bone structure
-			std::vector<Bone*> children = curr->GetChildren();
-			if (children.size() > 0)
-			{
-				curr = children.at(0);
-			}
-			else
-			{
-				curr = nullptr;
-			}
-			i++;
-		}
-	}
-	else if (drawStructure2)
-	{
-		ImGui::Text("Structure 2");
-		std::vector<Bone*> tree2 = std::vector<Bone*>();
-		tree2.push_back(Structure2);
-		for (auto x : Structure2->GetAllBones())
-		{
-			tree2.push_back(x);
-		}
-
-		int layer = 0;
-		for (auto curr : tree2)
-		{
-			std::string l = std::to_string(layer);
-			if (ImGui::TreeNode(("L" + std::to_string(curr->GetDepth()) + " Bone " + l).c_str()))
-			{
-				glm::vec3 rootPos = curr->GetGlobalRootPosition();
-				glm::vec3 pos = curr->GetGlobalTipPosition();
-				ImGui::Text(("Root Global Position: (" + std::to_string(rootPos.x) + "," + std::to_string(rootPos.y) + "," + std::to_string(rootPos.z) + ")").c_str());
-				ImGui::Text(("Tip Global Position: (" + std::to_string(pos.x) + "," + std::to_string(pos.y) + "," + std::to_string(pos.z) + ")").c_str());
-
-				ImGui::SliderFloat("X", curr->GetRotateX(), 0.0f, 180.f);
-				ImGui::SliderFloat("Y", curr->GetRotateY(), 0.0f, 180.f);
-				ImGui::SliderFloat("Z", curr->GetRotateZ(), 0.0f, 180.f);
-
-				ImGui::SliderInt("Target Index", curr->GetIdx(), 0, 3);
-				ImGui::Checkbox("Move To Target", curr->MovingToTarget());
-				ImGui::TreePop();
-			}
-
-			curr->SetTarget(Targets[*curr->GetIdx()]);
-			layer++;
-		}
-	}
 
 }
 
