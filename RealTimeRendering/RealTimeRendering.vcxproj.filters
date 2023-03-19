@@ -52,6 +52,9 @@
     <Filter Include="Resource Files\Images\tree_geo_maps">
       <UniqueIdentifier>{b3552309-067d-4a31-8bf4-161705a12ab5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource Files\Models\Plank">
+      <UniqueIdentifier>{6da37730-7049-4fcc-9965-440e23642fb8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Shader.cpp">
@@ -108,6 +111,9 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Texture.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Model.h">
@@ -150,6 +156,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ITransformable.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Texture.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -286,11 +295,14 @@
     <CopyFileToFolders Include="Images\wood_color_maps\wood_bar_specular.bmp">
       <Filter>Resource Files\Images\wood_color_maps</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="main.frag">
+    <CopyFileToFolders Include="Procedural.frag">
       <Filter>Resource Files\Shaders</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="main.vert">
+    <CopyFileToFolders Include="Procedural.vert">
       <Filter>Resource Files\Shaders</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="Models\Plank\plank.obj">
+      <Filter>Resource Files\Models\Plank</Filter>
     </CopyFileToFolders>
   </ItemGroup>
   <ItemGroup>

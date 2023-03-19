@@ -16,6 +16,7 @@
 class Shader
 {
 private:
+    std::string shaderName;
     std::string VertexShaderText;
     std::string FragmentShaderText;
     GLuint ShaderProgramID;
@@ -25,6 +26,14 @@ private:
     glm::vec3 LightDirection;
     glm::vec3 LightColor;
     GLuint textureID;
+    
+    //https://stackoverflow.com/questions/8520560/get-a-file-name-from-a-path
+    std::string NameFromPath(std::string path)
+    {
+        std::string::size_type const p(path.find_last_of('.'));
+        std::string file_without_extension = path.substr(0, p);
+        return file_without_extension;
+    }
 
     std::string ReadFile(const char* path)
     {
@@ -149,6 +158,8 @@ public:
     Shader() {};
     Shader(const char* vertexShaderPath, const char* fragmentShaderPath, bool debug);
     Shader(const char* vertexShaderPath, const char* fragmentShaderPath);
+
+    std::string GetShaderName();
 
     void DebugOn();
 

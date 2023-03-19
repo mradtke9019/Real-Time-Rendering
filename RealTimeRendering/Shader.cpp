@@ -9,6 +9,7 @@ Shader::Shader(const char* vertexShaderPath, const char* fragmentShaderPath, boo
 	VertexShaderText = ReadFile(vertexShaderPath);
 	FragmentShaderText = ReadFile(fragmentShaderPath);
 	ShaderProgramID = CompileShaders(VertexShaderText, FragmentShaderText);
+	shaderName = NameFromPath(vertexShaderPath);
 }
 
 Shader::Shader(const char* vertexShaderPath, const char* fragmentShaderPath)
@@ -17,6 +18,7 @@ Shader::Shader(const char* vertexShaderPath, const char* fragmentShaderPath)
 	VertexShaderText = ReadFile(vertexShaderPath);
 	FragmentShaderText = ReadFile(fragmentShaderPath);
 	ShaderProgramID = CompileShaders(VertexShaderText, FragmentShaderText);
+	shaderName = NameFromPath(vertexShaderPath);
 }
 
 
@@ -53,6 +55,12 @@ std::string Shader::GetFragmentShaderText()
 GLuint Shader::GetShaderProgramID()
 {
 	return ShaderProgramID;
+}
+
+
+std::string Shader::GetShaderName()
+{
+	return shaderName;
 }
 
 void Shader::Use()

@@ -29,6 +29,8 @@ int Height;
 using namespace std;
 
 Shader* activeShader;
+int shaderChosen;
+std::vector<string> shaderNames;
 vector<Shader*> shaders;
 
 ICamera* activeCamera;
@@ -38,6 +40,7 @@ vector<Model*> models;
 Model* LightBulb;
 Skybox* skybox;
 
+vector<Texture> textures;
 
 // Idea to use delta frame from here https://learnopengl.com/Getting-started/Camera
 float deltaTime;// Time between current frame and last frame
@@ -55,6 +58,8 @@ glm::vec3 CameraTarget;
 //////////// Shader parameters
 float specularExp;
 
+// Tree properties
+float rmin, rmax, hmax, knum;
 
 glm::vec3 LightColor;
 glm::vec3 LightPosition;
@@ -107,35 +112,81 @@ void display(GLFWwindow* window)
 	for (int i = 0; i < models.size(); i++)
 	{
 		Model* m = models.at(i);
-		m->Draw();
+		m->SetShader(activeShader);
+		m->Draw(textures);
 	}
+}
+
+void LoadTextures()
+{
+	textures = std::vector<Texture>();
+
+	//uniform sampler2D ColorMap;
+	//uniform sampler2D SpecularMap;
+	//uniform sampler2D NormalMap;
+	//uniform sampler2D PithRadiusMap;
+	//uniform sampler2D KnotHeightMap;
+	//uniform sampler2D KnotOrientMap;
+	//uniform sampler2D KnotStateMap;
+
+	// Tree geo maps
+	Texture knot_height_map = Texture();
+	knot_height_map.id = Texture::TextureFromFile("knot_height_map.bmp", "./Images/tree_geo_maps");
+	knot_height_map.name = "KnotHeightMap";
+	textures.push_back(knot_height_map);
+
+	Texture knot_orientation_map = Texture();
+	knot_orientation_map.id = Texture::TextureFromFile("knot_orientation_map.bmp", "./Images/tree_geo_maps");
+	knot_orientation_map.name = "KnotOrientMap";
+	textures.push_back(knot_orientation_map);
+
+	Texture knot_state_map = Texture();
+	knot_state_map.id = Texture::TextureFromFile("knot_state_map.bmp", "./Images/tree_geo_maps");
+	knot_state_map.name = "KnotStateMap";
+	textures.push_back(knot_state_map);
+
+	Texture pith_and_radius_map = Texture();
+	pith_and_radius_map.id = Texture::TextureFromFile("pith_and_radius_map.bmp", "./Images/tree_geo_maps");
+	pith_and_radius_map.name = "PithRadiusMap";
+	textures.push_back(pith_and_radius_map);
+
+
+	// Wood color maps
+	Texture wood_bar_color = Texture();
+	wood_bar_color.id = Texture::TextureFromFile("wood_bar_color.bmp", "./Images/wood_color_maps");
+	wood_bar_color.name = "ColorMap";
+	textures.push_back(wood_bar_color);
+
+	Texture wood_bar_normal = Texture();
+	wood_bar_normal.id = Texture::TextureFromFile("wood_bar_normal.bmp", "./Images/wood_color_maps");
+	wood_bar_normal.name = "NormalMap";
+	textures.push_back(wood_bar_normal);
+
+	Texture wood_bar_specular = Texture();
+	wood_bar_specular.id = Texture::TextureFromFile("wood_bar_specular.bmp", "./Images/wood_color_maps");
+	wood_bar_specular.name = "SpecularMap";
+	textures.push_back(wood_bar_specular);
 }
 
 void LoadShaders()
 {
 	// Set up the shaders
-	//Shader* textureShader = new Shader("./simple.vert", "./simple.frag", true);
-
 	Shader* blinnPhongShader = new Shader("./blinnPhong.vert", "./blinnPhong.frag", false);
 	blinnPhongShader->SetUniform1f("specularExp", 64);
 	blinnPhongShader->SetUniform1i("UseNormalMap", 0);
 
-	//Shader* reflectionShader = new Shader("./fresnel.vert", "./reflection.frag");
-	////reflectionShader->LoadCubemap("cubemap");
-
-
-	//Shader* refractionShader = new Shader("./fresnel.vert", "./refraction.frag");
-	////refractionShader->LoadCubemap("cubemap");
-
-	//Shader* chromaticShader = new Shader("./fresnel.vert", "./chromatic.frag");
-	////chromaticShader->LoadCubemap("cubemap");
-
-	//Shader* fresnelShader = new Shader("./fresnel.vert", "./fresnel.frag", false);
-	//fresnelShader->LoadCubemap("cubemap");
+	Shader * woodShader = new Shader("./Procedural.vert", "./Procedural.frag", false);
 
 
 	shaders.push_back(blinnPhongShader);
+	shaders.push_back(woodShader);
 	activeShader = blinnPhongShader;
+	shaderChosen = 0;
+
+	for (auto s : shaders)
+	{
+		shaderNames.push_back(s->GetShaderName());
+	}
 }
 
 
@@ -152,9 +203,21 @@ void LoadCameras()
 
 void LoadObjects()
 {
-	Model* model = new Model("./Models/Airplane/piper_pa18.obj", glm::vec3(0, 0, 0), activeShader);
+	Model* model = new Model("./Models/Plank/plank.obj", glm::vec3(0, 0, 0), activeShader);
 	models.push_back(model);
 
+	rmin = 104.06; 
+	rmax = 143.375;
+	hmax = 4000;
+	knum = 108;
+
+	for (auto s : shaders)
+	{
+		s->SetUniform1f("rmin", rmin);
+		s->SetUniform1f("rmax", rmax);
+		s->SetUniform1f("hmax", hmax);
+		s->SetUniform1f("knum", knum);
+	}
 }
 
 void initLight()
@@ -172,6 +235,7 @@ void init()
 	initLight();
 	LoadShaders();
 	LoadCameras();
+	LoadTextures();
 	LoadObjects();
 }
 
@@ -223,6 +287,26 @@ void ImguiData()
 		ImGui::SliderFloat("Orbit Speed", &orbitSpeed, 0.0f, 100.0f);
 		ImGui::SliderFloat("Camera Height", &cameraHeight, -20.0f, 20.0f);
 		ImGui::SliderFloat("Orbit Radius", &cameraOrbit, 0.0f, 100.0f);
+
+		ImGui::TreePop();
+	}
+
+	if (ImGui::TreeNode("Shader Settings"))
+	{
+		if (ImGui::BeginCombo("Active Shader", shaderNames[shaderChosen].c_str()))
+		{
+
+			for (int i = 0; i < shaders.size(); i++)
+			{
+				if (ImGui::Selectable(shaderNames[i].c_str(), i == shaderChosen))
+				{
+					activeShader = shaders[i];
+					shaderChosen = i;
+				}
+			}
+
+			ImGui::EndCombo();
+		}
 
 		ImGui::TreePop();
 	}

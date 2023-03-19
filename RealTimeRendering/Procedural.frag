@@ -2,8 +2,8 @@
 #define PI 3.1415926538
 
 in vec3 outTexCoords;
-in vec3 normal;
-in vec3 fragPos;
+in vec3 fNormal;
+in vec3 fPosition;
 in float zrat;
 
 uniform float rmin;
@@ -410,7 +410,7 @@ void main()
     float gg = 2 * clamp ( t_s - t_b_min + 0.3, 0.0, 1.0) ;
     float xlen = (1.0-gg) * ( 2.0*normal_rgb.x-1.0 );
     float zlen = abs(2*normal_rgb.z-1.0);
-    vec3 Nv = normalize(normal);
+    vec3 Nv = normalize(fNormal);
     vec3 Tv = normalize(vec3(P.x,P.y,0.0));
     vec3 Bv = cross(Nv,Tv);
     Tv = cross(Bv,Nv);
@@ -423,19 +423,20 @@ void main()
     vec3 ambient = ambientStrength * lightColor;
     // Diffuse
     float roughness = 0.5;
-    vec3 lightDir = normalize(lightPos - fragPos);
+    vec3 lightDir = normalize(lightPos - fPosition);
     float diff = max(dot(norm, lightDir), 0.0);
     vec3 diffuse = roughness * diff * lightColor;
     //Specular
     float specularStrength = 0.4;
     float shininess = vec3(texture2D(SpecularMap, vec2(t,0.5))).r;
-    vec3 viewDir = normalize(viewPos-fragPos);
+    vec3 viewDir = normalize(viewPos-fPosition);
     vec3 reflectDir = reflect(-lightDir, norm);
     float spec = pow(max(dot(viewDir, reflectDir), 0.0),32);
     vec3 specular = shininess * specularStrength * spec * lightColor;
     //Combine
     vec3 result = (ambient + diffuse + specular) * texColor;
-    outColor = vec4(result, 1.0);
+    //outColor = vec4(result, 1.0); Original
+    gl_FragColor = vec4(result, 1.0);
 }
 
 // TO DOs

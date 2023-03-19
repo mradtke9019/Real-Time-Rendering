@@ -18,11 +18,9 @@
 // Ideas used here for model loading via assimp
 // https://learnopengl.com/Model-Loading/
 
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-
 #include <string>
 #include <vector>
+#include "Texture.h"
 using namespace std;
 
 #define MAX_BONE_INFLUENCE 4
@@ -44,12 +42,6 @@ struct Vertex {
     float m_Weights[MAX_BONE_INFLUENCE];
 };
 
-struct Texture {
-    unsigned int id;
-    string type;
-    string path;
-};
-
 #pragma once
 class Mesh : public IRotatable {
 public:
@@ -63,6 +55,7 @@ public:
     void SetShader(Shader* Shader);
     Shader* GetShader();
     void Draw(glm::mat4* ModelTransform = nullptr);
+    void Draw(glm::mat4* ModelTransform, std::vector<Texture> textures);
 
     // constructor
     Mesh(vector<Vertex> vertices, vector<unsigned int> indices, vector<Texture> textures, Shader* s)
@@ -82,12 +75,6 @@ public:
             setupMesh();
         }
     }
-
-    void RotateX(float x);
-    void RotateY(float x);
-    void RotateZ(float x);
-
-    void SetOrigin(glm::vec3 mesh, glm::vec3 model);
 
 private:
     // render data 
@@ -148,10 +135,5 @@ private:
         glEnableVertexAttribArray(vBitangent);
         glVertexAttribPointer(vBitangent, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, Bitangent));
 
-    }
-
-    void UpdateMeshTransform()
-    {
-        MeshTransform = IRotatable::GetRotationMatrix();
     }
 };

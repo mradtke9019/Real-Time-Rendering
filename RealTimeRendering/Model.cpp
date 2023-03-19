@@ -40,6 +40,18 @@ void Model::Draw()
 	}
 }
 
+void Model::Draw(std::vector<Texture> textures)
+{
+	shader->Use();
+	glm::mat4 ModelTransform = this->GetTransformation();
+	shader->SetUniformMatrix4fv("model", &ModelTransform);
+	shader->SetUniformVec3("ObjectColor", ObjectColor);
+	for (int i = 0; i < meshes.size(); i++)
+	{
+		meshes.at(i).Draw(&ModelTransform, textures);
+	}
+}
+
 
 Shader* Model::GetShader()
 {
