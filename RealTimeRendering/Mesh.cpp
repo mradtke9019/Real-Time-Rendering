@@ -3,12 +3,12 @@
 // https://learnopengl.com/Model-Loading/Mesh
 
 
-void Mesh::SetShader(Shader* shader)
+void Mesh::SetShader(IShader* shader)
 {
     this->shader = shader;
 }
 
-Shader* Mesh::GetShader()
+IShader* Mesh::GetShader()
 {
     return shader;
 }

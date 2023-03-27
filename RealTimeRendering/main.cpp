@@ -14,6 +14,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include "Shader.h"
+#include "KnotShader.h"
 
 #include "Model.h"
 #include <random>
@@ -28,10 +29,10 @@ int Width;
 int Height;
 using namespace std;
 
-Shader* activeShader;
+IShader* activeShader;
 int shaderChosen;
 std::vector<string> shaderNames;
-vector<Shader*> shaders;
+vector<IShader*> shaders;
 
 ICamera* activeCamera;
 FixedCamera defaultCamera;
@@ -46,6 +47,7 @@ vector<Texture> textures;
 float deltaTime;// Time between current frame and last frame
 float lastFrame; // Time of last frame
 float currentFrame;
+bool updateTime = true;
 
 int rotatationMeshIndex = 0;
 
@@ -63,7 +65,6 @@ float rmin, rmax, hmax, knum;
 
 glm::vec3 LightColor;
 glm::vec3 LightPosition;
-glm::vec3 LightDirection;
 
 
 glm::mat4 GetProjection()
@@ -98,11 +99,14 @@ void display(GLFWwindow* window)
 
 	for (int i = 0; i < shaders.size(); i++)
 	{
-		Shader* s = shaders.at(i);
+		IShader* s = shaders.at(i);
 
 		s->SetUniformVec3("LightColor", LightColor);
 		s->SetUniformVec3("LightPosition", LightPosition);
-		s->SetUniform1f("time", timeValue);
+		if (updateTime)
+		{
+			s->SetUniform1f("time", timeValue);
+		}
 		s->SetUniform1f("rand", r);
 		s->SetUniformMatrix4fv("view", defaultCamera.GetViewTransform());
 		s->SetUniformMatrix4fv("projection", &projection);
@@ -113,59 +117,12 @@ void display(GLFWwindow* window)
 	{
 		Model* m = models.at(i);
 		m->SetShader(activeShader);
-		m->Draw(textures);
+		m->Draw();
 	}
 }
 
 void LoadTextures()
 {
-	textures = std::vector<Texture>();
-
-	//uniform sampler2D ColorMap;
-	//uniform sampler2D SpecularMap;
-	//uniform sampler2D NormalMap;
-	//uniform sampler2D PithRadiusMap;
-	//uniform sampler2D KnotHeightMap;
-	//uniform sampler2D KnotOrientMap;
-	//uniform sampler2D KnotStateMap;
-
-	// Tree geo maps
-	Texture knot_height_map = Texture();
-	knot_height_map.id = Texture::TextureFromFile("knot_height_map.bmp", "./Images/tree_geo_maps");
-	knot_height_map.name = "KnotHeightMap";
-	textures.push_back(knot_height_map);
-
-	Texture knot_orientation_map = Texture();
-	knot_orientation_map.id = Texture::TextureFromFile("knot_orientation_map.bmp", "./Images/tree_geo_maps");
-	knot_orientation_map.name = "KnotOrientMap";
-	textures.push_back(knot_orientation_map);
-
-	Texture knot_state_map = Texture();
-	knot_state_map.id = Texture::TextureFromFile("knot_state_map.bmp", "./Images/tree_geo_maps");
-	knot_state_map.name = "KnotStateMap";
-	textures.push_back(knot_state_map);
-
-	Texture pith_and_radius_map = Texture();
-	pith_and_radius_map.id = Texture::TextureFromFile("pith_and_radius_map.bmp", "./Images/tree_geo_maps");
-	pith_and_radius_map.name = "PithRadiusMap";
-	textures.push_back(pith_and_radius_map);
-
-
-	// Wood color maps
-	Texture wood_bar_color = Texture();
-	wood_bar_color.id = Texture::TextureFromFile("wood_bar_color.bmp", "./Images/wood_color_maps");
-	wood_bar_color.name = "ColorMap";
-	textures.push_back(wood_bar_color);
-
-	Texture wood_bar_normal = Texture();
-	wood_bar_normal.id = Texture::TextureFromFile("wood_bar_normal.bmp", "./Images/wood_color_maps");
-	wood_bar_normal.name = "NormalMap";
-	textures.push_back(wood_bar_normal);
-
-	Texture wood_bar_specular = Texture();
-	wood_bar_specular.id = Texture::TextureFromFile("wood_bar_specular.bmp", "./Images/wood_color_maps");
-	wood_bar_specular.name = "SpecularMap";
-	textures.push_back(wood_bar_specular);
 }
 
 void LoadShaders()
@@ -175,16 +132,42 @@ void LoadShaders()
 	blinnPhongShader->SetUniform1f("specularExp", 64);
 	blinnPhongShader->SetUniform1i("UseNormalMap", 0);
 
-	Shader * woodShader = new Shader("./Procedural.vert", "./Procedural.frag", false);
+	KnotShader* woodShader = new KnotShader("./Procedural.vert", "./Procedural.frag", false);
 
 
-	shaders.push_back(blinnPhongShader);
+	KnotShader* woodShader2 = new KnotShader("./Procedural2.vert", "./Procedural2.frag", false);
+
+
+	rmin = 104.06;
+	rmax = 143.375;
+	hmax = 4000;
+	knum = 108;
+
+	//woodShader->SetRMin(rmin);
+	//woodShader->SetRMax(rmax);
+	//woodShader->SetHMax(hmax);
+	//woodShader->SetKNum(knum);
+	//woodShader->SetUniform1i("N", 20);
+
 	shaders.push_back(woodShader);
-	activeShader = blinnPhongShader;
+	shaders.push_back(woodShader2);
+	shaders.push_back(blinnPhongShader);
+
+	activeShader = woodShader;
 	shaderChosen = 0;
 
 	for (auto s : shaders)
 	{
+		// Set the Knot Shaders to be initialized with the same values
+		if (dynamic_cast<KnotShader*>(s) != nullptr)
+		{
+			KnotShader* k = dynamic_cast<KnotShader*>(s);
+			k->SetRMin(rmin);
+			k->SetRMax(rmax);
+			k->SetHMax(hmax);
+			k->SetKNum(knum);
+			k->SetUniform1i("N", 20);
+		}
 		shaderNames.push_back(s->GetShaderName());
 	}
 }
@@ -192,8 +175,8 @@ void LoadShaders()
 
 void LoadCameras()
 {
-	cameraOrbit = 15.0f;
-	cameraHeight = 10.0f;
+	cameraOrbit = 1.7f;
+	cameraHeight = 1.0f;
 	orbitSpeed = 0.0f;
 	theta = 0.0f;
 	CameraTarget = glm::vec3(0.0f, 0.0f, 0.0f);
@@ -205,26 +188,12 @@ void LoadObjects()
 {
 	Model* model = new Model("./Models/Plank/plank.obj", glm::vec3(0, 0, 0), activeShader);
 	models.push_back(model);
-
-	rmin = 104.06; 
-	rmax = 143.375;
-	hmax = 4000;
-	knum = 108;
-
-	for (auto s : shaders)
-	{
-		s->SetUniform1f("rmin", rmin);
-		s->SetUniform1f("rmax", rmax);
-		s->SetUniform1f("hmax", hmax);
-		s->SetUniform1f("knum", knum);
-	}
 }
 
 void initLight()
 {
 	LightColor = glm::vec3(0.5, 0.5, 0.5);
 	LightPosition = glm::vec3(20, 100.0, 0);
-	LightDirection = glm::vec3(0.0, -1.0, 0.0);
 }
 
 void init()
@@ -281,6 +250,8 @@ void ImguiData()
 	ImGui::Begin("ImGui");
 
 	ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+
+	ImGui::Checkbox("Update Time", &updateTime);
 
 	if (ImGui::TreeNode("Camera Settings"))
 	{

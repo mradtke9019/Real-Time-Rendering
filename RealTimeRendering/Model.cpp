@@ -1,6 +1,6 @@
 #include "Model.h"
 
-Model::Model(std::string path, glm::vec3 Position, Shader* Shader)
+Model::Model(std::string path, glm::vec3 Position, IShader* Shader)
 	: ITransformable(), mipmap(GL_LINEAR_MIPMAP_LINEAR)
 {
 	shader = Shader;
@@ -9,7 +9,7 @@ Model::Model(std::string path, glm::vec3 Position, Shader* Shader)
 	loadModel(path);
 }
 
-Model::Model(std::string path, glm::vec3 Position, Shader* Shader, glm::vec3 color)
+Model::Model(std::string path, glm::vec3 Position, IShader* Shader, glm::vec3 color)
 	: ITransformable(), mipmap(GL_LINEAR_MIPMAP_LINEAR)
 {
 	shader = Shader;
@@ -19,7 +19,7 @@ Model::Model(std::string path, glm::vec3 Position, Shader* Shader, glm::vec3 col
 }
 
 // Constructor to control the mip mapping generated
-Model::Model(std::string path, glm::vec3 Position, Shader* Shader, GLint mipmapPolicy)
+Model::Model(std::string path, glm::vec3 Position, IShader* Shader, GLint mipmapPolicy)
 	: ITransformable(), mipmap(GL_LINEAR_MIPMAP_LINEAR)
 {
 	shader = Shader;
@@ -53,12 +53,12 @@ void Model::Draw(std::vector<Texture> textures)
 }
 
 
-Shader* Model::GetShader()
+IShader* Model::GetShader()
 {
 	return shader;
 }
 
-void Model::SetShader(Shader* Shader)
+void Model::SetShader(IShader* Shader)
 {
 	shader = Shader;
 	for (int i = 0; i < meshes.size(); i++)

@@ -41,12 +41,12 @@ public:
     {
         loadModel(path);
     }
-    Model(std::string path, glm::vec3 Position, Shader* Shader);
-    Model(std::string path, glm::vec3 Position, Shader* Shader, glm::vec3 color);
-    Model(std::string path, glm::vec3 Position, Shader* Shader, GLint mipmapPolicy);
-    Shader* GetShader();
+    Model(std::string path, glm::vec3 Position, IShader* Shader);
+    Model(std::string path, glm::vec3 Position, IShader* Shader, glm::vec3 color);
+    Model(std::string path, glm::vec3 Position, IShader* Shader, GLint mipmapPolicy);
+    IShader* GetShader();
 
-    void SetShader(Shader* Shader);
+    void SetShader(IShader* Shader);
     //void SetModelTransform(glm::mat4 model);
     void SetColor(glm::vec3 color);
     glm::vec3 GetColor();
@@ -58,7 +58,7 @@ public:
 
 private:
 
-    Shader* shader;
+    IShader* shader;
     glm::vec3 ObjectColor;
 
 
@@ -206,10 +206,7 @@ private:
             }
             if (!skip)
             {   // if texture hasn't been loaded already, load it
-                Texture texture;
-                texture.id = Texture::TextureFromFile(str.C_Str(), this->directory);
-                texture.type = typeName;
-                texture.path = str.C_Str();
+                Texture texture = Texture::TextureFromFile(str.C_Str(), this->directory, typeName, typeName);
                 textures.push_back(texture);
                 textures_loaded.push_back(texture);  // store it as texture loaded for entire model, to ensure we won't unnecessary load duplicate textures.
             }

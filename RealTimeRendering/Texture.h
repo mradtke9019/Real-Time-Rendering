@@ -18,8 +18,9 @@ public:
     std::string type;
     std::string path;
 
-    static unsigned int TextureFromFile(const char* path, const std::string& directory)
+    static Texture TextureFromFile(const char* path, const std::string& directory, const std::string& name, const std::string& type)
     {
+        Texture tex = Texture();
         std::string filename = std::string(path);
         filename = directory + '/' + filename;
 
@@ -61,7 +62,12 @@ public:
             stbi_image_free(data);
         }
 
-        return textureID;
+        tex.id = textureID;
+        tex.name = name;
+        tex.type = type;
+        tex.path = path;
+
+        return tex;
     }
 
 };

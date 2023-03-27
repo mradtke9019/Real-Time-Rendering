@@ -396,6 +396,7 @@ void main()
     float t_min = min(t_s, min_all(T_b));
     t = t_min + delta_sum;
 
+
     vec2 tSample = vec2(t,0.5);
 
     // COLOR. PAPER Section 4.3

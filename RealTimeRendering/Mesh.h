@@ -52,13 +52,13 @@ public:
     unsigned int VAO;
 
     //Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<Texture> textures, Shader* shader);
-    void SetShader(Shader* Shader);
-    Shader* GetShader();
+    void SetShader(IShader* Shader);
+    IShader* GetShader();
     void Draw(glm::mat4* ModelTransform = nullptr);
     void Draw(glm::mat4* ModelTransform, std::vector<Texture> textures);
 
     // constructor
-    Mesh(vector<Vertex> vertices, vector<unsigned int> indices, vector<Texture> textures, Shader* s)
+    Mesh(vector<Vertex> vertices, vector<unsigned int> indices, vector<Texture> textures, IShader* s)
         : MeshOrigin(glm::vec3(0, 0, 0)), ModelOrigin(glm::vec3(0, 0, 0))
     {
         MeshTransform = glm::mat4(1);
@@ -80,7 +80,7 @@ private:
     // render data 
     glm::mat4 MeshTransform;
     unsigned int VBO, EBO;
-    Shader* shader;
+    IShader* shader;
     glm::vec3 ModelOrigin;
     glm::vec3 MeshOrigin;
 

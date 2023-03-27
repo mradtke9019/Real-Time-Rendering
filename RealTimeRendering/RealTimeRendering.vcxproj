@@ -157,6 +157,7 @@
     <ClCompile Include="imgui\imgui_impl_opengl3.cpp" />
     <ClCompile Include="imgui\imgui_tables.cpp" />
     <ClCompile Include="imgui\imgui_widgets.cpp" />
+    <ClCompile Include="KnotShader.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Skybox.cpp" />
     <ClCompile Include="FixedCamera.cpp" />
@@ -171,8 +172,10 @@
     <ClInclude Include="Bone.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="IRotatable.h" />
+    <ClInclude Include="IShader.h" />
     <ClInclude Include="ITransformable.h" />
     <ClInclude Include="ITranslatable.h" />
+    <ClInclude Include="KnotShader.h" />
     <ClInclude Include="Log.h" />
     <ClInclude Include="Skybox.h" />
     <ClInclude Include="FixedCamera.h" />
@@ -328,6 +331,14 @@
   </ItemGroup>
   <ItemGroup>
     <CopyFileToFolders Include="Models\Plank\plank.obj">
+      <FileType>Document</FileType>
+    </CopyFileToFolders>
+  </ItemGroup>
+  <ItemGroup>
+    <CopyFileToFolders Include="Procedural2.frag">
+      <FileType>Document</FileType>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="Procedural2.vert">
       <FileType>Document</FileType>
     </CopyFileToFolders>
   </ItemGroup>

@@ -12,8 +12,9 @@
 #include <glm/gtc/type_ptr.hpp>
 #include "stb_image.h";
 #include "Log.h"
+#include "IShader.h"
 
-class Shader
+class Shader : public IShader
 {
 private:
     std::string shaderName;
