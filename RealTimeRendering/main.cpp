@@ -111,6 +111,8 @@ void display(GLFWwindow* window)
 		s->SetUniformMatrix4fv("view", defaultCamera.GetViewTransform());
 		s->SetUniformMatrix4fv("projection", &projection);
 		s->SetUniformVec3("cameraPos", defaultCamera.GetPosition());
+		s->SetUniformVec3("viewPos", defaultCamera.GetPosition());
+		s->SetUniformVec3("viewPosition", defaultCamera.GetPosition());
 	}
 
 	for (int i = 0; i < models.size(); i++)
