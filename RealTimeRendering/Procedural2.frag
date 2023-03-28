@@ -22,6 +22,8 @@ uniform vec3 viewPos;
 uniform mat4 model;
 uniform mat4 view;
 uniform float time;
+uniform float rand;
+
 
 
 
@@ -53,7 +55,12 @@ void main() {
     vec2 TexCoords = vec2(outTexCoords.x,outTexCoords.y);
     vec2 uv = TexCoords * scale;
     float noiseValue = noise(vec2(uv.x + time, uv.y));
-    vec4 color = texture2D(ColorMap, TexCoords) * noiseValue;
+    float noiseValue1 = noise(vec2(rand * uv.x + time, uv.y));
+    float noiseValue2 = noise(vec2(uv.x/rand + time, uv.y));
+    float noiseValue3 = noise(vec2(uv.x * rand * 2.0 + time, uv.y));
+    //vec4 color = texture2D(ColorMap, TexCoords) * noiseValue;
+    //vec4 color = texture2D(ColorMap, vec2(noiseValue,0.5));
+    vec4 color = vec4(noiseValue1,noiseValue2,noiseValue3,1.0);
 
     bool blinn = true;
     vec3 normal;
