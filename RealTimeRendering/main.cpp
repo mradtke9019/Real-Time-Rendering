@@ -113,6 +113,7 @@ void display(GLFWwindow* window)
 		s->SetUniformVec3("cameraPos", defaultCamera.GetPosition());
 		s->SetUniformVec3("viewPos", defaultCamera.GetPosition());
 		s->SetUniformVec3("viewPosition", defaultCamera.GetPosition());
+		s->SetUniformVec3("ViewPosition", defaultCamera.GetPosition());
 	}
 
 	for (int i = 0; i < models.size(); i++)
@@ -136,7 +137,6 @@ void LoadShaders()
 
 	KnotShader* woodShader = new KnotShader("./Procedural.vert", "./Procedural.frag", false);
 
-
 	KnotShader* woodShader2 = new KnotShader("./Procedural2.vert", "./Procedural2.frag", false);
 
 
@@ -144,12 +144,6 @@ void LoadShaders()
 	rmax = 143.375;
 	hmax = 4000;
 	knum = 108;
-
-	//woodShader->SetRMin(rmin);
-	//woodShader->SetRMax(rmax);
-	//woodShader->SetHMax(hmax);
-	//woodShader->SetKNum(knum);
-	//woodShader->SetUniform1i("N", 20);
 
 	shaders.push_back(woodShader);
 	shaders.push_back(woodShader2);

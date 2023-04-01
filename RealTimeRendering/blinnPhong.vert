@@ -3,16 +3,15 @@
 in vec3 vPosition;
 in vec3 vNormal;
 in vec2 vTexture;
-in vec4 vColor;
+
 uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
-uniform vec3 LightColor;
-uniform vec3 ObjectColor;
-uniform vec3 LightPosition;
-uniform vec3 LightDirection;
 
-out vec4 color;
+
+uniform vec3 LightColor;
+uniform vec3 LightPosition;
+
 out vec3 fNormal;
 out vec3 fPosition;
 out vec2 TexCoord;

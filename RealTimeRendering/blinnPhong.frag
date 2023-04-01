@@ -4,11 +4,9 @@ in vec4 color;
 in vec3 fNormal;
 in vec3 fPosition;
 
-
+uniform mat4 model;
 
 uniform float time;
-uniform mat4 model;
-uniform mat4 Identity;
 uniform float rand;
 
 const float ambientCoeff   = 0.1;
@@ -17,10 +15,8 @@ const float specularCoeff  = 1;
 uniform int UseNormalMap;
 uniform float specularExp;
 
-vec3 ObjectColor;
 uniform vec3 LightColor;
 uniform vec3 LightPosition;
-uniform vec3 LightDirection;
 uniform vec3 ViewPosition;
 
 
@@ -48,8 +44,8 @@ void main()
     vec3 lightDir = normalize(LightPosition - fPosition);
     vec3 viewDir = normalize(ViewPosition - fPosition);
     vec3 reflectDir = reflect(-lightDir, normal);
-
-    ObjectColor = texture(texture_diffuse1, TexCoord).rgb;
+    
+    vec3 ObjectColor = texture(texture_diffuse1, TexCoord).rgb;
     if(ObjectColor == vec3(0,0,0))
     {
         ObjectColor = vec3(0.5,0.5,0.5);
@@ -62,7 +58,6 @@ void main()
     // Diffuse
     float diff = max(dot(lightDir, normal), 0.0);
     vec3 diffuse = diff * ObjectColor;
-
 
     // Specular
     float spec = 0.0;
@@ -77,7 +72,6 @@ void main()
         spec = pow(max(dot(viewDir, reflectDir), 0.0), specularExp);
     }
     vec3 specular = specularCoeff * LightColor * spec;
-
 
 
     gl_FragColor = vec4(ambient + diffuse + specular, 1.0); //+ texture(texture_diffuse1, TexCoord);
