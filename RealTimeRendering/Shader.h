@@ -11,8 +11,8 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include "stb_image.h";
+#include "IShader.h";
 #include "Log.h"
-#include "IShader.h"
 
 class Shader : public IShader
 {
@@ -22,10 +22,8 @@ private:
     std::string FragmentShaderText;
     GLuint ShaderProgramID;
     
-    bool debugShader;
-    glm::vec3 LightPosition;
-    glm::vec3 LightDirection;
-    glm::vec3 LightColor;
+    /*glm::vec3 LightPosition;
+    glm::vec3 LightColor;*/
     GLuint textureID;
     
     //https://stackoverflow.com/questions/8520560/get-a-file-name-from-a-path
@@ -157,14 +155,10 @@ private:
 
 public:
     Shader() {};
-    Shader(const char* vertexShaderPath, const char* fragmentShaderPath, bool debug);
+
     Shader(const char* vertexShaderPath, const char* fragmentShaderPath);
 
     std::string GetShaderName();
-
-    void DebugOn();
-
-    void DebugOff();
 
     GLuint GetAttribLocation(std::string shaderAttribute);
 

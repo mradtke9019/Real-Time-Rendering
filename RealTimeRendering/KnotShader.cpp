@@ -1,18 +1,12 @@
 #include "KnotShader.h"
 
 
-KnotShader::KnotShader(const char* vertexShaderPath, const char* fragmentShaderPath, bool debug) :
-	Shader(vertexShaderPath, fragmentShaderPath, debug)
-{
-	LoadDefaultWoodTextures();
-}
-
-
 KnotShader::KnotShader(const char* vertexShaderPath, const char* fragmentShaderPath) :
-	Shader(vertexShaderPath, fragmentShaderPath, false)
+	Shader(vertexShaderPath, fragmentShaderPath)
 {
 	LoadDefaultWoodTextures();
 }
+
 
 void KnotShader::SetRMin(float rmin)
 {

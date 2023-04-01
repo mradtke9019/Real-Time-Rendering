@@ -11,6 +11,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <vector>
 #include "Shader.h"
+#include "IShader.h"
 #include "Log.h"
 #include "IRotatable.h"
 

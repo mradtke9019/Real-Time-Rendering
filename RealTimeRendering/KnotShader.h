@@ -47,8 +47,6 @@ private:
 
 public:
 
-	KnotShader(const char* vertexShaderPath, const char* fragmentShaderPath, bool debug);
-
 	KnotShader(const char* vertexShaderPath, const char* fragmentShaderPath);
 
 

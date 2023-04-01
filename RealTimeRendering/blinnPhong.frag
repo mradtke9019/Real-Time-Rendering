@@ -48,7 +48,9 @@ void main()
     vec3 ObjectColor = texture(texture_diffuse1, TexCoord).rgb;
     if(ObjectColor == vec3(0,0,0))
     {
-        ObjectColor = vec3(0.5,0.5,0.5);
+        ObjectColor = vec3(1.0,0.0,0.0);
+        gl_FragColor = vec4(ObjectColor,1.0);
+        return;
     }
 
     // Ambient

@@ -22,10 +22,6 @@ public:
 
     virtual std::string GetShaderName() = 0;
 
-    virtual void DebugOn() = 0;
-
-    virtual void DebugOff() = 0;
-
     virtual GLuint GetAttribLocation(std::string shaderAttribute) = 0;
 
     virtual std::string GetVertexShaderText() = 0;

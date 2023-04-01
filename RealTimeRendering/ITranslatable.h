@@ -23,6 +23,12 @@ public:
 		return Position;
 	}
 
+
+	glm::vec3* GetPositionAddress()
+	{
+		return &Position;
+	}
+
 	void SetPosition(glm::vec3 p)
 	{
 		Position = p;

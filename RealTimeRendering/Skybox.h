@@ -68,7 +68,7 @@ private:
 public:
 	Skybox()
 	{
-		shader = Shader("./skybox.vert", "./skybox.frag", true);
+		shader = Shader("./skybox.vert", "./skybox.frag");
         SetTexture();
 
 

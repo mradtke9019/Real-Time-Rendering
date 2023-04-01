@@ -102,7 +102,7 @@ void display(GLFWwindow* window)
 		IShader* s = shaders.at(i);
 
 		s->SetUniformVec3("LightColor", LightColor);
-		s->SetUniformVec3("LightPosition", LightPosition);
+		s->SetUniformVec3("LightPosition", LightBulb->GetPosition());
 		if (updateTime)
 		{
 			s->SetUniform1f("time", timeValue);
@@ -131,13 +131,13 @@ void LoadTextures()
 void LoadShaders()
 {
 	// Set up the shaders
-	Shader* blinnPhongShader = new Shader("./blinnPhong.vert", "./blinnPhong.frag", false);
+	Shader* blinnPhongShader = new Shader("./blinnPhong.vert", "./blinnPhong.frag");
 	blinnPhongShader->SetUniform1f("specularExp", 64);
 	blinnPhongShader->SetUniform1i("UseNormalMap", 0);
 
-	KnotShader* woodShader = new KnotShader("./Procedural.vert", "./Procedural.frag", false);
+	KnotShader* woodShader = new KnotShader("./Procedural.vert", "./Procedural.frag");
 
-	KnotShader* woodShader2 = new KnotShader("./Procedural2.vert", "./Procedural2.frag", false);
+	KnotShader* woodShader2 = new KnotShader("./Procedural2.vert", "./Procedural2.frag");
 
 
 	rmin = 104.06;
@@ -155,9 +155,9 @@ void LoadShaders()
 	for (auto s : shaders)
 	{
 		// Set the Knot Shaders to be initialized with the same values
-		if (dynamic_cast<KnotShader*>(s) != nullptr)
+		if (static_cast<KnotShader*>(s) != nullptr)
 		{
-			KnotShader* k = dynamic_cast<KnotShader*>(s);
+			KnotShader* k = static_cast<KnotShader*>(s);
 			k->SetRMin(rmin);
 			k->SetRMax(rmax);
 			k->SetHMax(hmax);
@@ -183,7 +183,12 @@ void LoadCameras()
 void LoadObjects()
 {
 	Model* model = new Model("./Models/Plank/plank.obj", glm::vec3(0, 0, 0), activeShader);
+	Model* cube = new Model("./Models/Cube/cube.obj", glm::vec3(0, 0, 0), activeShader);
+	LightBulb = new Model("./Models/Sphere/Sphere.obj", LightPosition, activeShader);
+	
 	models.push_back(model);
+	models.push_back(cube);
+	models.push_back(LightBulb);
 }
 
 void initLight()
@@ -204,15 +209,9 @@ void init()
 	LoadObjects();
 }
 
-
-void SetLightPosition(glm::vec3 pos) {
-	LightPosition = pos;
-	LightBulb->SetPosition(LightPosition);
-}
-
-glm::vec3 GetLightPosition()
+glm::vec3* GetLightPosition()
 {
-	return LightPosition;
+	return LightBulb->GetPositionAddress();
 }
 
 
@@ -248,6 +247,16 @@ void ImguiData()
 	ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 
 	ImGui::Checkbox("Update Time", &updateTime);
+
+
+	if (ImGui::TreeNode("Light Settings"))
+	{
+		ImGui::SliderFloat("Light X", &GetLightPosition()->x, -100.0f, 100.0f);
+		ImGui::SliderFloat("Light Y", &GetLightPosition()->y, -100.0f, 100.0f);
+		ImGui::SliderFloat("Light Z", &GetLightPosition()->z, -100.0f, 100.0f);
+
+		ImGui::TreePop();
+	}
 
 	if (ImGui::TreeNode("Camera Settings"))
 	{
