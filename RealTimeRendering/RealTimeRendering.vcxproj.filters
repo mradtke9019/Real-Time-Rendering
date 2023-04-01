@@ -304,19 +304,25 @@
     <CopyFileToFolders Include="Images\wood_color_maps\wood_bar_specular.bmp">
       <Filter>Resource Files\Images\wood_color_maps</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="Procedural.frag">
+    <CopyFileToFolders Include="ProceduralKnots.frag">
       <Filter>Resource Files\Shaders</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="Procedural.vert">
+    <CopyFileToFolders Include="ProceduralKnots.vert">
       <Filter>Resource Files\Shaders</Filter>
     </CopyFileToFolders>
     <CopyFileToFolders Include="Models\Plank\plank.obj">
       <Filter>Resource Files\Models\Plank</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="Procedural2.frag">
+    <CopyFileToFolders Include="ProceduralTexture.frag">
       <Filter>Resource Files\Shaders</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="Procedural2.vert">
+    <CopyFileToFolders Include="ProceduralTexture.vert">
+      <Filter>Resource Files\Shaders</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="phong.frag">
+      <Filter>Resource Files\Shaders</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="phong.vert">
       <Filter>Resource Files\Shaders</Filter>
     </CopyFileToFolders>
   </ItemGroup>

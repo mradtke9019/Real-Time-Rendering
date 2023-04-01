@@ -32,6 +32,8 @@ using namespace std;
 IShader* activeShader;
 int shaderChosen;
 std::vector<string> shaderNames;
+
+Shader* phongShader;
 vector<IShader*> shaders;
 
 ICamera* activeCamera;
@@ -39,7 +41,11 @@ FixedCamera defaultCamera;
 
 vector<Model*> models;
 Model* LightBulb;
+Model* cube;
+Model* plank;
+Model* teapot;
 Skybox* skybox;
+
 
 vector<Texture> textures;
 
@@ -65,6 +71,8 @@ float rmin, rmax, hmax, knum;
 
 glm::vec3 LightColor;
 glm::vec3 LightPosition;
+
+float smoothness = 1.0f;
 
 
 glm::mat4 GetProjection()
@@ -101,6 +109,7 @@ void display(GLFWwindow* window)
 	{
 		IShader* s = shaders.at(i);
 
+		s->SetUniform1f("smoothness", smoothness);
 		s->SetUniformVec3("LightColor", LightColor);
 		s->SetUniformVec3("LightPosition", LightBulb->GetPosition());
 		if (updateTime)
@@ -131,13 +140,13 @@ void LoadTextures()
 void LoadShaders()
 {
 	// Set up the shaders
-	Shader* blinnPhongShader = new Shader("./blinnPhong.vert", "./blinnPhong.frag");
-	blinnPhongShader->SetUniform1f("specularExp", 64);
-	blinnPhongShader->SetUniform1i("UseNormalMap", 0);
+	phongShader = new Shader("./phong.vert", "./phong.frag");
+	phongShader->SetUniform1f("specularExp", 64);
+	phongShader->SetUniform1i("UseNormalMap", 0);
 
-	KnotShader* woodShader = new KnotShader("./Procedural.vert", "./Procedural.frag");
+	KnotShader* woodShader = new KnotShader("./ProceduralKnots.vert", "./ProceduralKnots.frag");
 
-	KnotShader* woodShader2 = new KnotShader("./Procedural2.vert", "./Procedural2.frag");
+	Shader* ProceduralTexture = new Shader("./ProceduralTexture.vert", "./ProceduralTexture.frag");
 
 
 	rmin = 104.06;
@@ -146,8 +155,8 @@ void LoadShaders()
 	knum = 108;
 
 	shaders.push_back(woodShader);
-	shaders.push_back(woodShader2);
-	shaders.push_back(blinnPhongShader);
+	shaders.push_back(ProceduralTexture);
+	shaders.push_back(phongShader);
 
 	activeShader = woodShader;
 	shaderChosen = 0;
@@ -182,12 +191,14 @@ void LoadCameras()
 
 void LoadObjects()
 {
-	Model* model = new Model("./Models/Plank/plank.obj", glm::vec3(0, 0, 0), activeShader);
-	Model* cube = new Model("./Models/Cube/cube.obj", glm::vec3(0, 0, 0), activeShader);
+	cube = new Model("./Models/Cube/cube.obj", glm::vec3(0, 0, 0), phongShader);
+	teapot = new Model("./Models/Teapot/Teapot.obj", glm::vec3(0, 0, 0), phongShader);
+	plank = new Model("./Models/Plank/plank.obj", glm::vec3(0, 0, 0), activeShader);
 	LightBulb = new Model("./Models/Sphere/Sphere.obj", LightPosition, activeShader);
-	
-	models.push_back(model);
+
 	models.push_back(cube);
+	models.push_back(teapot);
+	models.push_back(plank);
 	models.push_back(LightBulb);
 }
 
@@ -246,7 +257,22 @@ void ImguiData()
 
 	ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 
-	ImGui::Checkbox("Update Time", &updateTime);
+	ImGui::SliderFloat("Smoothness", &smoothness, 0.0f, 50.0f);
+	
+	if (ImGui::Checkbox("Draw Plank", plank->ShouldDraw()))
+	{
+
+	}
+	if (ImGui::Checkbox("Draw Cube", cube->ShouldDraw())) 
+	{
+
+	}
+	if (ImGui::Checkbox("Draw Teapot", teapot->ShouldDraw())) 
+	{
+
+
+	}
+
 
 
 	if (ImGui::TreeNode("Light Settings"))

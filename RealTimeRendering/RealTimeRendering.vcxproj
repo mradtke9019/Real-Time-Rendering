@@ -322,10 +322,10 @@
     </CopyFileToFolders>
   </ItemGroup>
   <ItemGroup>
-    <CopyFileToFolders Include="Procedural.frag">
+    <CopyFileToFolders Include="ProceduralKnots.frag">
       <FileType>Document</FileType>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="Procedural.vert">
+    <CopyFileToFolders Include="ProceduralKnots.vert">
       <FileType>Document</FileType>
     </CopyFileToFolders>
   </ItemGroup>
@@ -335,10 +335,18 @@
     </CopyFileToFolders>
   </ItemGroup>
   <ItemGroup>
-    <CopyFileToFolders Include="Procedural2.frag">
+    <CopyFileToFolders Include="ProceduralTexture.frag">
       <FileType>Document</FileType>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="Procedural2.vert">
+    <CopyFileToFolders Include="ProceduralTexture.vert">
+      <FileType>Document</FileType>
+    </CopyFileToFolders>
+  </ItemGroup>
+  <ItemGroup>
+    <CopyFileToFolders Include="phong.frag">
+      <FileType>Document</FileType>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="phong.vert">
       <FileType>Document</FileType>
     </CopyFileToFolders>
   </ItemGroup>

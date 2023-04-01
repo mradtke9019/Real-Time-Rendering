@@ -1,7 +1,7 @@
 #include "Model.h"
 
 Model::Model(std::string path, glm::vec3 Position, IShader* Shader)
-	: ITransformable(), mipmap(GL_LINEAR_MIPMAP_LINEAR)
+	: ITransformable(), mipmap(GL_LINEAR_MIPMAP_LINEAR), shouldDraw(true)
 {
 	shader = Shader;
 	ObjectColor = glm::vec3(1.0, 0.0, 0.0);
@@ -10,7 +10,7 @@ Model::Model(std::string path, glm::vec3 Position, IShader* Shader)
 }
 
 Model::Model(std::string path, glm::vec3 Position, IShader* Shader, glm::vec3 color)
-	: ITransformable(), mipmap(GL_LINEAR_MIPMAP_LINEAR)
+	: ITransformable(), mipmap(GL_LINEAR_MIPMAP_LINEAR), shouldDraw(true)
 {
 	shader = Shader;
 	ObjectColor = color;
@@ -20,7 +20,7 @@ Model::Model(std::string path, glm::vec3 Position, IShader* Shader, glm::vec3 co
 
 // Constructor to control the mip mapping generated
 Model::Model(std::string path, glm::vec3 Position, IShader* Shader, GLint mipmapPolicy)
-	: ITransformable(), mipmap(GL_LINEAR_MIPMAP_LINEAR)
+	: ITransformable(), mipmap(GL_LINEAR_MIPMAP_LINEAR), shouldDraw(true)
 {
 	shader = Shader;
 	ObjectColor = glm::vec3(1.0, 0.0, 0.0);
@@ -28,8 +28,18 @@ Model::Model(std::string path, glm::vec3 Position, IShader* Shader, GLint mipmap
 	loadModel(path);
 }
 
+
+bool* Model::ShouldDraw()
+{
+	return &shouldDraw;
+}
+
 void Model::Draw()
 {
+	if (!shouldDraw)
+	{
+		return;
+	}
 	shader->Use();
 	glm::mat4 ModelTransform = this->GetTransformation();
 	shader->SetUniformMatrix4fv("model", &ModelTransform);
@@ -42,6 +52,10 @@ void Model::Draw()
 
 void Model::Draw(std::vector<Texture> textures)
 {
+	if (!shouldDraw)
+	{
+		return;
+	}
 	shader->Use();
 	glm::mat4 ModelTransform = this->GetTransformation();
 	shader->SetUniformMatrix4fv("model", &ModelTransform);

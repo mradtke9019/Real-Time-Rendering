@@ -29,15 +29,16 @@ class Model : public ITransformable
 {
 public:
     // model data 
-    vector<Texture> textures_loaded;	// stores all the textures loaded so far, optimization to make sure textures aren't loaded more than once.
+    vector<Texture> textures_loaded;
     vector<Mesh>    meshes;
     string directory;
     bool gammaCorrection;
     GLint mipmap;
+    bool shouldDraw;
 
     // constructor, expects a filepath to a 3D model.
     Model(string const& path, bool gamma = false)
-        : gammaCorrection(gamma), ITransformable(), mipmap(GL_NEAREST_MIPMAP_NEAREST)
+        : gammaCorrection(gamma), ITransformable(), mipmap(GL_NEAREST_MIPMAP_NEAREST), shouldDraw(true)
     {
         loadModel(path);
     }
@@ -50,6 +51,8 @@ public:
     //void SetModelTransform(glm::mat4 model);
     void SetColor(glm::vec3 color);
     glm::vec3 GetColor();
+
+    bool* ShouldDraw();
 
     // draws the model, and thus all its meshes
     void Draw();

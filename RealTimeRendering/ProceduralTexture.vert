@@ -1,6 +1,4 @@
 #version 330
-#extension GL_ARB_explicit_attrib_location : require
-#extension GL_ARB_explicit_uniform_location : require
 
 in vec3 vPosition;
 in vec3 vNormal;
@@ -10,26 +8,19 @@ uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
 
-uniform float rmin;
-uniform float hmax;
 
-out vec3 outTexCoords;
-out vec3 normal;
-out vec3 fragPos;
-out float zrat;
-
+uniform vec3 LightColor;
+uniform vec3 LightPosition;
 
 out vec3 fNormal;
 out vec3 fPosition;
 out vec2 TexCoord;
 
-void main()
+void main()                                                              
 {
 	gl_Position = projection * view * model * vec4(vPosition, 1.0);
 
 	fPosition = vec3(gl_Position);
 	fNormal =  transpose(inverse(mat3(model))) * vNormal;
-
-    zrat = hmax/rmin;
-    outTexCoords = vec3( vPosition.x, vPosition.y, vPosition.z);
+	TexCoord = vec2(vTexture.x, vTexture.y);
 }
