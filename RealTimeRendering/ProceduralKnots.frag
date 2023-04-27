@@ -6,9 +6,17 @@ in vec3 fNormal;
 in vec3 fPosition;
 in float zrat;
 
+
+uniform float xScale = 1.0f;
+uniform float yScale = 1.0f;
+uniform float zScale = 1.0f;
+
 uniform float rmin;
 uniform float rmax;
 uniform float hmax;
+
+uniform float offset = 0.0f;
+
 uniform int N;
 uniform sampler2D ColorMap;
 uniform sampler2D SpecularMap;
@@ -217,10 +225,11 @@ void main()
     float range_d0 = 0.1;
     float range_d1 = 0.2;
 
+    // Need to get set the offset based off the scale to be applied to the volume texture
     // GLOBAL 3D TEXTURE COORDINATES
-    float Px = outTexCoords.x;
-    float Py = outTexCoords.y + 0.18;                                 // offsetting texture coordinates in y-direction to make center of tree visible
-    float Pz_p = outTexCoords.z + mod(0.25*time,zrat);            // animating z to show how the texture changes
+    float Px = outTexCoords.x * xScale;
+    float Py = outTexCoords.y * yScale + offset;                                 // offsetting texture coordinates in y-direction to make center of tree visible
+    float Pz_p = outTexCoords.z * zScale ;//+ mod(0.25*time,zrat);            // animating z to show how the texture changes
     float Pz_m = map(Pz_p,0.0,zrat,0.0,1.0);                          // mapped to tree height, i.e. range 0.0-1.0
 
     // STEM GEOMETRY

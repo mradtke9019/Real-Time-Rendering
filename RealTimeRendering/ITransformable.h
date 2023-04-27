@@ -1,20 +1,31 @@
+#pragma once
 #include "ITranslatable.h"
 #include "IRotatable.h"
+#include "IScaleable.h"
 
-#pragma once
 
-class ITransformable : public ITranslatable, public IRotatable {
+class ITransformable : public ITranslatable, public IRotatable, public IScaleable 
+{
 private:
+	glm::mat4 transform;
+
 
 public:
 	ITransformable()
-		: ITranslatable(), IRotatable()
+		: ITranslatable(), IRotatable(), IScaleable()
 	{
+		transform = GetTranslationMatrix() * GetRotationMatrix() * GetScaleMatrix();
+	}
 
+	void Update()
+	{
+		ITranslatable::UpdateTranslationMatrix();
+		IScaleable::UpdateScaleMatrix();
+		transform = GetTranslationMatrix() * GetRotationMatrix() * GetScaleMatrix();
 	}
 
 	glm::mat4 GetTransformation()
 	{
-		return GetTranslationMatrix() * GetRotationMatrix();
+		return transform;
 	}
 };

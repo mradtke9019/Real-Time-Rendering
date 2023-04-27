@@ -46,6 +46,7 @@ Model* plank;
 Model* teapot;
 Skybox* skybox;
 
+float offset = 0.18f;
 
 vector<Texture> textures;
 
@@ -68,6 +69,9 @@ float specularExp;
 
 // Tree properties
 float rmin, rmax, hmax, knum;
+float xScale = 1.0f;
+float yScale = 1.0f;
+float zScale = 1.0f;
 
 glm::vec3 LightColor;
 glm::vec3 LightPosition;
@@ -108,7 +112,10 @@ void display(GLFWwindow* window)
 	for (int i = 0; i < shaders.size(); i++)
 	{
 		IShader* s = shaders.at(i);
-
+		s->SetUniform1f("xScale", xScale);
+		s->SetUniform1f("yScale", yScale);
+		s->SetUniform1f("zScale", zScale);
+		s->SetUniform1f("offset", offset);
 		s->SetUniform1f("smoothness", smoothness);
 		s->SetUniformVec3("LightColor", LightColor);
 		s->SetUniformVec3("LightPosition", LightBulb->GetPosition());
@@ -148,6 +155,7 @@ void LoadShaders()
 
 	Shader* ProceduralTexture = new Shader("./ProceduralTexture.vert", "./ProceduralTexture.frag");
 
+	Shader* noiseShader = new KnotShader("./Noise.vert", "./Noise.frag");
 
 	rmin = 104.06;
 	rmax = 143.375;
@@ -156,6 +164,7 @@ void LoadShaders()
 
 	shaders.push_back(woodShader);
 	shaders.push_back(ProceduralTexture);
+	shaders.push_back(noiseShader);
 	shaders.push_back(phongShader);
 
 	activeShader = woodShader;
@@ -195,6 +204,11 @@ void LoadObjects()
 	teapot = new Model("./Models/Teapot/Teapot.obj", glm::vec3(0, 0, 0), phongShader);
 	plank = new Model("./Models/Plank/plank.obj", glm::vec3(0, 0, 0), activeShader);
 	LightBulb = new Model("./Models/Sphere/Sphere.obj", LightPosition, activeShader);
+
+	cube->shouldDraw = false;
+	teapot->shouldDraw = false;
+	LightBulb->shouldDraw = false;
+
 
 	models.push_back(cube);
 	models.push_back(teapot);
@@ -270,8 +284,39 @@ void ImguiData()
 	if (ImGui::Checkbox("Draw Teapot", teapot->ShouldDraw())) 
 	{
 
-
 	}
+
+	if(ImGui::Button("Refresh Transforms"))
+	{
+		for (auto m : models)
+		{
+			m->Update();
+		}
+	}
+
+	ImGui::SliderFloat("Offset", &offset, 0.0f, 1.0f);
+
+	if (ImGui::TreeNode("Plank Scale Settings"))
+	{
+		if (ImGui::SliderFloat("Scale X", plank->GetScaleX(), 1.0f, 10.0f))
+		{
+			xScale = *plank->GetScaleX();
+			plank->Update();
+		}
+		if(ImGui::SliderFloat("Scale Y", plank->GetScaleY(), 1.0f, 10.0f))
+		{
+			yScale = *plank->GetScaleY();
+			plank->Update();
+		}
+		if(ImGui::SliderFloat("Scale Z", plank->GetScaleZ(), 1.0f, 10.0f))
+		{
+			zScale = *plank->GetScaleZ();
+			plank->Update();
+		}
+
+		ImGui::TreePop();
+	}
+
 
 
 
