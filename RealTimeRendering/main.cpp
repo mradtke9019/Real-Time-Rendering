@@ -117,6 +117,7 @@ void display(GLFWwindow* window)
 		s->SetUniform1f("zScale", zScale);
 		s->SetUniform1f("offset", offset);
 		s->SetUniform1f("smoothness", smoothness);
+		s->SetUniform1i("smoothness", (int)smoothness);
 		s->SetUniformVec3("LightColor", LightColor);
 		s->SetUniformVec3("LightPosition", LightBulb->GetPosition());
 		if (updateTime)
@@ -157,6 +158,8 @@ void LoadShaders()
 
 	Shader* noiseShader = new KnotShader("./Noise.vert", "./Noise.frag");
 
+	Shader* noiseShader2 = new KnotShader("./Noise2.vert", "./Noise2.frag");
+
 	rmin = 104.06;
 	rmax = 143.375;
 	hmax = 4000;
@@ -165,6 +168,7 @@ void LoadShaders()
 	shaders.push_back(woodShader);
 	shaders.push_back(ProceduralTexture);
 	shaders.push_back(noiseShader);
+	shaders.push_back(noiseShader2);
 	shaders.push_back(phongShader);
 
 	activeShader = woodShader;
@@ -266,7 +270,7 @@ void ImguiData()
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplGlfw_NewFrame();
 	ImGui::NewFrame();
-	ImGui::SetNextWindowSize(ImVec2(400, 200));
+	ImGui::SetNextWindowSize(ImVec2(450, 300));
 	ImGui::Begin("ImGui");
 
 	ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);

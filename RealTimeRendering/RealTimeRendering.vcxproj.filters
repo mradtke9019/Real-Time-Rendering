@@ -355,4 +355,12 @@
       <Filter>Resource Files\Skybox</Filter>
     </Image>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Noise2.vert">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="Noise2.frag">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+  </ItemGroup>
 </Project>
