@@ -229,7 +229,7 @@ void main()
     // GLOBAL 3D TEXTURE COORDINATES
     float Px = outTexCoords.x * xScale;
     float Py = outTexCoords.y * yScale + offset;                                 // offsetting texture coordinates in y-direction to make center of tree visible
-    float Pz_p = outTexCoords.z * zScale ;//+ mod(0.25*time,zrat);            // animating z to show how the texture changes
+    float Pz_p = outTexCoords.z * zScale + mod(0.25*time,zrat);            // animating z to show how the texture changes
     float Pz_m = map(Pz_p,0.0,zrat,0.0,1.0);                          // mapped to tree height, i.e. range 0.0-1.0
 
     // STEM GEOMETRY
@@ -251,6 +251,7 @@ void main()
     // KNOT GEOMETRY
     // initiate knot variables
     int n = 20;         // max number of considred knots
+    int N = 20;         // max number of considred knots
     float D_b[20];      // distances to from P to branch skeleton points S_b
     float T_b[20];      // time values of knots
     float T_death[20];  // time of death values of knots

@@ -124,6 +124,9 @@ void display(GLFWwindow* window)
 		{
 			s->SetUniform1f("time", timeValue);
 		}
+		else {
+			s->SetUniform1f("time", 1.0f);
+		}
 		s->SetUniform1f("rand", r);
 		s->SetUniformMatrix4fv("view", defaultCamera.GetViewTransform());
 		s->SetUniformMatrix4fv("projection", &projection);
@@ -169,7 +172,7 @@ void LoadShaders()
 	shaders.push_back(ProceduralTexture);
 	shaders.push_back(noiseShader);
 	shaders.push_back(noiseShader2);
-	shaders.push_back(phongShader);
+	//shaders.push_back(phongShader);
 
 	activeShader = woodShader;
 	shaderChosen = 0;
@@ -276,6 +279,10 @@ void ImguiData()
 	ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 
 	ImGui::SliderFloat("Smoothness", &smoothness, 0.0f, 50.0f);
+
+
+	ImGui::Checkbox("Update Time", &updateTime);
+
 	
 	if (ImGui::Checkbox("Draw Plank", plank->ShouldDraw()))
 	{
@@ -289,16 +296,6 @@ void ImguiData()
 	{
 
 	}
-
-	if(ImGui::Button("Refresh Transforms"))
-	{
-		for (auto m : models)
-		{
-			m->Update();
-		}
-	}
-
-	ImGui::SliderFloat("Offset", &offset, 0.0f, 1.0f);
 
 	if (ImGui::TreeNode("Plank Scale Settings"))
 	{
