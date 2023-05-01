@@ -20,6 +20,8 @@ uniform vec3 LightColor;
 uniform vec3 LightPosition;
 uniform vec3 ViewPosition;
 
+uniform vec3 RootColor;
+
 float DeterministicRandom(vec3 v) 
 {
     return fract(sin(dot(v, vec3(12.9898, 78.233, 45.543))) * 43758.5453);
@@ -68,22 +70,24 @@ void main()
 
     float scale =  InterpolatedNoise((mPosition + time * 0.1)* smoothness);
     vec3 ObjectColor = vec3(scale);
-    
+    float xFactor = 0.0f;
+
     if(scale < 0.1)
     {
-        ObjectColor = vec3(1,0,1) - vec3(0.1, 0 ,0.1);
+        xFactor = 0.1f;
     }
     else if(scale < 0.4)
     {
-        ObjectColor =vec3(1,0,1)- vec3(0.4, 0 ,0.4);
+        xFactor = 0.4f;
     }
-    else if(scale < 0.9)
+    else if(scale < 0.8)
     {
-        ObjectColor = vec3(1,0,1)- vec3(0.9, 0 ,0.9);
+        xFactor = 0.8f;
     }
     else {
-        ObjectColor = vec3(0);
+        xFactor = 1.0f;
     }
+    ObjectColor = RootColor - xFactor * RootColor;
     //ObjectColor = vec3(scale,0,scale);
 
 

@@ -76,6 +76,7 @@ float zScale = 1.0f;
 glm::vec3 LightColor;
 glm::vec3 LightPosition;
 
+glm::vec3 RootColor = glm::vec3(1);
 float smoothness = 1.0f;
 
 
@@ -120,6 +121,7 @@ void display(GLFWwindow* window)
 		s->SetUniform1i("smoothness", (int)smoothness);
 		s->SetUniformVec3("LightColor", LightColor);
 		s->SetUniformVec3("LightPosition", LightBulb->GetPosition());
+		s->SetUniformVec3("RootColor", RootColor);
 		if (updateTime)
 		{
 			s->SetUniform1f("time", timeValue);
@@ -318,7 +320,14 @@ void ImguiData()
 		ImGui::TreePop();
 	}
 
+	if (ImGui::TreeNode("Root Color Settings"))
+	{
+		ImGui::SliderFloat("R", &RootColor.x, 0.0f, 1.0f);
+		ImGui::SliderFloat("G", &RootColor.y, 0.0f, 1.0f);
+		ImGui::SliderFloat("B", &RootColor.z, 0.0f, 1.0f);
 
+		ImGui::TreePop();
+	}
 
 
 	if (ImGui::TreeNode("Light Settings"))
